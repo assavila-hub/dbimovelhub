@@ -53,6 +53,8 @@ import BrokerReviewsModal from './components/BrokerReviewsModal';
 import SavedSearchesModal from './components/SavedSearchesModal';
 import NeighborhoodInsightsModal from './components/NeighborhoodInsightsModal';
 import UnifiedTransactionTimelineModal from './components/UnifiedTransactionTimelineModal';
+import ResetPasswordModal from './components/ResetPasswordModal';
+import { supabase } from './services/supabase';
 import MassCsvManagerModal from './components/MassCsvManagerModal';
 import MovingChecklistModal from './components/MovingChecklistModal';
 import RadiusFilterModal from './components/RadiusFilterModal';
@@ -143,6 +145,7 @@ export default function App() {
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [isPostPropertyOpen, setIsPostPropertyOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [isAdminDashboardOpen, setIsAdminDashboardOpen] = useState(false);
   const [isUserDashboardOpen, setIsUserDashboardOpen] = useState(false);
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
@@ -329,6 +332,24 @@ export default function App() {
       document.body.classList.remove('dark-mode');
     }
   }, [darkMode]);
+
+  // Supabase Auth Recovery & URL Token Listener
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsResetPasswordOpen(true);
+      }
+    });
+
+    const hash = window.location.hash || '';
+    if (hash.includes('type=recovery') || (hash.includes('access_token=') && hash.includes('type=recovery'))) {
+      setIsResetPasswordOpen(true);
+    }
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -1404,6 +1425,24 @@ export default function App() {
       <OpportunityFloatingToast
         properties={properties}
         onSelectProperty={(p) => navigateToPropertyPage(p)}
+      />
+
+      {/* Supabase Password Recovery Modal */}
+      <ResetPasswordModal
+        isOpen={isResetPasswordOpen}
+        onClose={() => setIsResetPasswordOpen(false)}
+        onPasswordResetSuccess={(user) => {
+          showToast('Senha atualizada com sucesso no Supabase!');
+          if (user) {
+            setCurrentUser(prev => ({
+              ...prev,
+              id: user.id,
+              email: user.email,
+              name: user.user_metadata?.name || 'Alex Sandro',
+              role: user.user_metadata?.role || 'owner'
+            }));
+          }
+        }}
       />
     </div>
   );

@@ -343,8 +343,9 @@ export async function requestPasswordReset(email) {
       throw new Error('Não encontramos nenhuma conta com este e-mail no sistema.');
     }
 
+    const redirectOrigin = typeof window !== 'undefined' ? `${window.location.origin}/` : 'https://dbimovelhub.vercel.app/';
     const { error: authError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
-      redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : undefined
+      redirectTo: redirectOrigin
     });
 
     if (authError) {
