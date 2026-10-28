@@ -23,7 +23,9 @@ import {
   FileCheck,
   ClipboardCheck,
   Bell,
-  Video
+  Video,
+  Copy,
+  Check
 } from 'lucide-react';
 import FloorPlansWidget from './FloorPlansWidget';
 import ConstructionTimelineWidget from './ConstructionTimelineWidget';
@@ -58,8 +60,18 @@ export default function PropertyDetailModal({
   onOpenInteractiveFloorPlan
 }) {
   const [selectedImage, setSelectedImage] = useState(0);
+  const [copiedCode, setCopiedCode] = useState(false);
 
   if (!property) return null;
+
+  const propCode = property.code || property.id;
+
+  const handleCopyCode = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(propCode);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
 
   const safeArea = property.area || 1;
   const safePrice = property.price || 0;
@@ -92,14 +104,32 @@ export default function PropertyDetailModal({
           top: 0,
           zIndex: 10
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <span className="badge badge-quinto">
               <ShieldCheck size={14} />
               <span>Verificado ImóvelHUB</span>
             </span>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Cód. {property.id}
-            </span>
+            <button
+              onClick={handleCopyCode}
+              title="Clique para copiar o código do imóvel"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: '#38bdf8',
+                backgroundColor: 'rgba(15, 23, 42, 0.85)',
+                border: '1px solid rgba(56, 189, 248, 0.35)',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                letterSpacing: '0.5px'
+              }}
+            >
+              {copiedCode ? <Check size={13} color="#10b981" /> : <Copy size={13} />}
+              <span>{copiedCode ? 'Código Copiado!' : `Cód: ${propCode}`}</span>
+            </button>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

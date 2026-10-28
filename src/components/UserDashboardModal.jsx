@@ -868,6 +868,7 @@ export default function UserDashboardModal({
                         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
                           <thead>
                             <tr style={{ backgroundColor: 'var(--bg-main)', textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Código</th>
                               <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Imóvel</th>
                               <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Valor</th>
                               <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Status</th>
@@ -877,6 +878,20 @@ export default function UserDashboardModal({
                           <tbody>
                             {userProperties.map(prop => (
                               <tr key={prop.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                <td style={{ padding: '0.85rem 1rem', whiteSpace: 'nowrap' }}>
+                                  <span style={{
+                                    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+                                    color: '#38bdf8',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 800,
+                                    padding: '0.22rem 0.55rem',
+                                    borderRadius: '4px',
+                                    fontFamily: 'monospace',
+                                    letterSpacing: '0.5px'
+                                  }}>
+                                    {prop.code || prop.id}
+                                  </span>
+                                </td>
                                 <td style={{ padding: '0.85rem 1rem' }}>
                                   <strong style={{ fontSize: '0.88rem', display: 'block' }}>{prop.title}</strong>
                                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{prop.neighborhood}, {prop.city}</span>

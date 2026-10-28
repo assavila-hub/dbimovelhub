@@ -490,28 +490,36 @@ export default function App() {
     }
 
     if (searchQuery && searchQuery.trim() !== '') {
-      const cleanQ = searchQuery.trim().replace(/^#/, '');
-      if (item.id && (item.id.toLowerCase() === cleanQ.toLowerCase() || item.id.toLowerCase() === `prop-${cleanQ.toLowerCase()}`)) {
-        // Direct ID Match!
-      } else {
-        const normalize = (str) =>
-          (str || '')
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/[,\-–—\(\)\/]/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim();
+      const rawQ = searchQuery.trim().toLowerCase();
+      const cleanQ = rawQ.replace(/^[#\s]+/, '').replace(/^hub[-_\s]*/, '');
+      const itemCodeClean = (item.code || '').toLowerCase().replace(/^hub[-_\s]*/, '');
 
-        const normQuery = normalize(searchQuery);
-        const queryTerms = normQuery.split(' ').filter(t => t.length > 0);
-        const searchableText = normalize(
-          `${item.id} ${item.title} ${item.neighborhood} ${item.city} ${item.state} ${item.address} ${item.type} ${item.subType} ${item.referenceCode || ''} ${item.advertiser?.name || ''} ${item.advertiser?.email || ''} ${item.advertiser?.phone || ''} ${item.description || ''}`
-        );
+      const isDirectCodeMatch = 
+        (item.code && (item.code.toLowerCase() === rawQ || itemCodeClean === cleanQ)) ||
+        (item.id && (item.id.toLowerCase() === rawQ || item.id.toLowerCase() === `prop-${rawQ}`));
 
-        const matchesAllTerms = queryTerms.every(term => searchableText.includes(term));
-        if (!matchesAllTerms) return false;
+      if (isDirectCodeMatch) {
+        // Direct Code / ID Match - instantly matches!
+        return true;
       }
+
+      const normalize = (str) =>
+        (str || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[,\-–—\(\)\/]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+      const normQuery = normalize(searchQuery);
+      const queryTerms = normQuery.split(' ').filter(t => t.length > 0);
+      const searchableText = normalize(
+        `${item.code || ''} ${item.id} ${item.title} ${item.neighborhood} ${item.city} ${item.state} ${item.address} ${item.type} ${item.subType} ${item.referenceCode || ''} ${item.advertiser?.name || ''} ${item.advertiser?.email || ''} ${item.advertiser?.phone || ''} ${item.description || ''}`
+      );
+
+      const matchesAllTerms = queryTerms.every(term => searchableText.includes(term));
+      if (!matchesAllTerms) return false;
     }
 
     if (selectedSubTypes.length > 0) {

@@ -468,16 +468,16 @@ export default function HeroSearch({
               />
             </div>
 
-            {/* 2. Localização (Cidade ou Bairro) com histórico e tendências */}
+            {/* 2. Localização (Cidade, Bairro ou Código do Imóvel) */}
             <div style={{ position: 'relative', flex: '2 1 280px', width: '100%' }}>
               <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.3rem', display: 'block' }}>
-                Localização (Cidade ou Bairro)
+                Localização ou Código do Imóvel
               </label>
               <div style={{ position: 'relative' }}>
                 <MapPin size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-primary-light)' }} />
                 <input
                   type="text"
-                  placeholder={topRealNeighborhoods.length > 0 ? `Ex: ${topRealNeighborhoods.slice(0, 3).map(n => n.name.split(',')[0]).join(', ')}...` : 'Digite o bairro ou cidade...'}
+                  placeholder="Bairro, cidade ou código (ex: HUB-1061)..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);

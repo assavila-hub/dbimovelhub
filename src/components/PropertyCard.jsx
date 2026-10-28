@@ -60,7 +60,8 @@ export default function PropertyCard({
   const isMcmvEligible = property.price <= 350000 && property.transactionType === 'Venda';
   const acceptsExchange = property.acceptsExchange || property.description?.toLowerCase().includes('permuta');
 
-  const whatsappMessage = `Olá! Vi o imóvel "${property.title}" (Cód: ${property.id}) no ImóvelHUB no valor de ${displayPrice} e gostaria de mais informações.`;
+  const propCode = property.code || property.id;
+  const whatsappMessage = `Olá! Vi o imóvel "${property.title}" (Cód: ${propCode}) no ImóvelHUB no valor de ${displayPrice} e gostaria de mais informações.`;
 
   return (
     <div 
@@ -143,7 +144,25 @@ export default function PropertyCard({
         )}
 
         {/* Top Badges */}
-        <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', flexDirection: 'column', gap: '4px', zIndex: 2 }}>
+          <span style={{
+            backgroundColor: 'rgba(15, 23, 42, 0.88)',
+            color: '#38bdf8',
+            fontSize: '0.72rem',
+            padding: '0.22rem 0.55rem',
+            borderRadius: '6px',
+            fontWeight: 800,
+            letterSpacing: '0.5px',
+            backdropFilter: 'blur(6px)',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            width: 'fit-content'
+          }}>
+            <Tag size={11} color="#38bdf8" />
+            CÓD: {property.code || property.id}
+          </span>
           {isGreatDeal && (
             <span style={{ backgroundColor: '#ef4444', color: '#fff', fontSize: '0.7rem', padding: '0.2rem 0.55rem', borderRadius: '4px', fontWeight: 800 }}>
               🔥 Ótimo Preço

@@ -201,12 +201,16 @@ export default function PostPropertyModal({
   };
 
   const [isSuccess, setIsSuccess] = useState(false);
+  const [createdCode, setCreatedCode] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const generatedCode = 'HUB-' + Math.floor(1000 + Math.random() * 9000);
+    setCreatedCode(generatedCode);
     const newProp = {
       id: `prop-${Date.now()}`,
+      code: generatedCode,
       userId: currentUser ? currentUser.id : null,
       title: formData.title || 'Imóvel Anunciado no ImóvelHUB',
       type: formData.type || 'Apartamento',
@@ -307,6 +311,14 @@ export default function PostPropertyModal({
                 <CheckCircle size={36} />
               </div>
               <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.5rem' }}>Anúncio Publicado com Sucesso!</h3>
+              {createdCode && (
+                <div style={{ margin: '0.8rem 0' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Código exclusivo gerado:</span>
+                  <span style={{ fontFamily: 'monospace', fontSize: '1.1rem', fontWeight: 800, backgroundColor: 'rgba(15,23,42,0.95)', color: '#38bdf8', padding: '0.35rem 0.85rem', borderRadius: '6px' }}>
+                    {createdCode}
+                  </span>
+                </div>
+              )}
               <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)' }}>
                 Seu imóvel já está ativo nos resultados de busca com selo verificado do ImóvelHUB.
               </p>

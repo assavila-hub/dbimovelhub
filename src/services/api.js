@@ -287,6 +287,19 @@ export async function registerUser({ name, email, password, role, phone, creci }
       throw new Error('Este e-mail já está cadastrado. Faça login ou use outro e-mail.');
     }
 
+    // Trigger official Supabase confirmation email
+    try {
+      await supabase.auth.signUp({
+        email: cleanEmail,
+        password: password,
+        options: {
+          data: { name: name.trim(), role: role || 'buyer', phone: phone || '', creci: creci || null }
+        }
+      });
+    } catch (authErr) {
+      console.warn("Supabase auth signUp notification:", authErr);
+    }
+
     const newUser = {
       id: `user-${Date.now()}`,
       name: name.trim(),
@@ -310,6 +323,38 @@ export async function registerUser({ name, email, password, role, phone, creci }
     }
 
     return data[0];
+  } catch (err) {
+    throw err;
+  }
+}
+
+// 12. Password Recovery (Forgot Password)
+export async function requestPasswordReset(email) {
+  const cleanEmail = (email || '').trim().toLowerCase();
+
+  try {
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id, name, email')
+      .ilike('email', cleanEmail)
+      .limit(1);
+
+    if (userError || !user || user.length === 0) {
+      throw new Error('Não encontramos nenhuma conta com este e-mail no sistema.');
+    }
+
+    const { error: authError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+      redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : undefined
+    });
+
+    if (authError) {
+      console.warn("Supabase Auth reset warning:", authError);
+    }
+
+    return {
+      success: true,
+      message: `Enviamos um link de recuperação para ${cleanEmail}. Por favor, verifique sua caixa de entrada e pasta de spam!`
+    };
   } catch (err) {
     throw err;
   }
