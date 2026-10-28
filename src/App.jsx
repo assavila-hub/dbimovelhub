@@ -506,7 +506,7 @@ export default function App() {
         const normQuery = normalize(searchQuery);
         const queryTerms = normQuery.split(' ').filter(t => t.length > 0);
         const searchableText = normalize(
-          `${item.id} ${item.title} ${item.neighborhood} ${item.city} ${item.state} ${item.address} ${item.type} ${item.subType} ${item.referenceCode || ''}`
+          `${item.id} ${item.title} ${item.neighborhood} ${item.city} ${item.state} ${item.address} ${item.type} ${item.subType} ${item.referenceCode || ''} ${item.advertiser?.name || ''} ${item.advertiser?.email || ''} ${item.advertiser?.phone || ''} ${item.description || ''}`
         );
 
         const matchesAllTerms = queryTerms.every(term => searchableText.includes(term));

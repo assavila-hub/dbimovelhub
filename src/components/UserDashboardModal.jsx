@@ -451,6 +451,7 @@ export default function UserDashboardModal({
           {/* TABS FOR COMPRADOR */}
           {activeRole === 'buyer' && [
             { id: 'overview', label: 'Meu Painel', icon: User },
+            { id: 'my-properties', label: `Meus Imóveis (${userProperties.length})`, icon: Building2 },
             { id: 'buyer-favorites', label: `Meus Favoritos (${favoritePropertiesList.length})`, icon: Heart },
             { id: 'buyer-visits', label: `Visitas Agendadas (${roleVisits.length})`, icon: Calendar },
             { id: 'buyer-proposals', label: `Minhas Propostas (${ownerProposals.length})`, icon: FileText }
@@ -797,9 +798,9 @@ export default function UserDashboardModal({
           )}
 
           {/* ========================================================================= */}
-          {/* 🏡 PAINEL DO PROPRIETÁRIO                                                 */}
+          {/* 🏡 PAINEL DO PROPRIETÁRIO / MEUS IMÓVEIS                                   */}
           {/* ========================================================================= */}
-          {activeRole === 'owner' && (
+          {(activeRole === 'owner' || activeTab === 'my-properties') && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {activeTab === 'overview' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -1124,11 +1125,18 @@ export default function UserDashboardModal({
           {/* ========================================================================= */}
           {/* 🔍 PAINEL DO COMPRADOR                                                    */}
           {/* ========================================================================= */}
-          {activeRole === 'buyer' && (
+          {activeRole === 'buyer' && activeTab !== 'my-properties' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {activeTab === 'overview' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    <div 
+                      style={{ backgroundColor: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', cursor: 'pointer' }}
+                      onClick={() => setActiveTab('my-properties')}
+                    >
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>MEUS IMÓVEIS ANUNCIADOS</span>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f59e0b', marginTop: '0.2rem' }}>{userProperties.length}</div>
+                    </div>
                     <div style={{ backgroundColor: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                       <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>IMÓVEIS FAVORITADOS</span>
                       <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#3b82f6', marginTop: '0.2rem' }}>{favoritePropertiesList.length}</div>
