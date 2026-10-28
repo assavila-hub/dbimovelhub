@@ -328,7 +328,7 @@ export async function registerUser({ name, email, password, role, phone, creci }
   }
 }
 
-// 12. Password Recovery (Forgot Password)
+// 12. Password Recovery (Forgot Password via Email)
 export async function requestPasswordReset(email) {
   const cleanEmail = (email || '').trim().toLowerCase();
 
@@ -348,12 +348,55 @@ export async function requestPasswordReset(email) {
     });
 
     if (authError) {
-      console.warn("Supabase Auth reset warning:", authError);
+      if (authError.message?.includes('rate limit') || authError.status === 429) {
+        throw new Error('O envio de e-mails gratuitos do Supabase atingiu a cota por hora (máx. 3 disparos/hora). Utilize o botão "Redefinir Senha Imediatamente" logo abaixo para alterar sua senha na hora!');
+      }
+      throw new Error(authError.message || 'Erro ao enviar e-mail de recuperação.');
     }
 
     return {
       success: true,
       message: `Enviamos um link de recuperação para ${cleanEmail}. Por favor, verifique sua caixa de entrada e pasta de spam!`
+    };
+  } catch (err) {
+    throw err;
+  }
+}
+
+// 13. Direct Password Reset (Instant Reset via Supabase Database)
+export async function resetPasswordDirectly(email, newPassword) {
+  const cleanEmail = (email || '').trim().toLowerCase();
+  if (!newPassword || newPassword.length < 6) {
+    throw new Error('A nova senha deve ter no mínimo 6 caracteres.');
+  }
+
+  try {
+    const { data: users, error: findError } = await supabase
+      .from('users')
+      .select('id, name, email')
+      .ilike('email', cleanEmail)
+      .limit(1);
+
+    if (findError || !users || users.length === 0) {
+      throw new Error('Nenhuma conta encontrada com este e-mail.');
+    }
+
+    const user = users[0];
+
+    // Update in Supabase public.users
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ password: newPassword })
+      .eq('id', user.id);
+
+    if (updateError) {
+      throw new Error('Erro ao salvar a nova senha no banco de dados.');
+    }
+
+    return {
+      success: true,
+      user,
+      message: 'Senha alterada com sucesso! Você já pode fazer login com a sua nova senha.'
     };
   } catch (err) {
     throw err;
