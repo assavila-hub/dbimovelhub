@@ -48,18 +48,6 @@ export default function ProfileContextBanner({
   onSelectTransactionTab
 }) {
   const isVisitor = !currentUser;
-
-  const handleRoleSwitch = (roleKey) => {
-    if (roleKey === 'visitor') {
-      setCurrentUser(null);
-    } else {
-      const userFound = DEFAULT_USERS.find(u => u.role === roleKey);
-      if (userFound) {
-        setCurrentUser(userFound);
-      }
-    }
-  };
-
   const currentRole = isVisitor ? 'visitor' : currentUser.role;
 
   return (
@@ -69,61 +57,6 @@ export default function ProfileContextBanner({
       maxWidth: '1680px',
       padding: '0 clamp(1rem, 2.5vw, 2.5rem)'
     }}>
-      {/* 1. TOP ROLE SELECTOR BAR (Interactive Role Switcher) */}
-      <div style={{
-        backgroundColor: 'var(--bg-card)',
-        borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--border-color)',
-        padding: '0.65rem 1rem',
-        boxShadow: 'var(--shadow-sm)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '0.75rem',
-        marginBottom: '1rem'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Sparkles size={16} color="var(--color-primary-light)" />
-          <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-            Visão do Portal por Perfil:
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
-          {[
-            { id: 'visitor', label: '🌐 Visitante (Público)', color: 'var(--text-muted)' },
-            { id: 'buyer', label: '🔍 Comprador / Inquilino', color: 'var(--color-primary-light)' },
-            { id: 'owner', label: '🏡 Proprietário', color: '#f59e0b' },
-            { id: 'broker', label: '📜 Corretor (CRECI)', color: '#059669' },
-            { id: 'agency', label: '🏢 Imobiliária', color: '#0284c7' },
-            { id: 'support', label: '🎧 Suporte', color: '#8b5cf6' },
-            { id: 'admin', label: '🔒 Administrador', color: 'var(--color-primary)' }
-          ].map(item => {
-            const isSelected = currentRole === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleRoleSwitch(item.id)}
-                style={{
-                  padding: '0.35rem 0.75rem',
-                  borderRadius: 'var(--radius-full)',
-                  border: isSelected ? '1px solid var(--color-primary-light)' : '1px solid var(--border-color)',
-                  backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.12)' : 'var(--bg-main)',
-                  color: isSelected ? 'var(--color-primary-light)' : 'var(--text-muted)',
-                  fontSize: '0.78rem',
-                  fontWeight: isSelected ? 800 : 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                {item.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* 2. DYNAMIC PROFILE CARD CONTAINER */}
       {isVisitor ? (
         /* =========================================================================

@@ -241,3 +241,73 @@ export async function createProposal(proposalData) {
   }
   return item;
 }
+
+// 10. Real Authentication (Login)
+export async function loginUser(email, password) {
+  const cleanEmail = (email || '').trim().toLowerCase();
+  
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .ilike('email', cleanEmail)
+      .limit(1);
+
+    if (error || !data || data.length === 0) {
+      throw new Error('E-mail não encontrado no sistema.');
+    }
+
+    const user = data[0];
+    if (user.password && user.password !== password) {
+      throw new Error('Senha incorreta. Verifique suas credenciais.');
+    }
+
+    return user;
+  } catch (err) {
+    throw err;
+  }
+}
+
+// 11. Real Authentication (Register)
+export async function registerUser({ name, email, password, role, phone, creci }) {
+  const cleanEmail = (email || '').trim().toLowerCase();
+
+  try {
+    // Check if user already exists
+    const { data: existing } = await supabase
+      .from('users')
+      .select('id')
+      .ilike('email', cleanEmail)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      throw new Error('Este e-mail já está cadastrado. Faça login ou use outro e-mail.');
+    }
+
+    const newUser = {
+      id: `user-${Date.now()}`,
+      name: name.trim(),
+      email: cleanEmail,
+      password,
+      role: role || 'buyer',
+      phone: phone || '',
+      creci: role === 'broker' ? creci : null,
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+      status: 'active'
+    };
+
+    const { data, error } = await supabase
+      .from('users')
+      .insert([newUser])
+      .select();
+
+    if (error) {
+      console.error("Supabase registration error:", error);
+      throw new Error('Erro ao salvar cadastro no banco de dados.');
+    }
+
+    return data[0];
+  } catch (err) {
+    throw err;
+  }
+}
