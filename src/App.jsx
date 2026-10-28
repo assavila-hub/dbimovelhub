@@ -7,7 +7,11 @@ import {
   updateProperty as updatePropertyApi, 
   deleteProperty as deletePropertyApi, 
   processCheckoutPayment,
-  sendChatMessage
+  sendChatMessage,
+  fetchUsers,
+  toggleUserStatus as toggleUserStatusApi,
+  deleteUser as deleteUserApi,
+  updateUserRole as updateUserRoleApi
 } from './services/api';
 
 import Header from './components/Header';
@@ -225,9 +229,15 @@ export default function App() {
   // Load from Express API & Saved Custom Theme on Mount
   useEffect(() => {
     async function loadData() {
-      const apiProps = await fetchProperties();
+      const [apiProps, apiUsers] = await Promise.all([
+        fetchProperties(),
+        fetchUsers()
+      ]);
       if (apiProps && apiProps.length > 0) {
         setProperties(apiProps);
+      }
+      if (apiUsers && apiUsers.length > 0) {
+        setUsers(apiUsers);
       }
     }
     loadData();
@@ -369,14 +379,18 @@ export default function App() {
   };
 
   // User Management Handlers (Admin)
-  const handleUpdateUserRole = (userId, newRole) => {
+  const handleUpdateUserRole = async (userId, newRole) => {
+    await updateUserRoleApi(userId, newRole);
     setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
     showToast(`Função do usuário atualizada para ${newRole}`);
   };
 
-  const handleToggleUserStatus = (userId) => {
-    setUsers(users.map(u => u.id === userId ? { ...u, status: u.status === 'active' ? 'blocked' : 'active' } : u));
-    showToast(`Status do usuário alterado`);
+  const handleToggleUserStatus = async (userId) => {
+    const targetUser = users.find(u => u.id === userId);
+    if (!targetUser) return;
+    const newStatus = await toggleUserStatusApi(userId, targetUser.status || 'active');
+    setUsers(users.map(u => u.id === userId ? { ...u, status: newStatus } : u));
+    showToast(newStatus === 'blocked' ? `Conta congelada/bloqueada no banco de dados!` : `Conta reativada com sucesso!`);
   };
 
   const handleAddUser = (newUser) => {
@@ -384,9 +398,10 @@ export default function App() {
     showToast(`Nova conta cadastrada com sucesso!`);
   };
 
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = async (userId) => {
+    await deleteUserApi(userId);
     setUsers(users.filter(u => u.id !== userId));
-    showToast(`Conta removida com sucesso`);
+    showToast(`Conta excluída permanentemente do Supabase`);
   };
 
   const handleSendProposalToChat = async (propertyId, proposalText) => {

@@ -1386,9 +1386,10 @@ export default function AdminDashboardModal({
                                 cursor: 'pointer',
                                 padding: 0
                               }}
+                              title={u.status === 'active' ? 'Clique para Congelar / Bloquear conta' : 'Clique para Descongelar / Reativar conta'}
                             >
-                              <span className={`badge ${u.status === 'active' ? 'badge-quinto' : 'badge-viva'}`}>
-                                {u.status === 'active' ? '✓ Ativo' : '✕ Bloqueado'}
+                              <span className={`badge ${u.status === 'active' ? 'badge-quinto' : 'badge-viva'}`} style={{ padding: '0.35rem 0.65rem', cursor: 'pointer' }}>
+                                {u.status === 'active' ? '✓ Ativo (Congelar)' : '❄️ Congelado (Ativar)'}
                               </span>
                             </button>
                           </td>

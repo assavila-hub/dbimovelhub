@@ -258,6 +258,9 @@ export async function loginUser(email, password) {
     }
 
     const user = data[0];
+    if (user.status === 'blocked') {
+      throw new Error('Esta conta está congelada/bloqueada pelo Administrador. Entre em contato com o suporte.');
+    }
     if (user.password && user.password !== password) {
       throw new Error('Senha incorreta. Verifique suas credenciais.');
     }
@@ -310,4 +313,74 @@ export async function registerUser({ name, email, password, role, phone, creci }
   } catch (err) {
     throw err;
   }
+}
+
+// 12. Fetch All Users (Admin)
+export async function fetchUsers() {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data && data.length > 0) {
+      return data;
+    }
+  } catch (err) {
+    console.error("Error fetching users from Supabase:", err);
+  }
+  return null;
+}
+
+// 13. Toggle User Status (Freeze/Unfreeze)
+export async function toggleUserStatus(userId, currentStatus) {
+  const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
+  try {
+    await supabase
+      .from('users')
+      .update({ status: newStatus })
+      .eq('id', userId);
+  } catch (err) {
+    console.error("Error toggling user status in Supabase:", err);
+  }
+  return newStatus;
+}
+
+// 14. Delete User (Admin)
+export async function deleteUser(userId) {
+  try {
+    await supabase
+      .from('users')
+      .delete()
+      .eq('id', userId);
+  } catch (err) {
+    console.error("Error deleting user from Supabase:", err);
+  }
+}
+
+// 15. Update User Role (Admin)
+export async function updateUserRole(userId, newRole) {
+  try {
+    await supabase
+      .from('users')
+      .update({ role: newRole })
+      .eq('id', userId);
+  } catch (err) {
+    console.error("Error updating user role in Supabase:", err);
+  }
+}
+
+// 16. Update User Profile Data
+export async function updateUserData(userId, partialData) {
+  try {
+    const { data } = await supabase
+      .from('users')
+      .update(partialData)
+      .eq('id', userId)
+      .select();
+    if (data && data.length > 0) return data[0];
+  } catch (err) {
+    console.error("Error updating user in Supabase:", err);
+  }
+  return partialData;
 }
