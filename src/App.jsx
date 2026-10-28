@@ -590,7 +590,13 @@ export default function App() {
   });
 
   const comparedPropertiesList = properties.filter(p => comparedIds.includes(p.id));
-  const userPropertiesList = currentUser ? properties.filter(p => p.advertiser?.name === currentUser.name || p.id.includes('custom')) : [];
+  const userPropertiesList = currentUser ? properties.filter(p => {
+    if (p.userId && p.userId === currentUser.id) return true;
+    if (p.advertiser?.email && p.advertiser?.email === currentUser.email) return true;
+    if (p.advertiser?.phone && currentUser.phone && p.advertiser?.phone === currentUser.phone) return true;
+    if (p.advertiser?.name && p.advertiser?.name === currentUser.name && p.advertiser?.name !== 'Proprietário Direto') return true;
+    return false;
+  }) : [];
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -1104,6 +1110,7 @@ export default function App() {
 
       {isPostPropertyOpen && (
         <PostPropertyModal
+          currentUser={currentUser}
           onClose={() => setIsPostPropertyOpen(false)}
           onAddProperty={handleAddProperty}
         />

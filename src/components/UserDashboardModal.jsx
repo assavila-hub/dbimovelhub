@@ -54,8 +54,8 @@ export default function UserDashboardModal({
   onDeleteProperty,
   onOpenLeadCrm
 }) {
-  // Active Role can be toggled to preview different dashboards
-  const [activeRole, setActiveRole] = useState(() => currentUser?.role || 'agency');
+  // Active Role is directly bound to the authenticated user's role
+  const activeRole = currentUser?.role || 'owner';
   const [activeTab, setActiveTab] = useState('overview');
 
   // =========================================================================
@@ -114,49 +114,64 @@ export default function UserDashboardModal({
     }
   ]);
 
-  // Owner/Broker Proposals State
-  const [ownerProposals, setOwnerProposals] = useState([
-    {
-      id: 'prop-formal-1',
-      propertyTitle: 'High Line Batel Curitiba',
-      offerPrice: 1580000,
-      originalPrice: 1650000,
-      downPayment: 450000,
-      paymentType: 'Financiamento Caixa Econômica',
-      buyerName: 'Dr. Fernando Guimarães',
-      buyerPhone: '(41) 99123-8899',
-      validity: '25/08/2026',
-      status: 'Em Análise'
+  // Owner/Broker Proposals State (only show mock for demo accounts)
+  const [ownerProposals, setOwnerProposals] = useState(() => {
+    if (currentUser?.id === 'user-owner' || currentUser?.id === 'user-broker') {
+      return [
+        {
+          id: 'prop-formal-1',
+          propertyTitle: 'High Line Batel Curitiba',
+          offerPrice: 1580000,
+          originalPrice: 1650000,
+          downPayment: 450000,
+          paymentType: 'Financiamento Caixa Econômica',
+          buyerName: 'Dr. Fernando Guimarães',
+          buyerPhone: '(41) 99123-8899',
+          validity: '25/08/2026',
+          status: 'Em Análise'
+        }
+      ];
     }
-  ]);
+    return [];
+  });
 
-  // Visits State
-  const [roleVisits, setRoleVisits] = useState([
-    {
-      id: 'vis-101',
-      propertyTitle: 'High Line Batel Curitiba',
-      clientName: 'Dr. Fernando Guimarães',
-      clientPhone: '(41) 99123-8899',
-      date: '20/08/2026 (Sexta-feira)',
-      time: '14:30',
-      type: 'Presencial',
-      status: 'Confirmada'
+  // Visits State (only show mock for demo accounts)
+  const [roleVisits, setRoleVisits] = useState(() => {
+    if (currentUser?.id === 'user-owner' || currentUser?.id === 'user-broker') {
+      return [
+        {
+          id: 'vis-101',
+          propertyTitle: 'High Line Batel Curitiba',
+          clientName: 'Dr. Fernando Guimarães',
+          clientPhone: '(41) 99123-8899',
+          date: '20/08/2026 (Sexta-feira)',
+          time: '14:30',
+          type: 'Presencial',
+          status: 'Confirmada'
+        }
+      ];
     }
-  ]);
+    return [];
+  });
 
-  // Buyer Simulations Saved
-  const [buyerSimulations] = useState([
-    {
-      id: 'sim-1',
-      propertyTitle: 'High Line Batel Curitiba',
-      bank: 'Caixa Econômica (SAC)',
-      loanAmount: 1200000,
-      downPayment: 450000,
-      monthlyPayment: 10450,
-      interestRate: '9.99% a.a.',
-      termMonths: 360
+  // Buyer Simulations Saved (only show mock for demo accounts)
+  const [buyerSimulations] = useState(() => {
+    if (currentUser?.id === 'user-buyer') {
+      return [
+        {
+          id: 'sim-1',
+          propertyTitle: 'High Line Batel Curitiba',
+          bank: 'Caixa Econômica (SAC)',
+          loanAmount: 1200000,
+          downPayment: 450000,
+          monthlyPayment: 10450,
+          interestRate: '9.99% a.a.',
+          termMonths: 360
+        }
+      ];
     }
-  ]);
+    return [];
+  });
 
   if (!isOpen || !currentUser) return null;
 
@@ -317,52 +332,6 @@ export default function UserDashboardModal({
           </div>
         </div>
 
-        {/* Role Switcher Pills Bar (Facilita testar todas as funções) */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0.5rem 1.5rem',
-          backgroundColor: 'rgba(59, 130, 246, 0.05)',
-          borderBottom: '1px solid var(--border-color)',
-          fontSize: '0.78rem'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-            <Sparkles size={14} color="var(--color-primary-light)" />
-            <span>Alternar Visão de Painel:</span>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.35rem' }}>
-            {[
-              { id: 'agency', label: '🏢 Imobiliária', color: '#0284c7' },
-              { id: 'owner', label: '🏡 Proprietário', color: '#f59e0b' },
-              { id: 'broker', label: '📜 Corretor', color: '#059669' },
-              { id: 'buyer', label: '🔍 Comprador', color: '#3b82f6' },
-              { id: 'support', label: '🎧 Suporte', color: '#8b5cf6' }
-            ].map(r => (
-              <button
-                key={r.id}
-                onClick={() => {
-                  setActiveRole(r.id);
-                  setActiveTab('overview');
-                }}
-                style={{
-                  padding: '0.3rem 0.65rem',
-                  borderRadius: '999px',
-                  border: activeRole === r.id ? `1.5px solid ${r.color}` : '1px solid var(--border-color)',
-                  backgroundColor: activeRole === r.id ? `${r.color}20` : 'var(--bg-card)',
-                  color: activeRole === r.id ? r.color : 'var(--text-muted)',
-                  fontWeight: activeRole === r.id ? 800 : 600,
-                  fontSize: '0.75rem',
-                  cursor: 'pointer'
-                }}
-              >
-                {r.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Navigation Tabs Bar */}
         <div style={{
           display: 'flex',
@@ -412,7 +381,7 @@ export default function UserDashboardModal({
           {/* TABS FOR PROPRIETÁRIO */}
           {activeRole === 'owner' && [
             { id: 'overview', label: 'Visão Geral & Métricas', icon: TrendingUp },
-            { id: 'my-properties', label: `Meus Imóveis (${userProperties.length || 1})`, icon: Building2 },
+            { id: 'my-properties', label: `Meus Imóveis (${userProperties.length})`, icon: Building2 },
             { id: 'owner-visits', label: `Visitas Agendadas (${roleVisits.length})`, icon: Calendar },
             { id: 'owner-proposals', label: `Propostas Recebidas (${ownerProposals.length})`, icon: FileText }
           ].map(tab => {
@@ -838,7 +807,7 @@ export default function UserDashboardModal({
                     <div style={{ backgroundColor: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                       <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>IMÓVEIS ANUNCIADOS</span>
                       <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f59e0b', marginTop: '0.2rem' }}>
-                        {userProperties.length || 1}
+                        {userProperties.length}
                       </div>
                     </div>
                     <div style={{ backgroundColor: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
@@ -861,7 +830,7 @@ export default function UserDashboardModal({
               {activeTab === 'my-properties' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Meus Imóveis Cadastrados</h3>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Meus Imóveis Cadastrados ({userProperties.length})</h3>
                     <button
                       className="btn btn-primary btn-sm"
                       onClick={() => {
@@ -874,125 +843,157 @@ export default function UserDashboardModal({
                     </button>
                   </div>
 
-                  <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflowX: 'auto' }}>
-                    <div className="table-responsive">
-                      <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
-                        <thead>
-                          <tr style={{ backgroundColor: 'var(--bg-main)', textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Imóvel</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Valor</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Status</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem', textAlign: 'center' }}>Ações</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(userProperties.length > 0 ? userProperties : properties.slice(0, 2)).map(prop => (
-                            <tr key={prop.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                              <td style={{ padding: '0.85rem 1rem' }}>
-                                <strong style={{ fontSize: '0.88rem', display: 'block' }}>{prop.title}</strong>
-                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{prop.neighborhood}, {prop.city}</span>
-                              </td>
-                              <td style={{ padding: '0.85rem 1rem', fontWeight: 800, color: 'var(--color-primary)' }}>
-                                {prop.transactionType === 'Venda' ? `R$ ${(prop.price || 0).toLocaleString('pt-BR')}` : `R$ ${(prop.rentPrice || prop.price || 0).toLocaleString('pt-BR')}/mês`}
-                              </td>
-                              <td style={{ padding: '0.85rem 1rem' }}>
-                                <span className="badge badge-quinto">Publicado</span>
-                              </td>
-                              <td style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>
-                                <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'center' }}>
-                                  <button
-                                    className="btn btn-outline btn-sm"
-                                    onClick={() => onOpenCheckout && onOpenCheckout(prop)}
-                                    title="Turbinar com Super Destaque / SEO"
-                                    style={{ fontSize: '0.72rem', color: '#f59e0b', borderColor: '#f59e0b' }}
-                                  >
-                                    <Sparkles size={13} />
-                                    <span>Destacar</span>
-                                  </button>
-                                  <button
-                                    className="btn btn-ghost btn-sm"
-                                    onClick={() => {
-                                      if (window.confirm(`Tem certeza que deseja excluir o anúncio "${prop.title}"?`)) {
-                                        onDeleteProperty && onDeleteProperty(prop.id);
-                                      }
-                                    }}
-                                    title="Excluir Imóvel"
-                                    style={{ color: '#ef4444', padding: '0.35rem' }}
-                                  >
-                                    <Trash2 size={15} />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  {userProperties.length === 0 ? (
+                    <div style={{ backgroundColor: 'var(--bg-card)', padding: '3rem 1.5rem', textAlign: 'center', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                      <Home size={38} color="var(--color-primary-light)" style={{ margin: '0 auto 0.75rem auto' }} />
+                      <h4 style={{ fontWeight: 800, fontSize: '1.05rem', marginBottom: '0.4rem' }}>Você ainda não tem imóveis cadastrados</h4>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem', maxWidth: '420px', margin: '0 auto 1.25rem auto' }}>
+                        Cadastre seu primeiro imóvel agora mesmo. Você pode preencher manualmente ou usar a opção de <strong>Cadastrar Modelo</strong> para preencher com 1 clique!
+                      </p>
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => {
+                          onClose();
+                          onOpenPostProperty && onOpenPostProperty();
+                        }}
+                      >
+                        <PlusCircle size={15} />
+                        <span>Anunciar Primeiro Imóvel</span>
+                      </button>
                     </div>
-                  </div>
+                  ) : (
+                    <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflowX: 'auto' }}>
+                      <div className="table-responsive">
+                        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                          <thead>
+                            <tr style={{ backgroundColor: 'var(--bg-main)', textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Imóvel</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Valor</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Status</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem', textAlign: 'center' }}>Ações</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {userProperties.map(prop => (
+                              <tr key={prop.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                <td style={{ padding: '0.85rem 1rem' }}>
+                                  <strong style={{ fontSize: '0.88rem', display: 'block' }}>{prop.title}</strong>
+                                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{prop.neighborhood}, {prop.city}</span>
+                                </td>
+                                <td style={{ padding: '0.85rem 1rem', fontWeight: 800, color: 'var(--color-primary)' }}>
+                                  {prop.transactionType === 'Venda' ? `R$ ${(prop.price || 0).toLocaleString('pt-BR')}` : `R$ ${(prop.rentPrice || prop.price || 0).toLocaleString('pt-BR')}/mês`}
+                                </td>
+                                <td style={{ padding: '0.85rem 1rem' }}>
+                                  <span className="badge badge-quinto">Publicado</span>
+                                </td>
+                                <td style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'center' }}>
+                                    <button
+                                      className="btn btn-outline btn-sm"
+                                      onClick={() => onOpenCheckout && onOpenCheckout(prop)}
+                                      title="Turbinar com Super Destaque / SEO"
+                                      style={{ fontSize: '0.72rem', color: '#f59e0b', borderColor: '#f59e0b' }}
+                                    >
+                                      <Sparkles size={13} />
+                                      <span>Destacar</span>
+                                    </button>
+                                    <button
+                                      className="btn btn-ghost btn-sm"
+                                      onClick={() => {
+                                        if (window.confirm(`Tem certeza que deseja excluir o anúncio "${prop.title}"?`)) {
+                                          onDeleteProperty && onDeleteProperty(prop.id);
+                                        }
+                                      }}
+                                      title="Excluir Imóvel"
+                                      style={{ color: '#ef4444', padding: '0.35rem' }}
+                                    >
+                                      <Trash2 size={15} />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Visitas Agendadas (Proprietário) */}
               {activeTab === 'owner-visits' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Visitas Solicitadas para Meus Imóveis</h3>
-                  <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflowX: 'auto' }}>
-                    <div className="table-responsive">
-                      <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
-                        <thead>
-                          <tr style={{ backgroundColor: 'var(--bg-main)', textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Imóvel</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Interessado</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Data &amp; Hora</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {roleVisits.map(v => (
-                            <tr key={v.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                              <td style={{ padding: '0.85rem 1rem', fontWeight: 700 }}>{v.propertyTitle}</td>
-                              <td style={{ padding: '0.85rem 1rem', fontSize: '0.85rem' }}>{v.clientName} ({v.clientPhone})</td>
-                              <td style={{ padding: '0.85rem 1rem', fontSize: '0.85rem' }}>{v.date} às {v.time}</td>
-                              <td style={{ padding: '0.85rem 1rem' }}><span className="badge badge-quinto">{v.status}</span></td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Visitas Solicitadas para Meus Imóveis ({roleVisits.length})</h3>
+                  {roleVisits.length === 0 ? (
+                    <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', textAlign: 'center', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                      Nenhuma visita agendada para seus imóveis no momento.
                     </div>
-                  </div>
+                  ) : (
+                    <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflowX: 'auto' }}>
+                      <div className="table-responsive">
+                        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                          <thead>
+                            <tr style={{ backgroundColor: 'var(--bg-main)', textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Imóvel</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Interessado</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Data &amp; Hora</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {roleVisits.map(v => (
+                              <tr key={v.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                <td style={{ padding: '0.85rem 1rem', fontWeight: 700 }}>{v.propertyTitle}</td>
+                                <td style={{ padding: '0.85rem 1rem', fontSize: '0.85rem' }}>{v.clientName} ({v.clientPhone})</td>
+                                <td style={{ padding: '0.85rem 1rem', fontSize: '0.85rem' }}>{v.date} às {v.time}</td>
+                                <td style={{ padding: '0.85rem 1rem' }}><span className="badge badge-quinto">{v.status}</span></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Propostas Recebidas (Proprietário) */}
               {activeTab === 'owner-proposals' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Propostas de Compra Recebidas</h3>
-                  <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflowX: 'auto' }}>
-                    <div className="table-responsive">
-                      <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
-                        <thead>
-                          <tr style={{ backgroundColor: 'var(--bg-main)', textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Imóvel</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Proponente</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Valor Ofertado</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Pagamento</th>
-                            <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {ownerProposals.map(p => (
-                            <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                              <td style={{ padding: '0.85rem 1rem', fontWeight: 700 }}>{p.propertyTitle}</td>
-                              <td style={{ padding: '0.85rem 1rem', fontSize: '0.85rem' }}>{p.buyerName}</td>
-                              <td style={{ padding: '0.85rem 1rem', fontWeight: 800, color: 'var(--color-primary)' }}>R$ {p.offerPrice?.toLocaleString('pt-BR')}</td>
-                              <td style={{ padding: '0.85rem 1rem', fontSize: '0.82rem' }}>{p.paymentType}</td>
-                              <td style={{ padding: '0.85rem 1rem' }}><span className="badge badge-loft">{p.status}</span></td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Propostas de Compra Recebidas ({ownerProposals.length})</h3>
+                  {ownerProposals.length === 0 ? (
+                    <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', textAlign: 'center', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                      Nenhuma proposta de compra recebida no momento.
                     </div>
-                  </div>
+                  ) : (
+                    <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflowX: 'auto' }}>
+                      <div className="table-responsive">
+                        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                          <thead>
+                            <tr style={{ backgroundColor: 'var(--bg-main)', textAlign: 'left', borderBottom: '2px solid var(--border-color)' }}>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Imóvel</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Proponente</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Valor Ofertado</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Pagamento</th>
+                              <th style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {ownerProposals.map(p => (
+                              <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                <td style={{ padding: '0.85rem 1rem', fontWeight: 700 }}>{p.propertyTitle}</td>
+                                <td style={{ padding: '0.85rem 1rem', fontSize: '0.85rem' }}>{p.buyerName}</td>
+                                <td style={{ padding: '0.85rem 1rem', fontWeight: 800, color: 'var(--color-primary)' }}>R$ {p.offerPrice?.toLocaleString('pt-BR')}</td>
+                                <td style={{ padding: '0.85rem 1rem', fontSize: '0.82rem' }}>{p.paymentType}</td>
+                                <td style={{ padding: '0.85rem 1rem' }}><span className="badge badge-loft">{p.status}</span></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

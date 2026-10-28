@@ -19,6 +19,7 @@ import {
 import { fetchAddressByCep } from '../services/api';
 
 export default function PostPropertyModal({
+  currentUser,
   onClose,
   onAddProperty
 }) {
@@ -53,9 +54,102 @@ export default function PostPropertyModal({
     address: '',
     description: '',
     youtubeUrl: '',
-    advertiserName: '',
-    advertiserPhone: ''
+    advertiserName: currentUser?.name || '',
+    advertiserPhone: currentUser?.phone || ''
   });
+
+  const handleApplyTemplate = (modelKey) => {
+    if (modelKey === 'apartamento') {
+      setFormData({
+        title: 'Apartamento de Alto Padrão com Varanda Gourmet em Moema',
+        type: 'Apartamento',
+        subType: 'Padrão',
+        transactionType: 'Venda',
+        price: '950000',
+        rentPrice: '',
+        condoFee: '850',
+        iptu: '290',
+        area: '96',
+        bedrooms: '3',
+        suites: '1',
+        bathrooms: '2',
+        parkingSpots: '2',
+        city: 'São Paulo',
+        state: 'SP',
+        neighborhood: 'Moema',
+        address: 'Alameda dos Maracatins, 1100',
+        description: 'Espetacular apartamento em andar alto, totalmente reformado com marcenaria planejada, varanda envidraçada integrada à sala e condomínio com lazer de clube completo (piscina aquecida, academia de ponta e espaço gourmet).',
+        youtubeUrl: '',
+        advertiserName: currentUser?.name || 'Alex Sandro',
+        advertiserPhone: currentUser?.phone || '(11) 97591-3968'
+      });
+      setCep('04089000');
+      setImagesList([
+        'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80'
+      ]);
+    } else if (modelKey === 'casa') {
+      setFormData({
+        title: 'Casa Contemporânea em Condomínio Fechado com Piscina',
+        type: 'Casa',
+        subType: 'Condomínio Fechado',
+        transactionType: 'Venda',
+        price: '1450000',
+        rentPrice: '',
+        condoFee: '620',
+        iptu: '350',
+        area: '240',
+        bedrooms: '4',
+        suites: '2',
+        bathrooms: '4',
+        parkingSpots: '3',
+        city: 'Campinas',
+        state: 'SP',
+        neighborhood: 'Gramado',
+        address: 'Rua das Palmeiras Imperiais, 450',
+        description: 'Belíssima residência moderna com pé-direito duplo, sala integrada, cozinha americana com ilha gourmet, piscina privativa com deck molhado e segurança 24h blindada.',
+        youtubeUrl: '',
+        advertiserName: currentUser?.name || 'Alex Sandro',
+        advertiserPhone: currentUser?.phone || '(11) 97591-3968'
+      });
+      setCep('13092599');
+      setImagesList([
+        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
+      ]);
+    } else if (modelKey === 'aluguel') {
+      setFormData({
+        title: 'Studio Mobiliado Smart Home Próximo ao Metrô Pinheiros',
+        type: 'Apartamento',
+        subType: 'Studio / Loft',
+        transactionType: 'Aluguel',
+        price: '',
+        rentPrice: '3200',
+        condoFee: '480',
+        iptu: '90',
+        area: '38',
+        bedrooms: '1',
+        suites: '1',
+        bathrooms: '1',
+        parkingSpots: '1',
+        city: 'São Paulo',
+        state: 'SP',
+        neighborhood: 'Pinheiros',
+        address: 'Rua dos Pinheiros, 750',
+        description: 'Studio 100% mobiliado e equipado com ar-condicionado, fechadura digital, Smart TV, eletrodomésticos em inox e varanda com vista livre. Aluguel sem fiador com aprovação digital instantânea.',
+        youtubeUrl: '',
+        advertiserName: currentUser?.name || 'Alex Sandro',
+        advertiserPhone: currentUser?.phone || '(11) 97591-3968'
+      });
+      setCep('05422001');
+      setImagesList([
+        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
+        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80'
+      ]);
+    }
+  };
 
   const handleSearchCep = async (cepInput) => {
     setCep(cepInput);
@@ -112,7 +206,8 @@ export default function PostPropertyModal({
     e.preventDefault();
 
     const newProp = {
-      id: `prop-custom-${Date.now()}`,
+      id: `prop-${Date.now()}`,
+      userId: currentUser ? currentUser.id : null,
       title: formData.title || 'Imóvel Anunciado no ImóvelHUB',
       type: formData.type || 'Apartamento',
       subType: formData.subType || 'Padrão',
@@ -149,12 +244,13 @@ export default function PostPropertyModal({
         "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80"
       ],
       advertiser: {
-        name: formData.advertiserName || 'Proprietário Direto',
-        type: 'Proprietário',
-        creci: null,
-        phone: formData.advertiserPhone || '(11) 99999-8888',
-        whatsapp: '5511999998888',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'
+        name: currentUser?.name || formData.advertiserName || 'Proprietário Anunciante',
+        email: currentUser?.email || '',
+        type: currentUser?.role === 'broker' ? 'Corretor' : currentUser?.role === 'agency' ? 'Imobiliária' : 'Proprietário',
+        creci: currentUser?.creci || null,
+        phone: currentUser?.phone || formData.advertiserPhone || '(11) 99999-8888',
+        whatsapp: (currentUser?.phone || formData.advertiserPhone || '5511999998888').replace(/\D/g, ''),
+        avatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'
       },
       publishedAt: new Date().toISOString().split('T')[0]
     };
@@ -225,6 +321,59 @@ export default function PostPropertyModal({
 
               {step === 1 && (
                 <div>
+                  {/* Cadastrar Modelo Quick-Fill Box */}
+                  <div style={{
+                    backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                    border: '1px solid rgba(59, 130, 246, 0.25)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: '1rem',
+                    marginBottom: '1.25rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <Sparkles size={20} color="var(--color-primary-light)" />
+                      <div>
+                        <strong style={{ fontSize: '0.88rem', display: 'block', color: 'var(--text-main)' }}>
+                          ⚡ Cadastrar com Modelo (Preenchimento Rápido)
+                        </strong>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                          Clique em um modelo para preencher todos os dados, fotos e valores automaticamente:
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => handleApplyTemplate('apartamento')}
+                        style={{ fontSize: '0.76rem', borderColor: 'var(--color-primary-light)', color: 'var(--color-primary-light)', fontWeight: 700 }}
+                      >
+                        🏢 Modelo Apartamento
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => handleApplyTemplate('casa')}
+                        style={{ fontSize: '0.76rem', borderColor: '#059669', color: '#059669', fontWeight: 700 }}
+                      >
+                        🏡 Modelo Casa
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => handleApplyTemplate('aluguel')}
+                        style={{ fontSize: '0.76rem', borderColor: '#f59e0b', color: '#f59e0b', fontWeight: 700 }}
+                      >
+                        🔑 Modelo Aluguel
+                      </button>
+                    </div>
+                  </div>
+
                   <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1rem' }}>Etapa 1: Tipo e Valor do Imóvel</h3>
 
                   <div style={{ marginBottom: '1rem' }}>
