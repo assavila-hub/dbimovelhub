@@ -287,12 +287,14 @@ export async function registerUser({ name, email, password, role, phone, creci }
       throw new Error('Este e-mail já está cadastrado. Faça login ou use outro e-mail.');
     }
 
-    // Trigger official Supabase confirmation email
+    // Trigger official Supabase confirmation email with production Vercel redirect URL
     try {
+      const redirectOrigin = typeof window !== 'undefined' ? `${window.location.origin}/` : 'https://dbimovelhub.vercel.app/';
       await supabase.auth.signUp({
         email: cleanEmail,
         password: password,
         options: {
+          emailRedirectTo: redirectOrigin,
           data: { name: name.trim(), role: role || 'buyer', phone: phone || '', creci: creci || null }
         }
       });

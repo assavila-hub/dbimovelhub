@@ -333,17 +333,30 @@ export default function App() {
     }
   }, [darkMode]);
 
-  // Supabase Auth Recovery & URL Token Listener
+  // Supabase Auth Recovery & URL Token Listener (Signup & Password Reset)
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         setIsResetPasswordOpen(true);
+      } else if (event === 'SIGNED_IN') {
+        const hash = window.location.hash || '';
+        if (hash.includes('type=signup') || hash.includes('type=email_confirmation')) {
+          showToast('✅ Conta ativada com sucesso! Bem-vindo ao ImóvelHUB.');
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, '', window.location.pathname);
+          }
+        }
       }
     });
 
     const hash = window.location.hash || '';
     if (hash.includes('type=recovery') || (hash.includes('access_token=') && hash.includes('type=recovery'))) {
       setIsResetPasswordOpen(true);
+    } else if (hash.includes('type=signup') || hash.includes('type=email_confirmation')) {
+      showToast('✅ E-mail confirmado com sucesso!');
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
     }
 
     return () => {
