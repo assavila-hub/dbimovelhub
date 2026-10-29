@@ -36,8 +36,8 @@ export default function OpportunityFloatingToast({ properties = [], onSelectProp
     <div
       style={{
         position: 'fixed',
-        bottom: '24px',
-        left: '24px',
+        bottom: '16px',
+        left: '16px',
         zIndex: 1300,
         backgroundColor: '#0f172a',
         color: '#ffffff',
@@ -48,7 +48,7 @@ export default function OpportunityFloatingToast({ properties = [], onSelectProp
         display: 'flex',
         alignItems: 'center',
         gap: '0.85rem',
-        maxWidth: '420px',
+        maxWidth: 'min(420px, calc(100vw - 32px))',
         animation: 'slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
         backdropFilter: 'blur(12px)'
       }}

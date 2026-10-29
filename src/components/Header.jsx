@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Building2, 
   Heart, 
@@ -94,6 +95,18 @@ export default function Header({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Prevent background scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   const toggleDropdown = (name) => {
     setActiveDropdown(prev => prev === name ? null : name);
@@ -826,31 +839,44 @@ export default function Header({
           {/* Hamburger Mobile Menu Button (< 1024px) */}
           <button
             className="btn btn-ghost btn-sm mobile-only"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setMobileMenuOpen(true)}
             aria-label="Abrir Menu de Navegação"
             style={{
-              padding: '0.5rem',
+              padding: '0.45rem 0.75rem',
               borderRadius: 'var(--radius-sm)',
               border: '1px solid var(--border-color)',
-              backgroundColor: 'var(--bg-main)'
+              backgroundColor: 'var(--bg-main)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              cursor: 'pointer'
             }}
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            <Menu size={20} color="var(--color-primary-light)" />
+            <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Menu</span>
           </button>
         </div>
       </div>
 
       {/* =========================================================================
-         MOBILE & TABLET SLIDE-OUT DRAWER MENU WITH ACCORDION SUBMENUS
+         MOBILE & TABLET SLIDE-OUT DRAWER MENU (PORTALED TO BODY TO PREVENT CLIPPING)
          ========================================================================= */}
-      {mobileMenuOpen && (
+      {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
         <div 
+          className="mobile-drawer-overlay"
           style={{
             position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            backgroundColor: 'rgba(15, 23, 42, 0.65)',
-            backdropFilter: 'blur(6px)',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            height: '100dvh',
+            zIndex: 999999,
+            backgroundColor: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             display: 'flex',
             justifyContent: 'flex-end',
             animation: 'fadeIn 0.2s ease-out'
@@ -858,33 +884,68 @@ export default function Header({
           onClick={closeAll}
         >
           <div 
+            className="mobile-drawer-content"
             style={{
-              width: 'min(360px, 85vw)',
+              width: 'min(380px, 86vw)',
               height: '100%',
               backgroundColor: 'var(--bg-card)',
+              color: 'var(--text-main)',
               boxShadow: 'var(--shadow-xl)',
               display: 'flex',
               flexDirection: 'column',
               padding: '1.25rem',
               overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
               borderLeft: '1px solid var(--border-color)',
               animation: 'slideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drawer Top Bar */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', paddingBottom: '0.85rem', borderBottom: '1px solid var(--border-color)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Building2 size={20} color="var(--color-primary-light)" />
-                <strong style={{ fontSize: '1.1rem' }}>Imóvel<span style={{ color: 'var(--color-primary-light)' }}>HUB</span></strong>
+                <div style={{
+                  background: 'linear-gradient(135deg, #1e3a8a, #3b82f6)',
+                  color: '#ffffff',
+                  padding: '0.4rem',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Building2 size={18} />
+                </div>
+                <div>
+                  <strong style={{ fontSize: '1.1rem', letterSpacing: '-0.02em', display: 'block', lineHeight: 1.1 }}>
+                    Imóvel<span style={{ color: 'var(--color-primary-light)' }}>HUB</span>
+                  </strong>
+                  <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontWeight: 600 }}>CLASSIFICADOS</span>
+                </div>
               </div>
-              <button 
-                className="btn btn-ghost btn-sm" 
-                onClick={closeAll}
-                style={{ padding: '0.4rem', borderRadius: '50%' }}
-              >
-                <X size={20} />
-              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                {/* Dark Mode Quick Switch */}
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setDarkMode(!darkMode)}
+                  title={darkMode ? "Mudar para Modo Claro" : "Mudar para Modo Escuro"}
+                  style={{ padding: '0.45rem', borderRadius: '50%' }}
+                >
+                  {darkMode ? <Sun size={18} color="#f59e0b" /> : <Moon size={18} />}
+                </button>
+
+                {/* Close Button */}
+                <button 
+                  type="button"
+                  className="btn btn-ghost btn-sm" 
+                  onClick={closeAll}
+                  style={{ padding: '0.45rem', borderRadius: '50%' }}
+                  aria-label="Fechar Menu"
+                >
+                  <X size={22} />
+                </button>
+              </div>
             </div>
 
             {/* User Profile Card / Login Button */}
@@ -896,20 +957,38 @@ export default function Header({
                 marginBottom: '1rem',
                 border: '1px solid var(--border-color)'
               }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>Conectado como:</div>
-                <div style={{ fontWeight: 800, fontSize: '0.95rem', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Conectado como:</span>
+                  <span style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 800,
+                    backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                    color: 'var(--color-primary-light)',
+                    padding: '0.1rem 0.45rem',
+                    borderRadius: '4px',
+                    textTransform: 'uppercase'
+                  }}>
+                    {currentUser.role}
+                  </span>
+                </div>
+                <div style={{ fontWeight: 800, fontSize: '0.98rem', marginBottom: '0.15rem' }}>
                   {currentUser.name}
                 </div>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginBottom: '0.65rem' }}>
+                  {currentUser.email}
+                </div>
+
                 <div style={{ display: 'flex', gap: '0.4rem' }}>
                   <button
                     className="btn btn-primary btn-sm"
-                    style={{ flex: 1, fontSize: '0.78rem' }}
+                    style={{ flex: 1, fontSize: '0.78rem', fontWeight: 700 }}
                     onClick={() => {
                       currentUser.role === 'admin' ? onOpenAdminDashboard() : onOpenUserDashboard();
                       closeAll();
                     }}
                   >
-                    Painel {currentUser.role === 'admin' ? 'Admin' : 'do Usuário'}
+                    <Briefcase size={14} />
+                    <span>Painel {currentUser.role === 'admin' ? 'Admin' : 'do Usuário'}</span>
                   </button>
                   <button
                     className="btn btn-outline btn-sm"
@@ -917,8 +996,8 @@ export default function Header({
                       onLogout();
                       closeAll();
                     }}
-                    title="Sair"
-                    style={{ padding: '0.45rem' }}
+                    title="Sair da Conta"
+                    style={{ padding: '0.45rem', color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
                   >
                     <LogOut size={15} />
                   </button>
@@ -927,78 +1006,157 @@ export default function Header({
             ) : (
               <button
                 className="btn btn-outline"
-                style={{ width: '100%', marginBottom: '1rem', justifyContent: 'center', gap: '0.5rem' }}
+                style={{ width: '100%', marginBottom: '1rem', justifyContent: 'center', gap: '0.5rem', fontWeight: 700 }}
                 onClick={() => {
                   onOpenAuth();
                   closeAll();
                 }}
               >
-                <User size={18} />
-                <span>Entrar ou Cadastrar</span>
+                <User size={18} color="var(--color-primary-light)" />
+                <span>Entrar ou Criar Conta Grátis</span>
               </button>
             )}
 
-            {/* CTA Anunciar Imóvel */}
+            {/* Primary Action: Anunciar Imóvel */}
             <button
               className="btn btn-primary"
-              style={{ width: '100%', marginBottom: '1.25rem', fontWeight: 800, justifyContent: 'center' }}
+              style={{ width: '100%', marginBottom: '1rem', fontWeight: 800, justifyContent: 'center', padding: '0.75rem', gap: '0.5rem' }}
               onClick={() => {
                 onOpenPostProperty();
                 closeAll();
               }}
             >
               <PlusCircle size={18} />
-              <span>Anunciar Imóvel Grátis</span>
+              <span>Anunciar Novo Imóvel</span>
             </button>
+
+            {/* Quick Badges Row: Favoritos, Comparador, Notificações */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.4rem', marginBottom: '1.25rem' }}>
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => {
+                  onOpenFavorites();
+                  closeAll();
+                }}
+                style={{
+                  flexDirection: 'column',
+                  padding: '0.6rem 0.3rem',
+                  backgroundColor: 'var(--bg-main)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.72rem',
+                  gap: '0.2rem'
+                }}
+              >
+                <Heart size={16} color="var(--color-accent)" fill={favoritesCount > 0 ? "var(--color-accent)" : "none"} />
+                <span>Favoritos ({favoritesCount})</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => {
+                  onOpenCompare();
+                  closeAll();
+                }}
+                style={{
+                  flexDirection: 'column',
+                  padding: '0.6rem 0.3rem',
+                  backgroundColor: 'var(--bg-main)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.72rem',
+                  gap: '0.2rem'
+                }}
+              >
+                <ArrowLeftRight size={16} color="#0284c7" />
+                <span>Comparar ({compareCount})</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => {
+                  onOpenNotifications && onOpenNotifications();
+                  closeAll();
+                }}
+                style={{
+                  flexDirection: 'column',
+                  padding: '0.6rem 0.3rem',
+                  backgroundColor: 'var(--bg-main)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.72rem',
+                  gap: '0.2rem'
+                }}
+              >
+                <Bell size={16} color={unreadNotificationsCount > 0 ? "#ef4444" : "currentColor"} />
+                <span>Alertas ({unreadNotificationsCount})</span>
+              </button>
+            </div>
 
             {/* Submenu Group 1: Imóveis */}
             <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
-              🏠 Imóveis por Categoria
+              🏠 Imóveis &amp; Negociação
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1.25rem' }}>
               <button
-                className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Comprar' ? 700 : 500, color: activeTab === 'Comprar' ? 'var(--color-primary-light)' : 'inherit' }}
+                className={`btn btn-ghost btn-sm ${activeTab === 'Todos' ? 'active-nav' : ''}`}
+                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Todos' ? 800 : 600, color: activeTab === 'Todos' ? 'var(--color-primary-light)' : 'inherit', gap: '0.6rem' }}
+                onClick={() => {
+                  onNavigateHome && onNavigateHome();
+                  setActiveTab('Todos');
+                  closeAll();
+                }}
+              >
+                <Building2 size={16} color="#38bdf8" />
+                <span>Todos os Imóveis</span>
+              </button>
+
+              <button
+                className={`btn btn-ghost btn-sm ${activeTab === 'Comprar' ? 'active-nav' : ''}`}
+                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Comprar' ? 800 : 600, color: activeTab === 'Comprar' ? 'var(--color-primary-light)' : 'inherit', gap: '0.6rem' }}
                 onClick={() => {
                   onNavigateHome && onNavigateHome();
                   setActiveTab('Comprar');
                   closeAll();
                 }}
               >
-                <Home size={16} />
+                <Home size={16} color="var(--color-primary-light)" />
                 <span>Comprar Imóveis</span>
               </button>
 
               <button
-                className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Alugar' ? 700 : 500, color: activeTab === 'Alugar' ? 'var(--color-primary-light)' : 'inherit' }}
+                className={`btn btn-ghost btn-sm ${activeTab === 'Alugar' ? 'active-nav' : ''}`}
+                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Alugar' ? 800 : 600, color: activeTab === 'Alugar' ? 'var(--color-primary-light)' : 'inherit', gap: '0.6rem' }}
                 onClick={() => {
                   onNavigateHome && onNavigateHome();
                   setActiveTab('Alugar');
                   closeAll();
                 }}
               >
-                <Key size={16} />
-                <span>Alugar Imóveis</span>
+                <Key size={16} color="var(--color-quinto)" />
+                <span>Alugar Imóveis (Sem Fiador)</span>
               </button>
 
               <button
-                className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Lançamentos' ? 700 : 500, color: activeTab === 'Lançamentos' ? 'var(--color-primary-light)' : 'inherit' }}
+                className={`btn btn-ghost btn-sm ${activeTab === 'Lançamentos' ? 'active-nav' : ''}`}
+                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Lançamentos' ? 800 : 600, color: activeTab === 'Lançamentos' ? 'var(--color-primary-light)' : 'inherit', gap: '0.6rem' }}
                 onClick={() => {
                   onNavigateHome && onNavigateHome();
                   setActiveTab('Lançamentos');
                   closeAll();
                 }}
               >
-                <Sparkles size={16} />
+                <Sparkles size={16} color="#f59e0b" />
                 <span>Lançamentos &amp; Plantas</span>
               </button>
 
               <button
-                className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Temporada' ? 700 : 500, color: activeTab === 'Temporada' ? 'var(--color-primary-light)' : 'inherit' }}
+                className={`btn btn-ghost btn-sm ${activeTab === 'Temporada' ? 'active-nav' : ''}`}
+                style={{ justifyContent: 'flex-start', fontWeight: activeTab === 'Temporada' ? 800 : 600, color: activeTab === 'Temporada' ? 'var(--color-primary-light)' : 'inherit', gap: '0.6rem' }}
                 onClick={() => {
                   onNavigateHome && onNavigateHome();
                   setActiveTab('Temporada');
@@ -1010,8 +1168,8 @@ export default function Header({
               </button>
 
               <button
-                className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start', color: '#ef4444', fontWeight: activeTab === 'Leilão' ? 700 : 500 }}
+                className={`btn btn-ghost btn-sm ${activeTab === 'Leilão' ? 'active-nav' : ''}`}
+                style={{ justifyContent: 'flex-start', color: '#ef4444', fontWeight: activeTab === 'Leilão' ? 800 : 600, gap: '0.6rem' }}
                 onClick={() => {
                   onNavigateHome && onNavigateHome();
                   setActiveTab('Leilão');
@@ -1028,22 +1186,22 @@ export default function Header({
               🛠️ Serviços &amp; Soluções
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1.25rem' }}>
               <button
                 className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start' }}
+                style={{ justifyContent: 'flex-start', gap: '0.6rem' }}
                 onClick={() => {
-                  onOpenDigitalContract();
+                  onOpenFinanceCalculator && onOpenFinanceCalculator();
                   closeAll();
                 }}
               >
-                <FileCheck size={16} color="var(--color-primary-light)" />
-                <span>Contratos Digitais ICP-Brasil</span>
+                <Calculator size={16} color="var(--color-primary-light)" />
+                <span>Simulador de Financiamento</span>
               </button>
 
               <button
                 className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start', color: '#ef4444' }}
+                style={{ justifyContent: 'flex-start', color: '#ef4444', gap: '0.6rem' }}
                 onClick={() => {
                   onOpenOpportunityRadar();
                   closeAll();
@@ -1055,26 +1213,50 @@ export default function Header({
 
               <button
                 className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start' }}
+                style={{ justifyContent: 'flex-start', gap: '0.6rem' }}
                 onClick={() => {
-                  onOpenCompare();
+                  onOpenDigitalContract();
                   closeAll();
                 }}
               >
-                <ArrowLeftRight size={16} />
-                <span>Comparador de Imóveis ({compareCount})</span>
+                <FileCheck size={16} color="#059669" />
+                <span>Contratos Digitais ICP-Brasil</span>
+              </button>
+
+              <button
+                className="btn btn-ghost btn-sm"
+                style={{ justifyContent: 'flex-start', gap: '0.6rem' }}
+                onClick={() => {
+                  onOpenMovingChecklist && onOpenMovingChecklist();
+                  closeAll();
+                }}
+              >
+                <Truck size={16} color="#f59e0b" />
+                <span>Checklist de Mudança</span>
+              </button>
+
+              <button
+                className="btn btn-ghost btn-sm"
+                style={{ justifyContent: 'flex-start', gap: '0.6rem' }}
+                onClick={() => {
+                  onOpenNeighborhoodInsights && onOpenNeighborhoodInsights();
+                  closeAll();
+                }}
+              >
+                <MapPin size={16} color="#0284c7" />
+                <span>Insights dos Bairros</span>
               </button>
             </div>
 
-            {/* Submenu Group 3: Para Corretores & Conteúdo */}
+            {/* Submenu Group 3: Para Profissionais & Suporte */}
             <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
-              🏢 Profissionais &amp; Conteúdo
+              🏢 Profissionais &amp; Suporte
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1.25rem' }}>
               <button
                 className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start', color: '#0284c7' }}
+                style={{ justifyContent: 'flex-start', color: '#0284c7', gap: '0.6rem' }}
                 onClick={() => {
                   onOpenXmlSync();
                   closeAll();
@@ -1086,19 +1268,19 @@ export default function Header({
 
               <button
                 className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start', fontWeight: 600, color: 'var(--color-primary-light)' }}
+                style={{ justifyContent: 'flex-start', color: '#8b5cf6', gap: '0.6rem' }}
                 onClick={() => {
-                  onNavigateBlog();
+                  onOpenLeadCrm && onOpenLeadCrm();
                   closeAll();
                 }}
               >
-                <BookOpen size={16} />
-                <span>Blog &amp; Tendências do Mercado</span>
+                <Users size={16} />
+                <span>CRM Kanban de Leads</span>
               </button>
 
               <button
                 className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start' }}
+                style={{ justifyContent: 'flex-start', gap: '0.6rem' }}
                 onClick={() => {
                   onOpenChatHub();
                   closeAll();
@@ -1110,7 +1292,7 @@ export default function Header({
 
               <button
                 className="btn btn-ghost btn-sm"
-                style={{ justifyContent: 'flex-start' }}
+                style={{ justifyContent: 'flex-start', gap: '0.6rem' }}
                 onClick={() => {
                   onOpenSupport();
                   closeAll();
@@ -1119,10 +1301,23 @@ export default function Header({
                 <Headphones size={16} color="var(--color-primary-light)" />
                 <span>Central de Suporte</span>
               </button>
+
+              <button
+                className="btn btn-ghost btn-sm"
+                style={{ justifyContent: 'flex-start', fontWeight: 600, color: 'var(--color-primary-light)', gap: '0.6rem' }}
+                onClick={() => {
+                  onNavigateBlog();
+                  closeAll();
+                }}
+              >
+                <BookOpen size={16} />
+                <span>Blog &amp; Mercado Imobiliário</span>
+              </button>
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );

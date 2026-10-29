@@ -400,20 +400,24 @@ export default function HeroSearch({
           color: 'var(--text-main)',
           borderRadius: 'var(--radius-lg)',
           boxShadow: 'var(--shadow-xl)',
-          padding: '1.75rem',
+          padding: 'clamp(1rem, 3vw, 1.75rem)',
           maxWidth: '1080px',
           margin: '0 auto',
           border: '1px solid rgba(255, 255, 255, 0.12)'
         }}>
           {/* 6 Tabs de Transação */}
-          <div style={{
-            display: 'flex',
-            gap: '0.5rem',
-            overflowX: 'auto',
-            paddingBottom: '1rem',
-            borderBottom: '1px solid var(--border-color)',
-            marginBottom: '1.5rem'
-          }}>
+          <div 
+            className="hide-scrollbar"
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              overflowX: 'auto',
+              paddingBottom: '0.85rem',
+              borderBottom: '1px solid var(--border-color)',
+              marginBottom: '1.25rem',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
             {[
               { id: 'Todos', label: 'Todos', icon: '🌐' },
               { id: 'Comprar', label: 'Comprar', icon: '🏡' },
@@ -688,16 +692,20 @@ export default function HeroSearch({
           </div>
 
           {/* Pílulas de Filtros Rápidos com 1 Clique (Quick Filter Pills) */}
-          <div style={{
-            marginTop: '1.15rem',
-            paddingTop: '0.9rem',
-            borderTop: '1px solid var(--border-color)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-            overflowX: 'auto',
-            paddingBottom: '0.25rem'
-          }}>
+          <div 
+            className="hide-scrollbar"
+            style={{
+              marginTop: '1.15rem',
+              paddingTop: '0.9rem',
+              borderTop: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              overflowX: 'auto',
+              paddingBottom: '0.25rem',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
             <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', whiteSpace: 'nowrap', marginRight: '0.3rem' }}>
               Filtros Rápidos:
             </span>
