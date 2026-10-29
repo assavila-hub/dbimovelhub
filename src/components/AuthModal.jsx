@@ -49,8 +49,9 @@ export default function AuthModal({
           creci
         });
         
-        // Switch to verification notice screen
-        setMode('verify-notice');
+        // Instant login: Connect the user immediately without blocking them
+        onLoginSuccess(newUser);
+        onClose();
       } else if (mode === 'forgot') {
         if (!email.trim()) throw new Error('Por favor, informe seu e-mail cadastrado.');
         if (forgotTab === 'direct') {
