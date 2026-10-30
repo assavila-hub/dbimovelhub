@@ -9,6 +9,7 @@ import {
   processCheckoutPayment,
   sendChatMessage,
   fetchUsers,
+  createUser as createUserApi,
   toggleUserStatus as toggleUserStatusApi,
   deleteUser as deleteUserApi,
   updateUserRole as updateUserRoleApi
@@ -427,9 +428,10 @@ export default function App() {
     showToast(newStatus === 'blocked' ? `Conta congelada/bloqueada no banco de dados!` : `Conta reativada com sucesso!`);
   };
 
-  const handleAddUser = (newUser) => {
-    setUsers([...users, newUser]);
-    showToast(`Nova conta cadastrada com sucesso!`);
+  const handleAddUser = async (newUser) => {
+    const savedUser = await createUserApi(newUser);
+    setUsers(prev => [savedUser || newUser, ...prev.filter(u => u.id !== newUser.id)]);
+    showToast(`Nova conta cadastrada e sincronizada com o banco!`);
   };
 
   const handleDeleteUser = async (userId) => {
@@ -1153,6 +1155,7 @@ export default function App() {
       {isPostPropertyOpen && (
         <PostPropertyModal
           currentUser={currentUser}
+          properties={properties}
           onClose={() => setIsPostPropertyOpen(false)}
           onAddProperty={handleAddProperty}
         />

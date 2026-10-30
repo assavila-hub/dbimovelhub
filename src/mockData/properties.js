@@ -6,6 +6,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "apt-padrao-1",
+    code: "HUB-1001",
     title: "Apartamento Clássico em Moema Pássaros",
     type: "Apartamento",
     subType: "Padrão",
@@ -41,6 +42,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "apt-padrao-2",
+    code: "HUB-1002",
     title: "Apartamento Reformado no Coração do Savassi",
     type: "Apartamento",
     subType: "Padrão",
@@ -80,6 +82,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "apt-studio-1",
+    code: "HUB-1003",
     title: "Studio Inteligente Smart Pinheiros Metrô",
     type: "Apartamento",
     subType: "Kitnet/Studio",
@@ -113,6 +116,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "apt-studio-2",
+    code: "HUB-1004",
     title: "Kitnet Reformada e Mobiliada a 1 Quadra da Praia",
     type: "Apartamento",
     subType: "Kitnet/Studio",
@@ -148,6 +152,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "apt-cobertura-1",
+    code: "HUB-1005",
     title: "Cobertura Penthouse Triplex nos Jardins com Piscina",
     type: "Apartamento",
     subType: "Cobertura",
@@ -179,6 +184,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "apt-cobertura-2",
+    code: "HUB-1006",
     title: "Cobertura Linear Vista Mar Leblon",
     type: "Apartamento",
     subType: "Cobertura",
@@ -214,6 +220,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "apt-flat-1",
+    code: "HUB-1007",
     title: "Flat com Serviços Pay-Per-Use no Itaim Bibi",
     type: "Apartamento",
     subType: "Flat",
@@ -245,6 +252,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "apt-flat-2",
+    code: "HUB-1008",
     title: "Flat Executivo Batel com Piscina Aquecida",
     type: "Apartamento",
     subType: "Flat",
@@ -280,6 +288,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "apt-garden-1",
+    code: "HUB-1009",
     title: "Apartamento Garden com Quintal Privativo em Pinheiros",
     type: "Apartamento",
     subType: "Garden",
@@ -311,6 +320,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "apt-garden-2",
+    code: "HUB-1010",
     title: "Garden Exclusivo com Jacuzzi e Churrasqueira Batel",
     type: "Apartamento",
     subType: "Garden",
@@ -346,6 +356,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "apt-loft-1",
+    code: "HUB-1011",
     title: "Loft Estilo Industrial Pé-Direito Duplo Vila Madalena",
     type: "Apartamento",
     subType: "Loft",
@@ -377,6 +388,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "apt-loft-2",
+    code: "HUB-1012",
     title: "Loft Design Mobiliado com Vista Panorâmica em Ipanema",
     type: "Apartamento",
     subType: "Loft",
@@ -412,6 +424,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "prop-batel-seo",
+    code: "HUB-1013",
     title: "High Line Batel Curitiba Duplex",
     type: "Apartamento",
     subType: "Duplex",
@@ -458,6 +471,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "apt-duplex-2",
+    code: "HUB-1014",
     title: "Duplex Contemporâneo em Moema com Terraço Gourmet",
     type: "Apartamento",
     subType: "Duplex",
@@ -493,6 +507,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "casa-padrao-1",
+    code: "HUB-1015",
     title: "Casa Térrea Espaçosa com Quintal e Pomar Vila Mariana",
     type: "Casa",
     subType: "Padrão",
@@ -524,6 +539,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "casa-padrao-2",
+    code: "HUB-1016",
     title: "Casa Clássica Reformada no Bairro Água Verde",
     type: "Casa",
     subType: "Padrão",
@@ -559,6 +575,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "casa-cond-1",
+    code: "HUB-1017",
     title: "Casa em Condomínio Fechado Alphaville Graciosa",
     type: "Casa",
     subType: "Casa em condomínio",
@@ -590,6 +607,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "casa-cond-2",
+    code: "HUB-1018",
     title: "Mansão em Condomínio Fechado no Alto de Pinheiros",
     type: "Casa",
     subType: "Casa em condomínio",
@@ -625,6 +643,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "casa-sobrado-1",
+    code: "HUB-1019",
     title: "Sobrado Triplex com Ático e Jacuzzi no Batel Soho",
     type: "Casa",
     subType: "Sobrado",
@@ -656,6 +675,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "casa-sobrado-2",
+    code: "HUB-1020",
     title: "Sobrado Moderno com Piscina e Espaço Gourmet",
     type: "Casa",
     subType: "Sobrado",
@@ -691,6 +711,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "casa-vila-1",
+    code: "HUB-1021",
     title: "Charmosa Casa de Vila Fechada na Vila Madalena",
     type: "Casa",
     subType: "Casa de Vila",
@@ -722,6 +743,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "casa-vila-2",
+    code: "HUB-1022",
     title: "Casa de Vila Aconchegante e Segura em Ipanema",
     type: "Casa",
     subType: "Casa de Vila",
@@ -757,6 +779,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "terreno-lote-1",
+    code: "HUB-1023",
     title: "Lote Plano 600m² em Condomínio Fechado Alphaville",
     type: "Terreno",
     subType: "Loteamento/Condomínio",
@@ -788,6 +811,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "terreno-lote-2",
+    code: "HUB-1024",
     title: "Terreno 1.200m² com Vista para a Serra Graciosa",
     type: "Terreno",
     subType: "Loteamento/Condomínio",
@@ -823,6 +847,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "com-sala-1",
+    code: "HUB-1025",
     title: "Conjunto Comercial Corporativo Faria Lima Prime",
     type: "Comercial",
     subType: "Conjunto Comercial/sala",
@@ -854,6 +879,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "com-sala-2",
+    code: "HUB-1026",
     title: "Sala Comercial Mobiliada no Batel Corporate",
     type: "Comercial",
     subType: "Conjunto Comercial/sala",
@@ -889,6 +915,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "com-ponto-1",
+    code: "HUB-1027",
     title: "Ponto Comercial Estratégico no Batel Soho",
     type: "Comercial",
     subType: "Ponto Comercial",
@@ -920,6 +947,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "com-ponto-2",
+    code: "HUB-1028",
     title: "Ponto Comercial de Esquina Movimentada Rua Augusta",
     type: "Comercial",
     subType: "Ponto Comercial",
@@ -955,6 +983,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "com-loja-1",
+    code: "HUB-1029",
     title: "Loja de Rua com Fachada Envidraçada Oscar Freire",
     type: "Comercial",
     subType: "Loja/Salão",
@@ -986,6 +1015,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "com-loja-2",
+    code: "HUB-1030",
     title: "Salão Comercial 350m² Avenida Sete de Setembro",
     type: "Comercial",
     subType: "Loja/Salão",
@@ -1021,6 +1051,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "com-box-1",
+    code: "HUB-1031",
     title: "Box Garagem Privativo Centro Financeiro Paulista",
     type: "Comercial",
     subType: "Box/Garagem",
@@ -1052,6 +1083,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "com-box-2",
+    code: "HUB-1032",
     title: "Vaga Dupla Autônoma em Garagem Subterrânea Batel",
     type: "Comercial",
     subType: "Box/Garagem",
@@ -1087,6 +1119,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "com-casa-1",
+    code: "HUB-1033",
     title: "Casa Comercial para Clínicas ou Escritórios Jardim Europa",
     type: "Comercial",
     subType: "Casa Comercial",
@@ -1118,6 +1151,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "com-casa-2",
+    code: "HUB-1034",
     title: "Casa Comercial Imponente na Avenida do Batel",
     type: "Comercial",
     subType: "Casa Comercial",
@@ -1153,6 +1187,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "com-galpao-1",
+    code: "HUB-1035",
     title: "Galpão Logístico Modular 2.500m² Rodovia Anhanguera",
     type: "Comercial",
     subType: "Galpão/Depósito/Barracão",
@@ -1184,6 +1219,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "com-galpao-2",
+    code: "HUB-1036",
     title: "Barracão Industrial 1.200m² com Docas e Ponte Rolante CIC",
     type: "Comercial",
     subType: "Galpão/Depósito/Barracão",
@@ -1219,6 +1255,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "com-pousada-1",
+    code: "HUB-1037",
     title: "Pousada Ecológica em Funcionamento com 12 Suítes",
     type: "Comercial",
     subType: "Pousada/Chalé",
@@ -1250,6 +1287,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "com-pousada-2",
+    code: "HUB-1038",
     title: "Chalé Romântico com Lareira e Hidromassagem",
     type: "Comercial",
     subType: "Pousada/Chalé",
@@ -1286,6 +1324,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "com-predio-1",
+    code: "HUB-1039",
     title: "Prédio Comercial Monousuário 6 Andares Centro SP",
     type: "Comercial",
     subType: "Prédio Inteiro",
@@ -1317,6 +1356,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "com-predio-2",
+    code: "HUB-1040",
     title: "Edifício Comercial Corporativo 2.800m² Batel",
     type: "Comercial",
     subType: "Prédio Inteiro",
@@ -1352,6 +1392,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "rural-chacara-1",
+    code: "HUB-1041",
     title: "Chácara de Lazer 5.000m² com Piscina, Pomar e Campo",
     type: "Rural",
     subType: "Chácara",
@@ -1383,6 +1424,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "rural-chacara-2",
+    code: "HUB-1042",
     title: "Chácara com Lago de Pesca e Casa Rústica de Madeira",
     type: "Rural",
     subType: "Chácara",
@@ -1418,6 +1460,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "rural-fazenda-1",
+    code: "HUB-1043",
     title: "Fazenda Produtiva 150 Alqueires para Café e Pecuária",
     type: "Rural",
     subType: "Fazenda",
@@ -1449,6 +1492,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "rural-fazenda-2",
+    code: "HUB-1044",
     title: "Fazenda Haras com Pista de Salto e Baias de Alto Padrão",
     type: "Rural",
     subType: "Fazenda",
@@ -1484,6 +1528,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "aruj-condo-1",
+    code: "HUB-1045",
     title: "Mansão Contemporânea no Condomínio Arujá 5",
     type: "Casa",
     subType: "Em Condomínio Fechado",
@@ -1517,6 +1562,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "aruj-sobrado-2",
+    code: "HUB-1046",
     title: "Sobrado Moderno com Piscina no Real Park Arujá",
     type: "Casa",
     subType: "Sobrado",
@@ -1550,6 +1596,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "aruj-terreno-3",
+    code: "HUB-1047",
     title: "Lote Plano de 1.000m² no Condomínio Arujazinho",
     type: "Terreno",
     subType: "Terreno em Condomínio",
@@ -1585,6 +1632,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "stisabel-chacara-1",
+    code: "HUB-1048",
     title: "Chácara de Lazer com Pomar e Piscina em Santa Isabel",
     type: "Rural",
     subType: "Chácara",
@@ -1617,6 +1665,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "stisabel-casa-2",
+    code: "HUB-1049",
     title: "Casa Térrea Ampla Próxima ao Centro de Santa Isabel",
     type: "Casa",
     subType: "Padrão",
@@ -1648,6 +1697,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "stisabel-temp-3",
+    code: "HUB-1050",
     title: "Sítio para Temporada e Retiros com Lago Privativo",
     type: "Rural",
     subType: "Sítio",
@@ -1684,6 +1734,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "guar-apt-1",
+    code: "HUB-1051",
     title: "Apartamento Alto Padrão no Bosque Maia com Varanda Gourmet",
     type: "Apartamento",
     subType: "Padrão",
@@ -1717,6 +1768,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "guar-apt-2",
+    code: "HUB-1052",
     title: "Studio Pronto para Morar ao Lado do Shopping Maia",
     type: "Apartamento",
     subType: "Studio / Kitnet",
@@ -1749,6 +1801,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "guar-cob-3",
+    code: "HUB-1053",
     title: "Cobertura Duplex com Vista Panorâmica na Vila Augusta",
     type: "Apartamento",
     subType: "Cobertura",
@@ -1782,6 +1835,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "guar-com-4",
+    code: "HUB-1054",
     title: "Galpão Logístico Modular Próximo à Rodovia Dutra e Aeroporto",
     type: "Comercial",
     subType: "Galpão",
@@ -1817,6 +1871,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "jac-casa-1",
+    code: "HUB-1055",
     title: "Casa Térrea de Alto Padrão no Condomínio Villa Branca",
     type: "Casa",
     subType: "Em Condomínio Fechado",
@@ -1850,6 +1905,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "jac-apt-2",
+    code: "HUB-1056",
     title: "Apartamento 2 Dormitórios com Varanda no Jardim Flórida",
     type: "Apartamento",
     subType: "Padrão",
@@ -1881,6 +1937,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "jac-lanc-3",
+    code: "HUB-1057",
     title: "Lançamento Residencial Parque das Águas Jacareí",
     type: "Apartamento",
     subType: "Padrão",
@@ -1916,6 +1973,7 @@ export const INITIAL_PROPERTIES = [
   // ==========================================
   {
     id: "pinda-casa-1",
+    code: "HUB-1058",
     title: "Casa Ampla com Espaço Gourmet no Village Paiaguás",
     type: "Casa",
     subType: "Padrão",
@@ -1949,6 +2007,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "pinda-sitio-2",
+    code: "HUB-1059",
     title: "Sítio Vista para a Serra da Mantiqueira em Pindamonhangaba",
     type: "Rural",
     subType: "Sítio",
@@ -1981,6 +2040,7 @@ export const INITIAL_PROPERTIES = [
   },
   {
     id: "pinda-apt-3",
+    code: "HUB-1060",
     title: "Apartamento Moderno no Centro de Pindamonhangaba",
     type: "Apartamento",
     subType: "Padrão",

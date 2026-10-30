@@ -64,6 +64,11 @@ export default function PropertyDetailModal({
 
   if (!property) return null;
 
+  const imagesList = (Array.isArray(property.images) && property.images.length > 0)
+    ? property.images
+    : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80'];
+  const amenitiesList = Array.isArray(property.amenities) ? property.amenities : [];
+
   const propCode = property.code || property.id;
 
   const handleCopyCode = (e) => {
@@ -177,15 +182,15 @@ export default function PropertyDetailModal({
               marginBottom: '0.75rem'
             }}>
               <img
-                src={property.images[selectedImage]}
+                src={imagesList[selectedImage] || imagesList[0]}
                 alt={property.title}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
 
-              {property.images.length > 1 && (
+              {imagesList.length > 1 && (
                 <>
                   <button
-                    onClick={() => setSelectedImage(prev => (prev === 0 ? property.images.length - 1 : prev - 1))}
+                    onClick={() => setSelectedImage(prev => (prev === 0 ? imagesList.length - 1 : prev - 1))}
                     style={{
                       position: 'absolute',
                       left: '12px',
@@ -206,7 +211,7 @@ export default function PropertyDetailModal({
                     <ChevronLeft size={22} />
                   </button>
                   <button
-                    onClick={() => setSelectedImage(prev => (prev === property.images.length - 1 ? 0 : prev + 1))}
+                    onClick={() => setSelectedImage(prev => (prev === imagesList.length - 1 ? 0 : prev + 1))}
                     style={{
                       position: 'absolute',
                       right: '12px',
@@ -232,7 +237,7 @@ export default function PropertyDetailModal({
 
             {/* Thumbnail Strip */}
             <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-              {property.images.map((img, idx) => (
+              {imagesList.map((img, idx) => (
                 <img
                   key={idx}
                   src={img}
@@ -368,7 +373,7 @@ export default function PropertyDetailModal({
                   gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
                   gap: '0.75rem'
                 }}>
-                  {property.amenities.map((item, i) => (
+                  {amenitiesList.map((item, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
                       <CheckCircle2 size={16} color="var(--color-quinto)" />
                       <span>{item}</span>

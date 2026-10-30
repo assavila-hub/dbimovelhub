@@ -50,7 +50,8 @@
         "whatsapp": "5511999990001",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-10"
+      "publishedAt": "2026-08-10",
+      "code": "HUB-1001"
     },
     {
       "id": "apt-padrao-2",
@@ -101,7 +102,8 @@
         "whatsapp": "5531988887777",
         "avatar": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-09"
+      "publishedAt": "2026-08-09",
+      "code": "HUB-1002"
     },
     {
       "id": "apt-studio-1",
@@ -151,7 +153,8 @@
         "whatsapp": "5511977771111",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1003"
     },
     {
       "id": "apt-studio-2",
@@ -194,7 +197,8 @@
         "whatsapp": "5521988883333",
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-12"
+      "publishedAt": "2026-08-12",
+      "code": "HUB-1004"
     },
     {
       "id": "apt-cobertura-1",
@@ -238,7 +242,8 @@
         "whatsapp": "5511999998888",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-08"
+      "publishedAt": "2026-08-08",
+      "code": "HUB-1005"
     },
     {
       "id": "apt-cobertura-2",
@@ -282,7 +287,8 @@
         "whatsapp": "5521998880000",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-05"
+      "publishedAt": "2026-08-05",
+      "code": "HUB-1006"
     },
     {
       "id": "apt-flat-1",
@@ -326,7 +332,8 @@
         "whatsapp": "5511998765432",
         "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-13"
+      "publishedAt": "2026-08-13",
+      "code": "HUB-1007"
     },
     {
       "id": "apt-flat-2",
@@ -369,7 +376,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1008"
     },
     {
       "id": "apt-garden-1",
@@ -412,7 +420,8 @@
         "whatsapp": "5511988882222",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-07"
+      "publishedAt": "2026-08-07",
+      "code": "HUB-1009"
     },
     {
       "id": "apt-garden-2",
@@ -455,7 +464,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-10"
+      "publishedAt": "2026-08-10",
+      "code": "HUB-1010"
     },
     {
       "id": "apt-loft-1",
@@ -498,7 +508,8 @@
         "whatsapp": "5511991234567",
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-09"
+      "publishedAt": "2026-08-09",
+      "code": "HUB-1011"
     },
     {
       "id": "apt-loft-2",
@@ -541,7 +552,8 @@
         "whatsapp": "5521987654321",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-12"
+      "publishedAt": "2026-08-12",
+      "code": "HUB-1012"
     },
     {
       "id": "prop-batel-seo",
@@ -605,7 +617,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-14"
+      "publishedAt": "2026-08-14",
+      "code": "HUB-1013"
     },
     {
       "id": "apt-duplex-2",
@@ -648,7 +661,8 @@
         "whatsapp": "5511999990001",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-06"
+      "publishedAt": "2026-08-06",
+      "code": "HUB-1014"
     },
     {
       "id": "casa-padrao-1",
@@ -691,7 +705,8 @@
         "whatsapp": "5511987650000",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-04"
+      "publishedAt": "2026-08-04",
+      "code": "HUB-1015"
     },
     {
       "id": "casa-padrao-2",
@@ -733,7 +748,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-09"
+      "publishedAt": "2026-08-09",
+      "code": "HUB-1016"
     },
     {
       "id": "casa-cond-1",
@@ -777,7 +793,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-01"
+      "publishedAt": "2026-08-01",
+      "code": "HUB-1017"
     },
     {
       "id": "casa-cond-2",
@@ -821,7 +838,8 @@
         "whatsapp": "5511999994444",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-03"
+      "publishedAt": "2026-08-03",
+      "code": "HUB-1018"
     },
     {
       "id": "casa-sobrado-1",
@@ -864,7 +882,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1019"
     },
     {
       "id": "casa-sobrado-2",
@@ -907,7 +926,8 @@
         "whatsapp": "5511999990001",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-08"
+      "publishedAt": "2026-08-08",
+      "code": "HUB-1020"
     },
     {
       "id": "casa-vila-1",
@@ -949,7 +969,8 @@
         "whatsapp": "5511991234567",
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-05"
+      "publishedAt": "2026-08-05",
+      "code": "HUB-1021"
     },
     {
       "id": "casa-vila-2",
@@ -991,7 +1012,8 @@
         "whatsapp": "5521987654321",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-08"
+      "publishedAt": "2026-08-08",
+      "code": "HUB-1022"
     },
     {
       "id": "terreno-lote-1",
@@ -1033,7 +1055,8 @@
         "whatsapp": "5511999993333",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-04"
+      "publishedAt": "2026-08-04",
+      "code": "HUB-1023"
     },
     {
       "id": "terreno-lote-2",
@@ -1075,7 +1098,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-06"
+      "publishedAt": "2026-08-06",
+      "code": "HUB-1024"
     },
     {
       "id": "com-sala-1",
@@ -1118,7 +1142,8 @@
         "whatsapp": "5511999995555",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1025"
     },
     {
       "id": "com-sala-2",
@@ -1160,7 +1185,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-12"
+      "publishedAt": "2026-08-12",
+      "code": "HUB-1026"
     },
     {
       "id": "com-ponto-1",
@@ -1202,7 +1228,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-10"
+      "publishedAt": "2026-08-10",
+      "code": "HUB-1027"
     },
     {
       "id": "com-ponto-2",
@@ -1243,7 +1270,8 @@
         "whatsapp": "5511999996666",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-08"
+      "publishedAt": "2026-08-08",
+      "code": "HUB-1028"
     },
     {
       "id": "com-loja-1",
@@ -1285,7 +1313,8 @@
         "whatsapp": "5511999998888",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-07"
+      "publishedAt": "2026-08-07",
+      "code": "HUB-1029"
     },
     {
       "id": "com-loja-2",
@@ -1326,7 +1355,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1030"
     },
     {
       "id": "com-box-1",
@@ -1367,7 +1397,8 @@
         "whatsapp": "5511988880099",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-12"
+      "publishedAt": "2026-08-12",
+      "code": "HUB-1031"
     },
     {
       "id": "com-box-2",
@@ -1407,7 +1438,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-13"
+      "publishedAt": "2026-08-13",
+      "code": "HUB-1032"
     },
     {
       "id": "com-casa-1",
@@ -1449,7 +1481,8 @@
         "whatsapp": "5511999998888",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-09"
+      "publishedAt": "2026-08-09",
+      "code": "HUB-1033"
     },
     {
       "id": "com-casa-2",
@@ -1490,7 +1523,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1034"
     },
     {
       "id": "com-galpao-1",
@@ -1531,7 +1565,8 @@
         "whatsapp": "5511999997777",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-05"
+      "publishedAt": "2026-08-05",
+      "code": "HUB-1035"
     },
     {
       "id": "com-galpao-2",
@@ -1572,7 +1607,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-08"
+      "publishedAt": "2026-08-08",
+      "code": "HUB-1036"
     },
     {
       "id": "com-pousada-1",
@@ -1615,7 +1651,8 @@
         "whatsapp": "5511998881234",
         "avatar": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-04"
+      "publishedAt": "2026-08-04",
+      "code": "HUB-1037"
     },
     {
       "id": "com-pousada-2",
@@ -1659,7 +1696,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-10"
+      "publishedAt": "2026-08-10",
+      "code": "HUB-1038"
     },
     {
       "id": "com-predio-1",
@@ -1702,7 +1740,8 @@
         "whatsapp": "5511999995555",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-02"
+      "publishedAt": "2026-08-02",
+      "code": "HUB-1039"
     },
     {
       "id": "com-predio-2",
@@ -1745,7 +1784,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-01"
+      "publishedAt": "2026-08-01",
+      "code": "HUB-1040"
     },
     {
       "id": "rural-chacara-1",
@@ -1788,7 +1828,8 @@
         "whatsapp": "5511998885555",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-07"
+      "publishedAt": "2026-08-07",
+      "code": "HUB-1041"
     },
     {
       "id": "rural-chacara-2",
@@ -1831,7 +1872,8 @@
         "whatsapp": "554130405500",
         "avatar": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-09"
+      "publishedAt": "2026-08-09",
+      "code": "HUB-1042"
     },
     {
       "id": "rural-fazenda-1",
@@ -1873,7 +1915,8 @@
         "whatsapp": "5531999991212",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-02"
+      "publishedAt": "2026-08-02",
+      "code": "HUB-1043"
     },
     {
       "id": "rural-fazenda-2",
@@ -1916,7 +1959,8 @@
         "whatsapp": "5511999991122",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-01"
+      "publishedAt": "2026-08-01",
+      "code": "HUB-1044"
     },
     {
       "id": "aruj-condo-1",
@@ -1967,7 +2011,8 @@
         "whatsapp": "5511999995501",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-14"
+      "publishedAt": "2026-08-14",
+      "code": "HUB-1045"
     },
     {
       "id": "aruj-sobrado-2",
@@ -2016,7 +2061,8 @@
         "whatsapp": "5511999995502",
         "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-13"
+      "publishedAt": "2026-08-13",
+      "code": "HUB-1046"
     },
     {
       "id": "aruj-terreno-3",
@@ -2058,7 +2104,8 @@
         "whatsapp": "5511999995501",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1047"
     },
     {
       "id": "stisabel-chacara-1",
@@ -2102,7 +2149,8 @@
         "whatsapp": "5511999995503",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-12"
+      "publishedAt": "2026-08-12",
+      "code": "HUB-1048"
     },
     {
       "id": "stisabel-casa-2",
@@ -2144,7 +2192,8 @@
         "whatsapp": "5511999995503",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-10"
+      "publishedAt": "2026-08-10",
+      "code": "HUB-1049"
     },
     {
       "id": "stisabel-temp-3",
@@ -2189,7 +2238,8 @@
         "whatsapp": "5511987654321",
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-09"
+      "publishedAt": "2026-08-09",
+      "code": "HUB-1050"
     },
     {
       "id": "guar-apt-1",
@@ -2239,7 +2289,8 @@
         "whatsapp": "5511999995504",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-14"
+      "publishedAt": "2026-08-14",
+      "code": "HUB-1051"
     },
     {
       "id": "guar-apt-2",
@@ -2283,7 +2334,8 @@
         "whatsapp": "5511999995505",
         "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-13"
+      "publishedAt": "2026-08-13",
+      "code": "HUB-1052"
     },
     {
       "id": "guar-cob-3",
@@ -2333,7 +2385,8 @@
         "whatsapp": "5511999995504",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1053"
     },
     {
       "id": "guar-com-4",
@@ -2375,7 +2428,8 @@
         "whatsapp": "5511999995506",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-08"
+      "publishedAt": "2026-08-08",
+      "code": "HUB-1054"
     },
     {
       "id": "jac-casa-1",
@@ -2425,7 +2479,8 @@
         "whatsapp": "5512999995507",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-14"
+      "publishedAt": "2026-08-14",
+      "code": "HUB-1055"
     },
     {
       "id": "jac-apt-2",
@@ -2468,7 +2523,8 @@
         "whatsapp": "5512999995507",
         "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-12"
+      "publishedAt": "2026-08-12",
+      "code": "HUB-1056"
     },
     {
       "id": "jac-lanc-3",
@@ -2511,7 +2567,8 @@
         "whatsapp": "5512999995508",
         "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-15"
+      "publishedAt": "2026-08-15",
+      "code": "HUB-1057"
     },
     {
       "id": "pinda-casa-1",
@@ -2559,7 +2616,8 @@
         "whatsapp": "5512999995509",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-14"
+      "publishedAt": "2026-08-14",
+      "code": "HUB-1058"
     },
     {
       "id": "pinda-sitio-2",
@@ -2603,7 +2661,8 @@
         "whatsapp": "5512999995509",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-11"
+      "publishedAt": "2026-08-11",
+      "code": "HUB-1059"
     },
     {
       "id": "pinda-apt-3",
@@ -2645,7 +2704,8 @@
         "whatsapp": "5512999995509",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
       },
-      "publishedAt": "2026-08-13"
+      "publishedAt": "2026-08-13",
+      "code": "HUB-1060"
     }
   ],
   "users": [

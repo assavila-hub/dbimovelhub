@@ -31,14 +31,18 @@ export default function PropertyCard({
 }) {
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
 
+  const imagesList = (Array.isArray(property.images) && property.images.length > 0)
+    ? property.images
+    : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80'];
+
   const prevImage = (e) => {
     e.stopPropagation();
-    setCurrentImgIndex((prev) => (prev === 0 ? property.images.length - 1 : prev - 1));
+    setCurrentImgIndex((prev) => (prev === 0 ? imagesList.length - 1 : prev - 1));
   };
 
   const nextImage = (e) => {
     e.stopPropagation();
-    setCurrentImgIndex((prev) => (prev === property.images.length - 1 ? 0 : prev + 1));
+    setCurrentImgIndex((prev) => (prev === imagesList.length - 1 ? 0 : prev + 1));
   };
 
   // Price formatting
@@ -90,13 +94,13 @@ export default function PropertyCard({
       {/* Property Image Gallery Slider */}
       <div style={{ position: 'relative', height: '220px', width: '100%', overflow: 'hidden' }}>
         <img 
-          src={property.images[currentImgIndex] || property.images[0]} 
+          src={imagesList[currentImgIndex] || imagesList[0]} 
           alt={property.title} 
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
 
         {/* Carousel Navigation Arrows */}
-        {property.images.length > 1 && (
+        {imagesList.length > 1 && (
           <>
             <button
               onClick={prevImage}
@@ -253,7 +257,7 @@ export default function PropertyCard({
           fontSize: '0.72rem',
           fontWeight: 600
         }}>
-          {currentImgIndex + 1} / {property.images.length}
+          {currentImgIndex + 1} / {imagesList.length}
         </div>
       </div>
 

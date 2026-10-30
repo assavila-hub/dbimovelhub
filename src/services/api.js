@@ -1,6 +1,9 @@
 import { supabase } from './supabase.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const isLocalEnv = typeof window !== 'undefined'
+  ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !!import.meta.env.VITE_API_URL)
+  : false;
 
 // 1. Fetch Properties (Supabase First, with fallback)
 export async function fetchProperties() {
@@ -17,13 +20,15 @@ export async function fetchProperties() {
     console.warn("Supabase fetch failed, attempting Express fallback:", err);
   }
 
-  // Fallback to Express backend if running
-  try {
-    const res = await fetch(`${API_BASE_URL}/properties`);
-    const json = await res.json();
-    if (json.data && json.data.length > 0) return json.data;
-  } catch (err) {
-    console.warn("Express API offline, falling back to local state");
+  // Fallback to Express backend if running locally
+  if (isLocalEnv) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/properties`);
+      const json = await res.json();
+      if (json.data && json.data.length > 0) return json.data;
+    } catch (err) {
+      console.warn("Express API offline, falling back to local state");
+    }
   }
 
   return null;
@@ -49,18 +54,21 @@ export async function createProperty(propertyData) {
     console.error("Error creating property via Supabase:", err);
   }
 
-  // Fallback to Express
-  try {
-    const res = await fetch(`${API_BASE_URL}/properties`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(propertyData)
-    });
-    const json = await res.json();
-    return json.data;
-  } catch (err) {
-    return propertyData;
+  // Fallback to Express (only when running locally)
+  if (isLocalEnv) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/properties`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(propertyData)
+      });
+      const json = await res.json();
+      return json.data;
+    } catch (err) {
+      return propertyData;
+    }
   }
+  return propertyData;
 }
 
 // 3. Update Property
@@ -80,17 +88,20 @@ export async function updateProperty(id, propertyData) {
   }
 
   // Fallback to Express
-  try {
-    const res = await fetch(`${API_BASE_URL}/properties/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(propertyData)
-    });
-    const json = await res.json();
-    return json.data;
-  } catch (err) {
-    return propertyData;
+  if (isLocalEnv) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/properties/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(propertyData)
+      });
+      const json = await res.json();
+      return json.data;
+    } catch (err) {
+      return propertyData;
+    }
   }
+  return propertyData;
 }
 
 // 4. Delete Property
@@ -101,10 +112,12 @@ export async function deleteProperty(id) {
     console.error("Error deleting property via Supabase:", err);
   }
 
-  try {
-    await fetch(`${API_BASE_URL}/properties/${id}`, { method: 'DELETE' });
-  } catch (err) {
-    // Ignore error
+  if (isLocalEnv) {
+    try {
+      await fetch(`${API_BASE_URL}/properties/${id}`, { method: 'DELETE' });
+    } catch (err) {
+      // Ignore error
+    }
   }
 }
 
@@ -143,13 +156,16 @@ export async function fetchChatMessages(propertyId) {
     console.warn("Supabase chat fetch error:", err);
   }
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/chats/${propertyId}`);
-    const json = await res.json();
-    return json.data || [];
-  } catch (err) {
-    return [];
+  if (isLocalEnv) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/chats/${propertyId}`);
+      const json = await res.json();
+      return json.data || [];
+    } catch (err) {
+      return [];
+    }
   }
+  return [];
 }
 
 export async function sendChatMessage(propertyId, text, sender = 'Cliente') {
@@ -168,17 +184,20 @@ export async function sendChatMessage(propertyId, text, sender = 'Cliente') {
     console.warn("Supabase send chat error:", err);
   }
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/chats/${propertyId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, sender })
-    });
-    const json = await res.json();
-    return json.data || newMsg;
-  } catch (err) {
-    return newMsg;
+  if (isLocalEnv) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/chats/${propertyId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, sender })
+      });
+      const json = await res.json();
+      return json.data || newMsg;
+    } catch (err) {
+      return newMsg;
+    }
   }
+  return newMsg;
 }
 
 // 7. Checkout Payment
@@ -474,4 +493,21 @@ export async function updateUserData(userId, partialData) {
     console.error("Error updating user in Supabase:", err);
   }
   return partialData;
+}
+
+// 17. Create User (Admin)
+export async function createUser(userData) {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .insert([userData])
+      .select();
+
+    if (!error && data && data.length > 0) {
+      return data[0];
+    }
+  } catch (err) {
+    console.error("Error creating user in Supabase:", err);
+  }
+  return userData;
 }

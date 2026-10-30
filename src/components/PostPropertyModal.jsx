@@ -20,6 +20,7 @@ import { fetchAddressByCep } from '../services/api';
 
 export default function PostPropertyModal({
   currentUser,
+  properties = [],
   onClose,
   onAddProperty
 }) {
@@ -206,7 +207,19 @@ export default function PostPropertyModal({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const generatedCode = 'HUB-' + Math.floor(1000 + Math.random() * 9000);
+    let nextNum = 1062;
+    if (Array.isArray(properties) && properties.length > 0) {
+      const nums = properties
+        .map(p => {
+          const match = (p.code || '').match(/HUB-(\d+)/i);
+          return match ? parseInt(match[1], 10) : 0;
+        })
+        .filter(n => n > 0);
+      if (nums.length > 0) {
+        nextNum = Math.max(...nums) + 1;
+      }
+    }
+    const generatedCode = `HUB-${nextNum}`;
     setCreatedCode(generatedCode);
     const newProp = {
       id: `prop-${Date.now()}`,

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../services/supabase';
 import { 
   X, 
   User, 
@@ -172,6 +173,64 @@ export default function UserDashboardModal({
     }
     return [];
   });
+
+  useEffect(() => {
+    if (!isOpen || !userProperties || userProperties.length === 0) return;
+    const propIds = userProperties.map(p => p.id);
+
+    async function loadRealData() {
+      try {
+        const { data: propData } = await supabase
+          .from('proposals')
+          .select('*')
+          .in('propertyId', propIds);
+
+        if (propData && propData.length > 0) {
+          const formatted = propData.map(p => {
+            const foundProp = userProperties.find(u => u.id === p.propertyId);
+            return {
+              id: p.id,
+              propertyTitle: foundProp?.title || 'Imóvel Anunciado',
+              offerPrice: p.offerPrice,
+              originalPrice: foundProp?.price || p.offerPrice,
+              downPayment: p.downPayment || Math.round(p.offerPrice * 0.2),
+              paymentType: 'Financiamento Imobiliário',
+              buyerName: p.buyerName || 'Interessado',
+              buyerPhone: p.buyerPhone || '(11) 98888-0000',
+              validity: '48 horas',
+              status: p.status || 'Em Análise'
+            };
+          });
+          setOwnerProposals(prev => [...formatted, ...prev.filter(d => !formatted.some(f => f.id === d.id))]);
+        }
+
+        const { data: schedData } = await supabase
+          .from('schedules')
+          .select('*')
+          .in('propertyId', propIds);
+
+        if (schedData && schedData.length > 0) {
+          const formattedVisits = schedData.map(s => {
+            const foundProp = userProperties.find(u => u.id === s.propertyId);
+            return {
+              id: s.id,
+              propertyTitle: s.propertyTitle || foundProp?.title || 'Imóvel Anunciado',
+              clientName: s.visitorName || 'Visitante Interessado',
+              clientPhone: s.visitorPhone || '(11) 98888-0000',
+              date: s.date || 'A combinar',
+              time: s.time || '14:00',
+              type: 'Presencial',
+              status: 'Confirmada'
+            };
+          });
+          setRoleVisits(prev => [...formattedVisits, ...prev.filter(d => !formattedVisits.some(f => f.id === d.id))]);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar dados do usuário:", err);
+      }
+    }
+    loadRealData();
+  }, [isOpen, userProperties]);
 
   if (!isOpen || !currentUser) return null;
 
