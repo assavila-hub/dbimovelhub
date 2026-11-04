@@ -36,9 +36,9 @@ export default function OpportunityFloatingToast({ properties = [], onSelectProp
     <div
       style={{
         position: 'fixed',
-        bottom: '16px',
-        left: '16px',
-        zIndex: 1300,
+        bottom: 'calc(env(safe-area-inset-bottom, 16px) + 16px)',
+        right: '16px',
+        zIndex: 1000,
         backgroundColor: '#0f172a',
         color: '#ffffff',
         borderRadius: 'var(--radius-lg)',

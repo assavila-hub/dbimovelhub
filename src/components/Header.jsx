@@ -659,23 +659,26 @@ export default function Header({
             onClick={onOpenNotifications}
             style={{ position: 'relative', padding: '0.45rem 0.65rem' }}
             title="Central de Notificações"
+            aria-label={`Central de Notificações (${unreadNotificationsCount} novas)`}
           >
             <Bell size={18} color={unreadNotificationsCount > 0 ? "#38bdf8" : "currentColor"} />
             {unreadNotificationsCount > 0 && (
               <span style={{
                 position: 'absolute',
-                top: '-3px',
-                right: '-3px',
+                top: '0px',
+                right: '0px',
                 backgroundColor: '#ef4444',
                 color: '#fff',
                 borderRadius: '50%',
-                width: '18px',
-                height: '18px',
-                fontSize: '0.68rem',
+                minWidth: '17px',
+                height: '17px',
+                padding: '0 3px',
+                fontSize: '0.65rem',
                 fontWeight: 800,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                boxShadow: '0 0 0 2px var(--bg-card)'
               }}>
                 {unreadNotificationsCount}
               </span>
@@ -688,23 +691,26 @@ export default function Header({
             onClick={onOpenFavorites}
             style={{ position: 'relative', padding: '0.45rem 0.65rem' }}
             title="Meus Favoritos"
+            aria-label={`Meus Favoritos (${favoritesCount})`}
           >
             <Heart size={18} color={favoritesCount > 0 ? "var(--color-accent)" : "currentColor"} fill={favoritesCount > 0 ? "var(--color-accent)" : "none"} />
             {favoritesCount > 0 && (
               <span style={{
                 position: 'absolute',
-                top: '-3px',
-                right: '-3px',
+                top: '0px',
+                right: '0px',
                 backgroundColor: 'var(--color-accent)',
                 color: '#fff',
                 borderRadius: '50%',
-                width: '18px',
-                height: '18px',
-                fontSize: '0.68rem',
+                minWidth: '17px',
+                height: '17px',
+                padding: '0 3px',
+                fontSize: '0.65rem',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                boxShadow: '0 0 0 2px var(--bg-card)'
               }}>
                 {favoritesCount}
               </span>
@@ -888,12 +894,14 @@ export default function Header({
             style={{
               width: 'min(380px, 86vw)',
               height: '100%',
+              minHeight: '100dvh',
+              maxHeight: '100dvh',
               backgroundColor: 'var(--bg-card)',
               color: 'var(--text-main)',
               boxShadow: 'var(--shadow-xl)',
               display: 'flex',
               flexDirection: 'column',
-              padding: '1.25rem',
+              padding: '1.25rem 1.25rem calc(env(safe-area-inset-bottom, 24px) + 2rem) 1.25rem',
               overflowY: 'auto',
               WebkitOverflowScrolling: 'touch',
               borderLeft: '1px solid var(--border-color)',

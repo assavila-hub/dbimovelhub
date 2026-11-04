@@ -366,29 +366,31 @@ export default function HeroSearch({
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         {/* Hero Title & Subtitle */}
-        <div style={{ textAlign: 'center', maxWidth: '950px', margin: '0 auto 2.5rem auto' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 0.9rem', backgroundColor: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '999px', color: '#38bdf8', fontSize: 'clamp(0.75rem, 1vw, 0.85rem)', fontWeight: 700, marginBottom: '1.25rem' }}>
-            <Sparkles size={14} />
-            <span>O Portal Unificado dos 6 Maiores Players do Brasil</span>
+        <div style={{ textAlign: 'center', maxWidth: '950px', margin: '0 auto clamp(1.5rem, 3vw, 2.5rem) auto', padding: '0 0.5rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 0.9rem', backgroundColor: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '999px', color: '#38bdf8', fontSize: 'clamp(0.72rem, 1vw, 0.85rem)', fontWeight: 700, marginBottom: '1rem', maxWidth: '100%' }}>
+            <Sparkles size={14} style={{ flexShrink: 0 }} />
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>O Portal Unificado dos 6 Maiores Players do Brasil</span>
           </div>
 
           <h1 style={{
-            fontSize: 'clamp(1.75rem, 3.5vw, 2.9rem)',
+            fontSize: 'clamp(1.45rem, 4vw, 2.9rem)',
             fontWeight: 800,
             letterSpacing: '-0.03em',
-            lineHeight: 1.15,
-            marginBottom: '1rem',
-            textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+            lineHeight: 1.2,
+            marginBottom: '0.85rem',
+            textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+            wordBreak: 'break-word',
+            hyphens: 'auto'
           }}>
             Compre, Alugue ou Invista nos Melhores Imóveis do Brasil
           </h1>
 
           <p style={{
-            fontSize: 'clamp(0.9rem, 1.3vw, 1.15rem)',
+            fontSize: 'clamp(0.85rem, 1.3vw, 1.15rem)',
             color: '#cbd5e1',
             maxWidth: '750px',
             margin: '0 auto',
-            lineHeight: 1.6
+            lineHeight: 1.5
           }}>
             Mais de <strong style={{ color: '#38bdf8' }}>{properties.length} imóveis verificados</strong> com dados 100% verídicos e busca inteligente em tempo real.
           </p>
@@ -454,9 +456,9 @@ export default function HeroSearch({
           </div>
 
           {/* Linha Principal de Busca (1º Tipo -> 2º Localização -> 3º Quartos -> 4º Vagas) */}
-          <div className="flex-column-mobile" style={{
+          <div className="hero-search-fields" style={{
             display: 'flex',
-            gap: '1rem',
+            gap: '12px',
             alignItems: 'center'
           }}>
             {/* 1. Tipo de Imóvel (Categorias com contagem reativa) */}
@@ -750,7 +752,7 @@ export default function HeroSearch({
           </div>
 
           {/* Action Row & Botão de Busca com Contador Dinâmico */}
-          <div style={{
+          <div className="hero-search-actions" style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -758,10 +760,10 @@ export default function HeroSearch({
             paddingTop: '1rem',
             borderTop: '1px solid var(--border-color)',
             flexWrap: 'wrap',
-            gap: '1rem'
+            gap: '12px'
           }}>
             {/* Filter Drawer Toggle & Saved Searches Button & Raio Modal */}
-            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div className="hero-action-buttons" style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
               <button
                 className="btn btn-outline"
                 onClick={onOpenFilters}
@@ -801,10 +803,10 @@ export default function HeroSearch({
 
             {/* Dynamic Result Counter CTA Button */}
             <button
-              className="btn btn-primary"
+              className="btn btn-primary hero-submit-btn"
               onClick={handleScrollToResults}
               style={{
-                padding: '0.75rem 2rem',
+                padding: '0.75rem 1.75rem',
                 fontSize: '0.95rem',
                 fontWeight: 800,
                 flex: '1 1 auto',
@@ -812,7 +814,8 @@ export default function HeroSearch({
                 boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem'
+                gap: '0.5rem',
+                minHeight: '46px'
               }}
             >
               <Search size={18} />

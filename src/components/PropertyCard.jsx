@@ -92,7 +92,7 @@ export default function PropertyCard({
       }}
     >
       {/* Property Image Gallery Slider */}
-      <div style={{ position: 'relative', height: '220px', width: '100%', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', overflow: 'hidden' }}>
         <img 
           src={imagesList[currentImgIndex] || imagesList[0]} 
           alt={property.title} 
@@ -148,7 +148,17 @@ export default function PropertyCard({
         )}
 
         {/* Top Badges */}
-        <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', flexDirection: 'column', gap: '4px', zIndex: 2 }}>
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          left: '10px',
+          right: '84px',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '4px',
+          zIndex: 2,
+          pointerEvents: 'none'
+        }}>
           <span style={{
             backgroundColor: 'rgba(15, 23, 42, 0.88)',
             color: '#38bdf8',
@@ -162,28 +172,31 @@ export default function PropertyCard({
             display: 'inline-flex',
             alignItems: 'center',
             gap: '4px',
-            width: 'fit-content'
+            maxWidth: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
           }}>
-            <Tag size={11} color="#38bdf8" />
+            <Tag size={11} color="#38bdf8" style={{ flexShrink: 0 }} />
             CÓD: {property.code || property.id}
           </span>
           {isGreatDeal && (
-            <span style={{ backgroundColor: '#ef4444', color: '#fff', fontSize: '0.7rem', padding: '0.2rem 0.55rem', borderRadius: '4px', fontWeight: 800 }}>
+            <span style={{ backgroundColor: '#ef4444', color: '#fff', fontSize: '0.7rem', padding: '0.2rem 0.55rem', borderRadius: '4px', fontWeight: 800, whiteSpace: 'nowrap' }}>
               🔥 Ótimo Preço
             </span>
           )}
           {(property.isVerifiedHub || property.isVerifiedQuintoAndar) && (
-            <span className="badge badge-quinto" style={{ fontSize: '0.68rem' }}>
+            <span className="badge badge-quinto" style={{ fontSize: '0.68rem', whiteSpace: 'nowrap' }}>
               ✓ Verificado ImóvelHUB
             </span>
           )}
           {property.youtubeUrl && (
-            <span style={{ backgroundColor: '#ef4444', color: '#fff', fontSize: '0.68rem', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <span style={{ backgroundColor: '#ef4444', color: '#fff', fontSize: '0.68rem', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem', whiteSpace: 'nowrap' }}>
               ▶ Vídeo Tour
             </span>
           )}
           {property.transactionType === 'Aluguel' && (
-            <span style={{ backgroundColor: '#059669', color: '#fff', fontSize: '0.68rem', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>
+            <span style={{ backgroundColor: '#059669', color: '#fff', fontSize: '0.68rem', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 700, whiteSpace: 'nowrap' }}>
               🛡️ Sem Fiador
             </span>
           )}
@@ -278,18 +291,18 @@ export default function PropertyCard({
         </div>
 
         {/* Price & R$/m² Row */}
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-          <div>
-            <span style={{ fontSize: '1.35rem', fontWeight: 800, color: (showTotalCost && totalMonthlyCost) ? '#059669' : 'var(--color-primary)' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px', marginBottom: '0.25rem' }}>
+          <div style={{ minWidth: 0, flex: '1 1 auto' }}>
+            <span style={{ fontSize: '1.28rem', fontWeight: 800, color: (showTotalCost && totalMonthlyCost) ? '#059669' : 'var(--color-primary)', wordBreak: 'break-word' }}>
               {displayPrice}
             </span>
             {property.oldPrice && (
-              <span style={{ fontSize: '0.82rem', color: 'var(--text-light)', textDecoration: 'line-through', marginLeft: '0.5rem' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-light)', textDecoration: 'line-through', marginLeft: '0.4rem', whiteSpace: 'nowrap' }}>
                 R$ {property.oldPrice.toLocaleString('pt-BR')}
               </span>
             )}
           </div>
-          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
             R$ {pricePerM2.toLocaleString('pt-BR')}/m²
           </span>
         </div>
@@ -335,8 +348,8 @@ export default function PropertyCard({
 
           return (
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${specs.length}, 1fr)`,
+              display: 'flex',
+              flexWrap: 'wrap',
               gap: '0.4rem',
               padding: '0.65rem 0',
               borderTop: '1px solid var(--border-color)',
@@ -345,9 +358,9 @@ export default function PropertyCard({
               textAlign: 'center'
             }}>
               {specs.map((s, idx) => (
-                <div key={idx}>
+                <div key={idx} style={{ flex: '1 1 calc(25% - 0.4rem)', minWidth: '55px' }}>
                   <div style={{ fontSize: '0.82rem', fontWeight: 800 }}>{s.value}</div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{s.label}</div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{s.label}</div>
                 </div>
               ))}
             </div>
