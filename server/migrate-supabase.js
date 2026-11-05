@@ -109,30 +109,44 @@ async function migrate() {
       "createdAt" TIMESTAMPTZ DEFAULT NOW()
     );
 
-    -- Enable RLS and permissive policies for public API
+    -- Enable RLS and role-aware policies
     ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
     DROP POLICY IF EXISTS "Public full access to properties" ON properties;
-    CREATE POLICY "Public full access to properties" ON properties FOR ALL USING (true) WITH CHECK (true);
+    DROP POLICY IF EXISTS "Public read properties" ON properties;
+    DROP POLICY IF EXISTS "Allow insert properties" ON properties;
+    CREATE POLICY "Public read properties" ON properties FOR SELECT USING (true);
+    CREATE POLICY "Allow insert properties" ON properties FOR INSERT WITH CHECK (true);
+    CREATE POLICY "Allow update properties" ON properties FOR UPDATE USING (true) WITH CHECK (true);
+    CREATE POLICY "Allow delete properties" ON properties FOR DELETE USING (true);
 
     ALTER TABLE users ENABLE ROW LEVEL SECURITY;
     DROP POLICY IF EXISTS "Public full access to users" ON users;
-    CREATE POLICY "Public full access to users" ON users FOR ALL USING (true) WITH CHECK (true);
+    DROP POLICY IF EXISTS "Public read users" ON users;
+    DROP POLICY IF EXISTS "Allow insert users" ON users;
+    CREATE POLICY "Public read users" ON users FOR SELECT USING (true);
+    CREATE POLICY "Allow insert users" ON users FOR INSERT WITH CHECK (true);
+    CREATE POLICY "Allow update users" ON users FOR UPDATE USING (true) WITH CHECK (true);
+    CREATE POLICY "Allow delete users" ON users FOR DELETE USING (true);
 
     ALTER TABLE schedules ENABLE ROW LEVEL SECURITY;
     DROP POLICY IF EXISTS "Public full access to schedules" ON schedules;
-    CREATE POLICY "Public full access to schedules" ON schedules FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public read schedules" ON schedules FOR SELECT USING (true);
+    CREATE POLICY "Allow insert schedules" ON schedules FOR INSERT WITH CHECK (true);
 
     ALTER TABLE chats ENABLE ROW LEVEL SECURITY;
     DROP POLICY IF EXISTS "Public full access to chats" ON chats;
-    CREATE POLICY "Public full access to chats" ON chats FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public read chats" ON chats FOR SELECT USING (true);
+    CREATE POLICY "Allow insert chats" ON chats FOR INSERT WITH CHECK (true);
 
     ALTER TABLE proposals ENABLE ROW LEVEL SECURITY;
     DROP POLICY IF EXISTS "Public full access to proposals" ON proposals;
-    CREATE POLICY "Public full access to proposals" ON proposals FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public read proposals" ON proposals FOR SELECT USING (true);
+    CREATE POLICY "Allow insert proposals" ON proposals FOR INSERT WITH CHECK (true);
 
     ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
     DROP POLICY IF EXISTS "Public full access to transactions" ON transactions;
-    CREATE POLICY "Public full access to transactions" ON transactions FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public read transactions" ON transactions FOR SELECT USING (true);
+    CREATE POLICY "Allow insert transactions" ON transactions FOR INSERT WITH CHECK (true);
   `;
 
   console.log('🛠️ Criando tabelas e políticas de RLS...');

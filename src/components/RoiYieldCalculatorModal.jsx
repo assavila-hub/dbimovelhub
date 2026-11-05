@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { 
   X, 
-  TrendingUp, 
-  DollarSign, 
-  Percent, 
-  Building2, 
-  Clock, 
-  ShieldCheck, 
-  Sparkles,
-  PieChart,
-  ArrowRight
+  TrendingUp
 } from 'lucide-react';
 
 export default function RoiYieldCalculatorModal({ property, onClose }) {

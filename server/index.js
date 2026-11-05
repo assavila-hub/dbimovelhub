@@ -38,7 +38,13 @@ app.put('/api/users/:id', (req, res) => {
 app.delete('/api/users/:id', (req, res) => {
   const db = loadDB();
   const { id } = req.params;
+  const initialCount = (db.users || []).length;
   db.users = (db.users || []).filter(u => u.id !== id);
+  
+  if (db.users.length === initialCount) {
+    return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+  }
+  
   saveDB(db);
   res.json({ success: true, message: 'Usuário removido com sucesso' });
 });
@@ -84,9 +90,14 @@ app.put('/api/properties/:id', (req, res) => {
 app.delete('/api/properties/:id', (req, res) => {
   const db = loadDB();
   const { id } = req.params;
-  db.properties = db.properties.filter(p => p.id !== id);
-  saveDB(db);
+  const initialCount = (db.properties || []).length;
+  db.properties = (db.properties || []).filter(p => p.id !== id);
   
+  if (db.properties.length === initialCount) {
+    return res.status(404).json({ success: false, message: 'Imóvel não encontrado' });
+  }
+  
+  saveDB(db);
   res.json({ success: true, message: 'Imóvel excluído com sucesso' });
 });
 
@@ -191,6 +202,10 @@ app.post('/api/payments/checkout', (req, res) => {
   const db = loadDB();
   const { propertyId, plan, method } = req.body;
   
+  if (!propertyId) {
+    return res.status(400).json({ success: false, message: 'propertyId é obrigatório' });
+  }
+
   const propIndex = db.properties.findIndex(p => p.id === propertyId);
   if (propIndex !== -1) {
     db.properties[propIndex].priceReduced = true;
@@ -204,17 +219,24 @@ app.post('/api/payments/checkout', (req, res) => {
   const tx = {
     id: `tx-${Date.now()}`,
     propertyId,
-    planName: plan?.name,
-    amount: plan?.price || 49.90,
-    method,
+    planName: plan?.name || 'Plano Destaque ImóvelHUB',
+    amount: Number(plan?.price) || 49.90,
+    method: method || 'PIX Instantâneo',
     status: 'APROVADO',
     createdAt: new Date().toISOString()
   };
   
+  db.transactions = db.transactions || [];
   db.transactions.unshift(tx);
   saveDB(db);
   
   res.json({ success: true, data: tx });
+});
+
+// 8.1. GET /api/transactions
+app.get('/api/transactions', (req, res) => {
+  const db = loadDB();
+  res.json({ success: true, data: db.transactions || [] });
 });
 
 // 9. GET & POST /api/proposals (Propostas Formais de Compra)

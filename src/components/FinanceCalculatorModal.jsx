@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { 
   X, 
-  Calculator, 
-  DollarSign, 
-  PieChart, 
-  ShieldCheck, 
-  ArrowRight, 
-  Building2, 
-  CheckCircle2, 
-  TrendingDown,
-  Info
+  Calculator
 } from 'lucide-react';
 
 const BANKS_DATA = [

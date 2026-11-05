@@ -69,7 +69,16 @@ export default function PropertyCard({
 
   return (
     <div 
+      role="article"
+      tabIndex={0}
+      aria-label={`Ver detalhes do imóvel: ${property.title}`}
       onClick={() => onSelectProperty(property)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelectProperty(property);
+        }
+      }}
       style={{
         backgroundColor: 'var(--bg-card)',
         borderRadius: 'var(--radius-md)',

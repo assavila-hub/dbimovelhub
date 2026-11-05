@@ -52,10 +52,12 @@
   --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.4);
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
   margin: 0;
-  padding: 0;
 }
 
 html, body {
@@ -505,4 +507,23 @@ input:focus, select:focus, textarea:focus {
 }
 .header-top-banner::-webkit-scrollbar {
   display: none;
+}
+
+/* 7. Mobile Drawer Overlay & Content (with 100vh / 100dvh cascaded fallbacks) */
+.mobile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+}
+
+.mobile-drawer-content {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
 }

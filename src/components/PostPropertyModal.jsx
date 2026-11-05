@@ -165,7 +165,7 @@ export default function PostPropertyModal({
           city: data.city || prev.city,
           state: data.state || prev.state,
           neighborhood: data.neighborhood || prev.neighborhood,
-          address: data.address ? `${data.address}, ${data.neighborhood}` : prev.address
+          address: data.street || prev.address
         }));
       }
     }
@@ -221,6 +221,39 @@ export default function PostPropertyModal({
     }
     const generatedCode = `HUB-${nextNum}`;
     setCreatedCode(generatedCode);
+    // Resolve real geocoded coordinates based on selected city/state
+    const cityCoords = {
+      'São Paulo': { lat: -23.5505, lng: -46.6333 },
+      'Rio de Janeiro': { lat: -22.9068, lng: -43.1729 },
+      'Curitiba': { lat: -25.4284, lng: -49.2733 },
+      'Belo Horizonte': { lat: -19.9167, lng: -43.9345 },
+      'Porto Alegre': { lat: -30.0346, lng: -51.2177 },
+      'Brasília': { lat: -15.7975, lng: -47.8919 },
+      'Salvador': { lat: -12.9777, lng: -38.5016 },
+      'Florianópolis': { lat: -27.5954, lng: -48.5480 },
+      'Fortaleza': { lat: -3.7319, lng: -38.5267 },
+      'Recife': { lat: -8.0476, lng: -34.8770 },
+      'Goiânia': { lat: -16.6869, lng: -49.2648 },
+      'Campinas': { lat: -22.9056, lng: -47.0608 },
+      'Santos': { lat: -23.9608, lng: -46.3336 }
+    };
+
+    let targetLat = -23.5505;
+    let targetLng = -46.6333;
+
+    if (formData.city && cityCoords[formData.city]) {
+      targetLat = cityCoords[formData.city].lat;
+      targetLng = cityCoords[formData.city].lng;
+    } else if (formData.state === 'PR') {
+      targetLat = -25.4284; targetLng = -49.2733;
+    } else if (formData.state === 'RJ') {
+      targetLat = -22.9068; targetLng = -43.1729;
+    } else if (formData.state === 'MG') {
+      targetLat = -19.9167; targetLng = -43.9345;
+    } else if (formData.state === 'RS') {
+      targetLat = -30.0346; targetLng = -51.2177;
+    }
+
     const newProp = {
       id: `prop-${Date.now()}`,
       code: generatedCode,
@@ -242,8 +275,8 @@ export default function PostPropertyModal({
       state: formData.state,
       neighborhood: formData.neighborhood,
       address: formData.address || `${formData.neighborhood}, ${formData.city}`,
-      lat: -23.567 + (Math.random() - 0.5) * 0.1,
-      lng: -46.662 + (Math.random() - 0.5) * 0.1,
+      lat: Number((targetLat + (Math.random() - 0.5) * 0.02).toFixed(6)),
+      lng: Number((targetLng + (Math.random() - 0.5) * 0.02).toFixed(6)),
       isVerifiedHub: true,
       isVerifiedQuintoAndar: true,
       isLaunch: false,

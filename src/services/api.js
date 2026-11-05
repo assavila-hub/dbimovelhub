@@ -2,8 +2,8 @@ import { supabase } from './supabase.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 const isLocalEnv = typeof window !== 'undefined'
-  ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !!import.meta.env.VITE_API_URL)
-  : false;
+  ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || import.meta.env.VITE_USE_EXPRESS_FALLBACK === 'true' || !!import.meta.env.VITE_API_URL)
+  : (import.meta.env?.VITE_USE_EXPRESS_FALLBACK === 'true' || false);
 
 // 1. Fetch Properties (Supabase First, with fallback)
 export async function fetchProperties() {
@@ -307,9 +307,10 @@ export async function registerUser({ name, email, password, role, phone, creci }
     }
 
     // Trigger official Supabase confirmation email with production Vercel redirect URL
+    let authUserId = null;
     try {
       const redirectOrigin = typeof window !== 'undefined' ? `${window.location.origin}/` : 'https://dbimovelhub.vercel.app/';
-      await supabase.auth.signUp({
+      const authRes = await supabase.auth.signUp({
         email: cleanEmail,
         password: password,
         options: {
@@ -317,12 +318,13 @@ export async function registerUser({ name, email, password, role, phone, creci }
           data: { name: name.trim(), role: role || 'buyer', phone: phone || '', creci: creci || null }
         }
       });
+      authUserId = authRes?.data?.user?.id || authRes?.user?.id || null;
     } catch (authErr) {
       console.warn("Supabase auth signUp notification:", authErr);
     }
 
     const newUser = {
-      id: `user-${Date.now()}`,
+      id: authUserId || `user-${Date.now()}`,
       name: name.trim(),
       email: cleanEmail,
       password,
@@ -510,4 +512,64 @@ export async function createUser(userData) {
     console.error("Error creating user in Supabase:", err);
   }
   return userData;
+}
+
+// 18. Fetch Schedules (Visitas Agendadas)
+export async function fetchSchedules() {
+  try {
+    const { data, error } = await supabase
+      .from('schedules')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error && data && data.length > 0) return data;
+  } catch (_) {}
+
+  if (isLocalEnv) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/schedules`);
+      const json = await res.json();
+      if (json.data && json.data.length > 0) return json.data;
+    } catch (_) {}
+  }
+  return null;
+}
+
+// 19. Fetch Proposals (Propostas Formais)
+export async function fetchProposals() {
+  try {
+    const { data, error } = await supabase
+      .from('proposals')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error && data && data.length > 0) return data;
+  } catch (_) {}
+
+  if (isLocalEnv) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/proposals`);
+      const json = await res.json();
+      if (json.data && json.data.length > 0) return json.data;
+    } catch (_) {}
+  }
+  return null;
+}
+
+// 20. Fetch Transactions (Financeiro Gateway)
+export async function fetchTransactions() {
+  try {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error && data && data.length > 0) return data;
+  } catch (_) {}
+
+  if (isLocalEnv) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/transactions`);
+      const json = await res.json();
+      if (json.data && json.data.length > 0) return json.data;
+    } catch (_) {}
+  }
+  return null;
 }

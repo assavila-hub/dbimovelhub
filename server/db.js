@@ -46,7 +46,7 @@ const defaultData = {
   ]
 };
 
-// Ensure data file exists
+// Ensure data file exists with corruption recovery
 export function loadDB() {
   try {
     if (!fs.existsSync(DB_FILE)) {
@@ -54,7 +54,21 @@ export function loadDB() {
       return defaultData;
     }
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    const parsed = JSON.parse(raw);
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (parseErr) {
+      console.error("Corrupted DB file detected. Creating backup and reinitializing with defaultData...", parseErr);
+      const corruptBackup = `${DB_FILE}.corrupt-${Date.now()}`;
+      try {
+        fs.writeFileSync(corruptBackup, raw, 'utf-8');
+        console.warn(`Corrupted file backed up to: ${corruptBackup}`);
+      } catch (backupErr) {
+        console.error("Failed to backup corrupt DB file:", backupErr);
+      }
+      fs.writeFileSync(DB_FILE, JSON.stringify(defaultData, null, 2), 'utf-8');
+      return defaultData;
+    }
 
     // Initialize default properties only if empty or missing
     if (!parsed.properties || !Array.isArray(parsed.properties) || parsed.properties.length === 0) {
@@ -67,6 +81,10 @@ export function loadDB() {
       saveDB(parsed);
     }
 
+    if (!parsed.transactions || !Array.isArray(parsed.transactions)) {
+      parsed.transactions = [];
+    }
+
     return parsed;
   } catch (err) {
     console.error("Error loading DB file:", err);
@@ -74,10 +92,28 @@ export function loadDB() {
   }
 }
 
+// Asynchronous atomic save to prevent event loop blocking and partial write corruption
+export async function saveDBAsync(data) {
+  const tmpFile = `${DB_FILE}.tmp-${Date.now()}`;
+  try {
+    const jsonStr = JSON.stringify(data, null, 2);
+    await fs.promises.writeFile(tmpFile, jsonStr, 'utf-8');
+    await fs.promises.rename(tmpFile, DB_FILE);
+  } catch (err) {
+    console.error("Error saving DB file asynchronously:", err);
+    try {
+      if (fs.existsSync(tmpFile)) await fs.promises.unlink(tmpFile);
+    } catch (_) {}
+  }
+}
+
 export function saveDB(data) {
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    const tmpFile = `${DB_FILE}.tmp-${Date.now()}`;
+    const jsonStr = JSON.stringify(data, null, 2);
+    fs.writeFileSync(tmpFile, jsonStr, 'utf-8');
+    fs.renameSync(tmpFile, DB_FILE);
   } catch (err) {
-    console.error("Error saving DB file:", err);
+    console.error("Error saving DB file synchronously:", err);
   }
 }

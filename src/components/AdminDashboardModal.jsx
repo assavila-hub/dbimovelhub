@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   Building2, 
@@ -46,6 +46,7 @@ import {
   Download
 } from 'lucide-react';
 import AdminAnalyticsCharts from './AdminAnalyticsCharts';
+import { fetchSchedules, fetchProposals, fetchTransactions } from '../services/api';
 
 const EMOJI_ICONS = ['🏢', '🏡', '🏞️', '🏬', '🚜', '🏖️', '🏰', '🏭', '🏨', '📦', '⛵', '🌿', '🔑', '🏠'];
 
@@ -226,22 +227,42 @@ export default function AdminDashboardModal({
     brandName: 'ImóvelHUB'
   });
 
-  // Schedules state
-  const [schedules] = useState([
+  // Schedules state (Synced with API)
+  const [schedules, setSchedules] = useState([
     { id: 'sch-1', propertyTitle: 'High Line Batel Curitiba', clientName: 'Dr. Fernando Guimarães', clientPhone: '(41) 99123-8899', date: '20/08/2026', time: '14:30', type: 'Presencial', status: 'Confirmada' },
     { id: 'sch-2', propertyTitle: 'Apartamento em Moema', clientName: 'Mariana Silveira', clientPhone: '(11) 98765-1122', date: '22/08/2026', time: '10:00', type: 'Tour Virtual', status: 'Pendente' }
   ]);
 
-  // Proposals state
-  const [proposals] = useState([
+  // Proposals state (Synced with API)
+  const [proposals, setProposals] = useState([
     { id: 'prop-formal-1', propertyTitle: 'High Line Batel Curitiba', proposerName: 'Dr. Fernando Guimarães', originalPrice: 1650000, offeredPrice: 1580000, paymentMethod: 'Financiamento Caixa (Entrada R$ 450k)', status: 'Em Análise' }
   ]);
 
-  // Financial Transactions Mock
-  const transactions = [
+  // Financial Transactions state (Synced with API)
+  const [transactions, setTransactions] = useState([
     { id: 'tx-1001', propTitle: 'High Line Batel Curitiba', plan: 'Plano Ultra VIP + Super SEO Google & Bing', amount: 149.90, method: 'PIX Instantâneo', date: '14/08/2026', status: 'Aprovado' },
     { id: 'tx-1002', propTitle: 'Apartamento em Moema', plan: 'Plano Super Destaque ZAP', amount: 49.90, method: 'PIX Instantâneo', date: '14/08/2026', status: 'Aprovado' }
-  ];
+  ]);
+
+  // Fetch live API data when dashboard is opened
+  useEffect(() => {
+    if (!isOpen) return;
+    async function loadAdminData() {
+      try {
+        const [apiSchedules, apiProposals, apiTransactions] = await Promise.all([
+          fetchSchedules(),
+          fetchProposals(),
+          fetchTransactions()
+        ]);
+        if (apiSchedules && apiSchedules.length > 0) setSchedules(apiSchedules);
+        if (apiProposals && apiProposals.length > 0) setProposals(apiProposals);
+        if (apiTransactions && apiTransactions.length > 0) setTransactions(apiTransactions);
+      } catch (err) {
+        console.warn("Could not load remote admin data, falling back to local state:", err);
+      }
+    }
+    loadAdminData();
+  }, [isOpen]);
 
   // Calculated Analytics
   const totalProperties = properties.length;

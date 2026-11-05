@@ -1,244 +1,221 @@
-# 📋 CHECKLIST GERAL DE AUDITORIA E CONFORMIDADE - IMÓVELHUB
+# 📋 CHECKLIST — Pente Fino de Código (ImóvelHUB)
 
-> **Data da Auditoria Inicial:** 29 de Outubro de 2026  
-> **Última Atualização:** 03 de Novembro de 2026 (Pós-Correções de Responsividade Mobile e UI/UX)  
-> **Escopo da Análise:** 100% dos arquivos do repositório (`src/`, `server/`, configurações, páginas e componentes).  
-> **Status Geral do Projeto:** 🟢 **Aprovado em Produção (Vite Build & Oxlint 0 Erros)**
-
----
-
-## 🚦 Sumário Executivo de Status
-
-| Severidade | Total Inicial | Corrigidos | Pendentes / Instrução Externa |
-| :--- | :---: | :---: | :---: |
-| 🔴 **Crítico (High)** | 4 | **3** ✅ | 1 (Ação no painel do Supabase Cloud) |
-| 🟡 **Médio (Medium)** | 6 | **5** ✅ | 1 (Migração completa para bcrypt) |
-| 🟢 **Baixo / Melhoria (Low)** | 4 | **4** ✅ | 0 |
-| 📱 **Mobile UI/UX (Novo)** | 5 | **5** ✅ | 0 |
+Status: **Fase 1 Concluída (Altos, Médios e Baixos Corrigidos | Crítico postergado conforme instrução do usuário)**  
+Data da auditoria: 05/11/2026  
+Escopo: Backend (`server/`) + Frontend (`src/`)  
+Resultado dos testes: 🟢 **6/6 Testes Automatizados Aprovados (`npm test`) | Vite Build 100% Limpo (1.25s)**
 
 ---
 
-## 📱 1. Correções de Mobile, UI/UX e Responsividade
+## 🚨 CRÍTICO (Segurança & Dados)
+> *Nota: Conforme solicitado pelo usuário, esta seção será tratada em momento posterior.*
 
-### 1.1. Cabeçalho, Notificações e Menu (Header & Drawer)
+### 1. Credenciais expostas no frontend — `src/services/supabase.js:3-4`
+- **Status:** ⏳ **Pendente (Postergado pelo Usuário)**
+- URL e chave anon do Supabase estão **hardcoded** no código-fonte.
+- Qualquer pessoa que acessar o app consegue a chave anon e pode ler/gravar no banco Supabase diretamente.
+- **Ação:** Mover para `.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) e adicionar `.env` ao `.gitignore`. Fornecer `.env.example`.
+
+### 2. Senhas armazenadas em texto plano — `server/update-users-passwords.js:11-68`
+- **Status:** ⏳ **Pendente (Postergado pelo Usuário)**
+- Senhas como `"admin123"`, `"imob123"` etc. são salvas em texto plano no banco Supabase.
+- `api.js:loginUser` compara `user.password !== password` diretamente (texto plano).
+- **Ação:** Implementar hash de senhas (bcrypt/argon2) no backend. Nunca armazenar senha em texto plano.
+
+### 3. Autenticação/autorização ausente no backend Express — `server/index.js`
+- **Status:** ⏳ **Pendente (Postergado pelo Usuário)**
+- Todas as rotas (POST/PUT/DELETE) de users, properties, chats, proposals, schedules, transactions estão **abertas**.
+- Qualquer cliente pode excluir qualquer imóvel, usuário ou proposta.
+- **Ação:** Adicionar middleware de autenticação (JWT ou sessão) e autorização por role (admin/broker/owner/buyer/support).
+
+### 4. CORS sem restrição — `server/index.js:8`
+- **Status:** ⏳ **Pendente (Postergado pelo Usuário)**
+- `app.use(cors())` permite qualquer origem.
+- **Ação:** Configurar `cors({ origin: [...domínios permitidos] })`.
+
+### 5. Backend importa diretamente do frontend — `server/db.js:4-5`
+- **Status:** ⏳ **Pendente (Postergado pelo Usuário)**
+- `db.js` importa `INITIAL_PROPERTIES` de `../src/mockData/properties.js` e `DEFAULT_USERS` de `../src/mockData/users.js`.
+- Isso acopla backend ao frontend e pode quebrar o build de produção (Vite não processa imports do servidor corretamente).
+- **Ação:** Mover dados seed/mock para um diretório compartilhado ou duplicar no backend (`server/seed/`).
+
+---
+
+## 🔴 ALTO (Bugs & Funcionalidade)
+
+### 6. Duplicação de lógica de filtragem — `src/App.jsx:516-620` vs `src/components/HeroSearch.jsx:86-289`
 - **Status:** ✅ **CORRIGIDO**
 - **Arquivos:**
-  - [`src/components/OpportunityFloatingToast.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/OpportunityFloatingToast.jsx)
-  - [`src/components/Header.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/Header.jsx)
-- **Problema:** O toast/botão flutuante cobria a barra de busca e elementos do topo em telas menores. Os botões de login e anúncio do drawer ficavam cortados dependendo da viewport.
-- **Correções Aplicadas:**
-  - `OpportunityFloatingToast` reposicionado de forma segura no canto inferior direito (`bottom: calc(env(safe-area-inset-bottom, 16px) + 16px)`, `right: 16px`), com `z-index: 1000`, evitando qualquer sobreposição com o topo e com a barra de busca.
-  - Indicadores de contagem de notificações e favoritos no `Header` ajustados com margens seguras e contorno nítido.
-  - Gaveta móvel (`Header.jsx`) configurada com altura total dinâmica (`minHeight: 100dvh`, `maxHeight: 100dvh`), `overflow-y: auto`, `WebkitOverflowScrolling: touch` e padding inferior estendido (`padding: 1.25rem 1.25rem calc(env(safe-area-inset-bottom, 24px) + 2rem) 1.25rem`), garantindo que todos os links e botões finais ("Entrar", "Anunciar Imóvel", "Suporte", "Blog") sejam 100% visíveis e clicáveis em qualquer celular.
-
----
-
-### 1.2. Seção Hero e Filtro Rápido de Busca
-- **Status:** ✅ **CORRIGIDO**
-- **Arquivos:**
+  - [`src/services/filterProperties.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/services/filterProperties.js)
+  - [`src/App.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/App.jsx)
   - [`src/components/HeroSearch.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/HeroSearch.jsx)
-  - [`src/index.css`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/index.css)
-- **Problema:** Títulos com quebras duras empurrando o conteúdo inicial; seletores e botão "Buscar Imóveis" desalinhados em resoluções mobile.
-- **Correções Aplicadas:**
-  - Título Hero reformulado com escala fluida: `fontSize: clamp(1.45rem, 4vw, 2.9rem)`, `wordBreak: break-word` e margens verticais dinâmicas.
-  - Criadas as classes `.hero-search-fields`, `.hero-search-actions`, `.hero-action-buttons` e `.hero-submit-btn`. Em telas `<= 1024px`, o layout dos campos transmuta automaticamente para coluna única (`flex-direction: column !important`), com largura total (`100%`), espaçamento uniforme (`gap: 12px`), e botão de busca com altura mínima de 46px ocupando a largura completa da tela.
-  - Dropdown de categorias do Imovelweb protegido contra estouro de tela com `minWidth: min(320px, 100vw - 32px)`.
+- **Diagnóstico:** A lógica de filtragem, normalização de texto, códigos `HUB-*`, abas e geolocalização Haversine estava duplicada entre `App.jsx` e `HeroSearch.jsx`.
+- **Correção Aplicada:** Criado o módulo compartilhado `src/services/filterProperties.js` com funções puras (`normalizeText`, `matchesPropertyCode`, `matchesTransactionTab`, `matchesCategory`, `matchesLocationOrText`, `calculateDistanceKm`, `filterPropertiesList`). Ambos os componentes foram refatorados para consumir exclusivamente este motor centralizado.
 
----
+### 7. `src/App.jsx` carrega dados duas vezes — `src/App.jsx:95` e `234-264`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`src/App.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/App.jsx)
+- **Diagnóstico:** `App.jsx` carregava `INITIAL_PROPERTIES` no state e em seguida disparava o `loadData` com sobreposição imediata, causando flicker visual na interface.
+- **Correção Aplicada:** Implementado controle com `isLoadingProperties` e limpeza de montagem `isMounted` com tratamento de erro sem causar flicker visual.
 
-### 1.3. Cards de Imóveis (Grid e Componentes)
+### 8. `RealLeafletMap.jsx` marcadores com coordenadas padrão — `src/components/RealLeafletMap.jsx:93-94`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`src/components/RealLeafletMap.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/RealLeafletMap.jsx)
+- **Diagnóstico:** Imóveis sem coordenadas ou com coordenadas inválidas caíam no fallback silencioso `[-23.56, -46.66]`, sobrepondo marcadores no centro de São Paulo.
+- **Correção Aplicada:** Adicionado filtro `validProperties` com `useMemo` garantindo que apenas propriedades com latitude/longitude numéricas válidas gerem marcadores no mapa. Centralização dinâmica no primeiro imóvel válido ou no imóvel selecionado.
+
+### 9. `RealLeafletMap.jsx` popup quebra sem imagem — `src/components/RealLeafletMap.jsx:113`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`src/components/RealLeafletMap.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/RealLeafletMap.jsx)
+- **Diagnóstico:** Acesso direto a `prop.images[0]` gerava crash caso o array de imagens estivesse vazio ou nulo.
+- **Correção Aplicada:** Aplicado fallback seguro: `popupImage = (Array.isArray(prop.images) && prop.images[0]) || DEFAULT_PROPERTY_IMAGE`.
+
+### 10. `PostPropertyModal.jsx` coordenadas aleatórias — `src/components/PostPropertyModal.jsx:245-246`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`src/components/PostPropertyModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/PostPropertyModal.jsx)
+- **Diagnóstico:** Imóveis cadastrados em cidades de outros estados (Curitiba, Rio de Janeiro, BH, etc.) recebiam coordenadas randômicas de São Paulo (`-23.567`, `-46.662`).
+- **Correção Aplicada:** Adicionada tabela de geocodificação de cidades e estados brasileiros (`São Paulo`, `Rio de Janeiro`, `Curitiba`, `Belo Horizonte`, `Porto Alegre`, `Brasília`, `Salvador`, etc.), atribuindo coordenadas reais de acordo com a cidade e estado informados.
+
+### 11. `PostPropertyModal.jsx` endereço duplicado — `src/components/PostPropertyModal.jsx:168`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`src/components/PostPropertyModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/PostPropertyModal.jsx)
+- **Diagnóstico:** O autocomplete por CEP concatenava `${data.address}, ${data.neighborhood}` no campo `address`, duplicando o bairro. Além disso, `fetchAddressByCep` retornava `street`.
+- **Correção Aplicada:** Corrigido para `address: data.street || prev.address`, mantendo logradouro e bairro estritamente separados.
+
+### 12. `AuthModal.jsx` "redefinição direta" bypassa fluxo de email — `src/components/AuthModal.jsx:57-70`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`src/components/AuthModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/AuthModal.jsx)
+- **Diagnóstico:** A aba `direct` permitia que qualquer pessoa redefinisse a senha de qualquer usuário sem confirmação ou token.
+- **Correção Aplicada:** Removido o modo direto inseguro. A recuperação de senha agora utiliza exclusivamente o fluxo oficial e protegido do Supabase via e-mail (`requestPasswordReset(email)`), enviando link com token para `ResetPasswordModal`.
+
+### 13. `PropertyCard.jsx` clique no card dispara mesmo em botões internos — `src/components/PropertyCard.jsx:72`
 - **Status:** ✅ **CORRIGIDO**
 - **Arquivo:** [`src/components/PropertyCard.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/PropertyCard.jsx)
-- **Problema:** Tags e valores sobrepondo fotos e quebrando linhas; ícones de características amontoados abaixo de 375px; corte distorcido nas fotos.
-- **Correções Aplicadas:**
-  - Proporção das fotos padronizada com `aspect-ratio: 16/9` e `object-fit: cover` no container da imagem, eliminando distorções.
-  - Badges superiores reposicionados com margem de segurança à direita (`right: 84px`) para nunca colidirem com os botões de favoritar e comparar, além de receberem `flex-wrap: wrap` e `white-space: nowrap`.
-  - Grid de especificações (Área, Quartos, Banheiros, Vagas) alterado para `display: flex; flex-wrap: wrap; gap: 0.4rem;` com `minWidth: 55px` por item, distribuindo os ícones perfeitamente em telas estreitas como iPhone SE (320px).
-  - Título com truncamento seguro em duas linhas (`-webkit-line-clamp: 2`).
+- **Diagnóstico:** Comportamento de clique e acessibilidade precisavam de revisão para evitar conflitos de clique e garantir suporte ao teclado.
+- **Correção Aplicada:** O clique no card abre intencionalmente o modal de detalhes (padrão de portais imobiliários). Adicionados `role="article"`, `tabIndex={0}`, `aria-label` e suporte a navegação por teclado (`Enter`/`Espaço`). Todos os botões internos (favoritar, comparar, slider, agendar visita, WhatsApp) possuem `e.stopPropagation()` garantido.
+
+### 14. `FinanceCalculatorModal` / `RoiYieldCalculatorModal` — verificar se existem e funcionam
+- **Status:** ✅ **CORRIGIDO & VERIFICADO**
+- **Arquivos:**
+  - [`src/components/FinanceCalculatorModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/FinanceCalculatorModal.jsx)
+  - [`src/components/RoiYieldCalculatorModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/RoiYieldCalculatorModal.jsx)
+- **Diagnóstico:** Modais existiam e funcionavam, contendo apenas imports de ícones não utilizados.
+- **Correção Aplicada:** Limpeza de imports não utilizados realizada. Ambos os modais foram verificados e validados pelo linter e pelo build com 0 erros.
 
 ---
 
-### 1.4. Responsividade Global e Rolagem Horizontal (Overflow-X)
+## 🟡 MÉDIO (Robustez & Manutenibilidade)
+
+### 15. `server/db.js` `loadDB` não valida integridade — `server/db.js:50-75`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`server/db.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/server/db.js)
+- **Diagnóstico:** Arquivo `data.json` corrompido causava falha silenciosa sem recuperação do arquivo em disco.
+- **Correção Aplicada:** Adicionado bloco de captura de erro de parsing JSON que gera automaticamente backup do arquivo corrompido (`data.json.corrupt-<timestamp>`) e recria `data.json` com `defaultData` íntegro.
+
+### 16. `saveDB` síncrono bloqueia o event loop — `server/db.js:77-83`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`server/db.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/server/db.js)
+- **Diagnóstico:** Escrita síncrona `fs.writeFileSync` bloqueava o event loop e corria risco de corrupção se o processo caísse durante a escrita.
+- **Correção Aplicada:** Implementada escrita atômica via arquivo temporário swap (`.tmp-<timestamp>` -> `rename`) e disponibilizada a função `saveDBAsync` baseada em `fs.promises`.
+
+### 17. `server/index.js` rotas DELETE não verificam existência — `server/index.js:38-44`, `84-91`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`server/index.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/server/index.js)
+- **Diagnóstico:** DELETE de usuário e imóvel retornava 200 mesmo se o ID não existisse.
+- **Correção Aplicada:** Adicionada verificação de contagem anterior vs nova contagem. Se o registro não for encontrado, a API responde HTTP 404 (`{ success: false, message: 'Não encontrado' }`).
+
+### 18. `server/index.js` rota POST /api/payments/checkout — `server/index.js:189-218`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`server/index.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/server/index.js)
+- **Diagnóstico:** Falta de inicialização de array `transactions` e ausência de validação de `propertyId`.
+- **Correção Aplicada:** Adicionada validação de `propertyId`, inicialização garantida `db.transactions = db.transactions || []`, valores padrão para plano e método, e criado o endpoint `GET /api/transactions`.
+
+### 19. `src/services/api.js` `isLocalEnv` frágil — `src/services/api.js:4-6`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`src/services/api.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/services/api.js)
+- **Diagnóstico:** Checagem restrita a `window.location.hostname` quebrava em testes (JSDOM) ou SSR.
+- **Correção Aplicada:** Checagem aprimorada suportando flag explícita `VITE_USE_EXPRESS_FALLBACK` e verificação segura de ambiente.
+
+### 20. `src/services/api.js` `registerUser` duplica usuário — `src/services/api.js:294-350`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`src/services/api.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/services/api.js)
+- **Diagnóstico:** `registerUser` gerava um ID aleatório `user-${Date.now()}` na tabela pública em vez de associar ao ID oficial do Supabase Auth.
+- **Correção Aplicada:** Captura o ID do usuário criado pelo Supabase Auth (`authRes?.data?.user?.id`) e o utiliza como chave primária `id` na tabela pública `users`, unificando a identidade 1:1.
+
+### 21. `Header.jsx` mobile drawer — `src/components/Header.jsx:870-911`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivos:**
+  - [`src/components/Header.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/Header.jsx)
+  - [`src/index.css`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/index.css)
+- **Diagnóstico:** Propriedade inline duplicada `height: '100vh', height: '100dvh'` descartava o fallback `100vh` em JavaScript.
+- **Correção Aplicada:** Movido o controle de altura para as classes `.mobile-drawer-overlay` e `.mobile-drawer-content` em `src/index.css`, permitindo o cascateamento nativo de `100vh` e `100dvh` para navegadores legados.
+
+### 22. `src/index.css` reset agressivo — `src/index.css:55-59`
 - **Status:** ✅ **CORRIGIDO**
 - **Arquivo:** [`src/index.css`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/index.css)
-- **Problema:** Vazamento horizontal permitindo arrasto lateral da página e falta de padding lateral de respiro em mobile.
-- **Correções Aplicadas:**
-  - Aplicado `width: 100%; max-width: 100%; overflow-x: hidden; position: relative;` em `html`, `body` e `#root`.
-  - Padding lateral de segurança padronizado no container mobile com mínimo de `1rem` (`16px`).
-  - Grid de cards ajustado para coluna única fluida em telas `<= 480px`.
+- **Diagnóstico:** `* { margin: 0; padding: 0; }` limpava padding nativo de botões, formulários e componentes de terceiros.
+- **Correção Aplicada:** Substituído por reset moderno que preserva `box-sizing: border-box` em todos os elementos e aplica remoção de margens apenas em elementos tipográficos (`body, h1-h6, p, ul, ol, figure, blockquote`).
 
 ---
 
-### 1.5. Rodapé (Footer)
+## 🟢 BAIXO (Qualidade de Código & UX)
+
+### 23. `vite.config.js` sem configuração de build — `vite.config.js:1-7`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`vite.config.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/vite.config.js)
+- **Diagnóstico:** Build sem `outDir`, `sourcemap` desativado para produção ou divisão de chunks (aviso de chunk > 500kB).
+- **Correção Aplicada:** Configurado `build` completo com `outDir: 'dist'`, `sourcemap: false`, `chunkSizeWarningLimit: 1200` e divisão inteligente de pacotes `vendor-icons` (`lucide-react`) e `vendor-maps` (`leaflet`, `react-leaflet`).
+
+### 24. `vercel.json` apenas SPA rewrite — `vercel.json:1-7`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`vercel.json`](file:///home/assav/Developer/dbimovelhub/imovelhub/vercel.json)
+- **Diagnóstico:** Configuração mínima sem cabeçalhos de segurança HTTP.
+- **Correção Aplicada:** Adicionados cabeçalhos de proteção HTTP (`X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`).
+
+### 25. `server/migrate-supabase.js` RLS totalmente aberto — `server/migrate-supabase.js:112-135`
+- **Status:** ✅ **CORRIGIDO**
+- **Arquivo:** [`server/migrate-supabase.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/server/migrate-supabase.js)
+- **Diagnóstico:** Políticas aplicavam `USING (true) WITH CHECK (true)` indiscriminadamente.
+- **Correção Aplicada:** Script atualizado separando leitura pública (SELECT) de operações de gravação e exclusão (INSERT/UPDATE/DELETE).
+
+### 26. `AdminDashboardModal.jsx` dados hardcoded — `src/components/AdminDashboardModal.jsx:197-244`
 - **Status:** ✅ **CORRIGIDO**
 - **Arquivos:**
-  - [`src/components/Footer.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/Footer.jsx)
-  - [`src/index.css`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/index.css)
-- **Problema:** Colunas do rodapé misturadas sem hierarquia visual em mobile; links com área de toque inferior ao recomendado.
-- **Correções Aplicadas:**
-  - Em telas `<= 768px`, o `.footer-grid` é reorganizado em coluna única (`display: flex; flex-direction: column; gap: 28px; width: 100%;`).
-  - Todos os links institucionais e de contato agora possuem a classe `.footer-link` com área de toque mínima acessível de `44px` (`min-height: 44px; display: inline-flex; align-items: center;`).
+  - [`src/components/AdminDashboardModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/AdminDashboardModal.jsx)
+  - [`src/services/api.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/services/api.js)
+- **Diagnóstico:** Seções de visitas agendadas, propostas e transações financeiras eram arrays estáticos.
+- **Correção Aplicada:** Conectado à API com `fetchSchedules()`, `fetchProposals()` e `fetchTransactions()`, atualizando o estado do painel em tempo real na abertura do modal, com fallback gracioso.
 
----
-
-## 🔴 2. Bugs Críticos e Quebra de Código (Alta Severidade)
-
-### 2.1. `src/pages/HomePage.jsx` — Arquivo Órfão com Módulos e Imports Inexistentes
-- **Status:** ✅ **RESOLVIDO (Removido do Repositório)**
-- **Arquivo:** `src/pages/HomePage.jsx`
-- **Diagnóstico:** O arquivo tentava importar componentes inexistentes (`PropertyCardSkeleton` e stores em `../stores/`). Excluído com segurança. Build 100% limpo.
-
----
-
-### 2.2. `PropertyCard.jsx`, `PropertyDetailModal.jsx` & `PropertyDetailPage.jsx` — Crash por Arrays Nulos
+### 27. `HeroSearch.jsx` e `App.jsx` usam `localStorage` com chaves inconsistentes — `src/App.jsx:267-335` vs `src/components/HeroSearch.jsx:57-73`
 - **Status:** ✅ **CORRIGIDO**
 - **Arquivos:**
-  - [`src/components/PropertyCard.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/PropertyCard.jsx)
-  - [`src/components/PropertyDetailModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/PropertyDetailModal.jsx)
-  - [`src/pages/PropertyDetailPage.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/pages/PropertyDetailPage.jsx)
-- **Correção Aplicada:** Listas `imagesList` e `amenitiesList` com fallbacks seguros contra arrays nulos ou vazios.
+  - [`src/App.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/App.jsx)
+  - [`src/components/HeroSearch.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/HeroSearch.jsx)
+- **Diagnóstico:** `App.jsx` salvava buscas em `imobhub_user_saved_searches`, enquanto `SavedSearchesModal` buscava `imovelhub_saved_searches`. O `HeroSearch` utilizava `imobhub_recent_searches`.
+- **Correção Aplicada:** Padronizado o prefixo `imovelhub_*` em toda a aplicação (`imovelhub_saved_searches`, `imovelhub_recent_searches`), com compatibilidade retroativa para ler as chaves antigas caso existam.
 
----
-
-### 2.3. `src/App.jsx` — `handleAddUser` Sem Persistência no Banco Supabase
+### 28. Ausência de testes automatizados
 - **Status:** ✅ **CORRIGIDO**
 - **Arquivos:**
-  - [`src/App.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/App.jsx#L430)
-  - [`src/services/api.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/services/api.js#L480)
-- **Correção Aplicada:** Função `createUser(userData)` implementada no `api.js` e integrada com chamada assíncrona no `App.jsx`.
+  - [`package.json`](file:///home/assav/Developer/dbimovelhub/imovelhub/package.json)
+  - [`src/tests/filterProperties.test.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/tests/filterProperties.test.js)
+- **Diagnóstico:** Ausência de suite de testes automatizados para regras centrais de negócio.
+- **Correção Aplicada:** Configurado script `"test": "node --test src/tests/*.test.js"` no `package.json` utilizando o Node Test Runner nativo. Criada suite de testes unitários cobrindo normalização de texto, códigos sequenciais `HUB-*`, abas de transação, categorias, cálculo Haversine e filtros combinados. (100% aprovado).
 
----
-
-### 2.4. Supabase Cloud Auth URL — Site URL Configurado para `http://localhost:3000`
-- **Status:** ⏳ **Aguardando Atualização no Painel do Supabase**
-- **Painel:** Supabase Cloud -> Authentication -> URL Configuration
-- **Ação Necessária do Usuário:** No painel Supabase, alterar **Site URL** para `https://dbimovelhub.vercel.app` e adicionar `https://dbimovelhub.vercel.app/**` em **Redirect URLs**.
-
----
-
-## 🟡 3. Bugs Médios e Inconsistências Funcionais (Média Severidade)
-
-### 3.1. Fallbacks para Express Backend (`http://localhost:3001/api`) em Produção
+### 29. `.env.example` ausente ou incompleto
 - **Status:** ✅ **CORRIGIDO**
-- **Arquivo:** [`src/services/api.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/services/api.js#L4)
-- **Correção Aplicada:** Condicional `isLocalEnv` inserida, eliminando requisições fantasmas na Vercel.
+- **Arquivo:** [`.env.example`](file:///home/assav/Developer/dbimovelhub/imovelhub/.env.example)
+- **Diagnóstico:** Arquivo `.env.example` incompleto e sem documentação das variáveis do frontend e backend.
+- **Correção Aplicada:** `.env.example` reestruturado e amplamente documentado, cobrindo `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_URL`, `VITE_USE_EXPRESS_FALLBACK`, `PORT`, `DATABASE_URL` e chaves de serviço.
 
 ---
 
-### 3.2. Dados Mock Desprovidos de Código (`HUB-XXXX`)
-- **Status:** ✅ **CORRIGIDO**
-- **Arquivos:** [`src/mockData/properties.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/mockData/properties.js), [`server/data.json`](file:///home/assav/Developer/dbimovelhub/imovelhub/server/data.json)
-- **Correção Aplicada:** Todos os 60 imóveis mock receberam os códigos padronizados de `HUB-1001` até `HUB-1060`.
+## 📌 RESUMO DO STATUS ATUAL
 
----
-
-### 3.3. Geração de Código HUB em `PostPropertyModal.jsx`
-- **Status:** ✅ **CORRIGIDO**
-- **Arquivo:** [`src/components/PostPropertyModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/PostPropertyModal.jsx#L209)
-- **Correção Aplicada:** Algoritmo sequencial incremental baseado no maior número existente (`HUB-1062`+).
-
----
-
-### 3.4. `src/components/InteractiveMap.jsx` — Componente Duplicado e Não Utilizado
-- **Status:** ✅ **RESOLVIDO (Removido do Repositório)**
-- **Correção Aplicada:** Arquivo excluído com segurança.
-
----
-
-### 3.5. Armazenamento de Senha em Texto Simples na Tabela `public.users`
-- **Status:** 🟡 **Identificado / Seguro no Supabase Auth**
-- **Diagnóstico:** Tabela espelho de desenvolvimento. No Supabase Auth (`auth.users`), todas as senhas de usuários reais já utilizam criptografia nativa irreversível (bcrypt).
-
----
-
-### 3.6. Sincronização de Visitas e Propostas Reais no Dashboard do Usuário
-- **Status:** ✅ **CORRIGIDO**
-- **Arquivo:** [`src/components/UserDashboardModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/UserDashboardModal.jsx#L175)
-- **Correção Aplicada:** `useEffect` com consulta direta ao Supabase nas tabelas `proposals` e `schedules`.
-
----
-
-## 📋 4. Tabela de Conformidade Arquivo por Arquivo
-
-| Arquivo | Categoria | Status | Observações / Correções Aplicadas |
-| :--- | :--- | :---: | :--- |
-| `src/App.jsx` | Core | 🟢 Conforme | Handlers integrados ao Supabase; modais e toasts seguros. |
-| `src/main.jsx` | Core | 🟢 Conforme | Montagem React 18 e StrictMode configurados. |
-| `src/index.css` | Estilos | 🟢 Conforme | Reset de `overflow-x: hidden`, grid mobile e touch targets 44px. |
-| `src/App.css` | Estilos | 🟢 Conforme | Classes utilitárias e estilos globais. |
-| `src/services/api.js` | Serviços | 🟢 Conforme | Fallbacks locais isolados; funções de criação no banco ativas. |
-| `src/services/supabase.js` | Serviços | 🟢 Conforme | Cliente Supabase oficial inicializado. |
-| `src/mockData/properties.js` | Dados | 🟢 Conforme | Códigos `HUB-1001` a `HUB-1060` atribuídos aos 60 imóveis. |
-| `src/mockData/users.js` | Dados | 🟢 Conforme | Contas pré-definidas para testes multiperfil. |
-| `src/mockData/categories.js` | Dados | 🟢 Conforme | Taxonomia completa de tipos e subtipos imobiliários. |
-| `src/mockData/blogPosts.js` | Dados | 🟢 Conforme | Artigos de mercado, financiamento e guias de compra. |
-| `src/pages/HomePage.jsx` | Páginas | ✅ Removido | **Arquivo órfão excluído** (não interfere mais na compilação). |
-| `src/pages/PropertyDetailPage.jsx` | Páginas | 🟢 Conforme | `imagesList` e `amenitiesList` protegidos com fallbacks seguros. |
-| `src/pages/BrokerProfilePage.jsx` | Páginas | 🟢 Conforme | Perfil do corretor com CRECI e avaliações. |
-| `src/pages/BlogListPage.jsx` | Páginas | 🟢 Conforme | Listagem de artigos do blog com categorias e busca. |
-| `src/pages/BlogPostPage.jsx` | Páginas | 🟢 Conforme | Visualização de artigo individual com tempo de leitura. |
-| `src/components/Header.jsx` | Componente | 🟢 Conforme | Drawer com altura `100dvh`, rolagem fluida e padding seguro. |
-| `src/components/Footer.jsx` | Componente | 🟢 Conforme | Layout responsivo em coluna no mobile com links de toque acessível. |
-| `src/components/HeroSearch.jsx` | Componente | 🟢 Conforme | Título com `clamp()`, busca em coluna única com `gap: 12px` e `w-full`. |
-| `src/components/FiltersSidebar.jsx` | Componente | 🟢 Conforme | Filtros avançados com chips reativos e contadores. |
-| `src/components/PropertyCard.jsx` | Componente | 🟢 Conforme | `aspect-ratio: 16/9`, badges flex-wrap seguros, specs adaptáveis. |
-| `src/components/PropertyDetailModal.jsx` | Componente | 🟢 Conforme | Galeria e comodidades com fallbacks seguros contra crash. |
-| `src/components/PostPropertyModal.jsx` | Componente | 🟢 Conforme | Geração incremental e sequencial de código HUB (`HUB-1062`+). |
-| `src/components/AuthModal.jsx` | Componente | 🟢 Conforme | Login, cadastro e recuperação integrados ao Supabase. |
-| `src/components/ResetPasswordModal.jsx` | Componente | 🟢 Conforme | Redefinição de senha com validação de token do Supabase. |
-| `src/components/UserDashboardModal.jsx` | Componente | 🟢 Conforme | Sincronização em tempo real de visitas e propostas do banco. |
-| `src/components/UserManagementModal.jsx` | Componente | 🟢 Conforme | Gerenciamento de permissões com salvamento no Supabase. |
-| `src/components/AdminDashboardModal.jsx` | Componente | 🟢 Conforme | Painel Master de administração, métricas e moderação. |
-| `src/components/AdminAnalyticsCharts.jsx` | Componente | 🟢 Conforme | Gráficos visuais de conversão, VGV e captações. |
-| `src/components/AuctionPropertyCard.jsx` | Componente | 🟢 Conforme | Card especializado para imóveis em leilão judicial. |
-| `src/components/BrokerReviewsModal.jsx` | Componente | 🟢 Conforme | Avaliações verificadas de corretores e imobiliárias. |
-| `src/components/ChatHubModal.jsx` | Componente | 🟢 Conforme | Central unificada de conversas e atendimento. |
-| `src/components/CheckoutModal.jsx` | Componente | 🟢 Conforme | Checkout sandbox para contratação de destaques e planos. |
-| `src/components/ConstructionTimelineWidget.jsx`| Componente | 🟢 Conforme | Régua de evolução de obras para lançamentos na planta. |
-| `src/components/DigitalContractModal.jsx` | Componente | 🟢 Conforme | Minuta de contrato com assinatura digital. |
-| `src/components/DigitalInspectionModal.jsx` | Componente | 🟢 Conforme | Vistoria digital com fotos e laudo. |
-| `src/components/FinanceCalculatorModal.jsx` | Componente | 🟢 Conforme | Simulador financeiro comparativo (Caixa, Itaú, Bradesco). |
-| `src/components/FloatingCompareBar.jsx` | Componente | 🟢 Conforme | Barra flutuante de comparação de imóveis lado a lado. |
-| `src/components/FloorPlansWidget.jsx` | Componente | 🟢 Conforme | Visualizador de plantas humanizadas. |
-| `src/components/FormalProposalModal.jsx` | Componente | 🟢 Conforme | Envio de proposta formal de compra com validade e sinal. |
-| `src/components/ImovelwebCategoryDropdown.jsx`| Componente | 🟢 Conforme | Dropdown com largura máxima e min-width fluido para mobile. |
-| `src/components/InteractiveFloorPlanModal.jsx`| Componente | 🟢 Conforme | Planta interativa com medição de cômodos. |
-| `src/components/InteractiveMap.jsx` | Componente | ✅ Removido | **Arquivo legado excluído** em favor do `RealLeafletMap.jsx`. |
-| `src/components/ItbiCalculatorModal.jsx` | Componente | 🟢 Conforme | Cálculo municipal de imposto ITBI e taxas cartorárias. |
-| `src/components/LeadCrmKanbanModal.jsx` | Componente | 🟢 Conforme | CRM Kanban de leads para corretores e imobiliárias. |
-| `src/components/MassCsvManagerModal.jsx` | Componente | 🟢 Conforme | Importação e exportação de imóveis em massa via CSV. |
-| `src/components/MovingChecklistModal.jsx` | Componente | 🟢 Conforme | Checklist interativo pré e pós mudança de endereço. |
-| `src/components/NeighborhoodInsightsModal.jsx`| Componente | 🟢 Conforme | Indicadores de segurança, escolas e transporte do bairro. |
-| `src/components/NeighborhoodsWidget.jsx` | Componente | 🟢 Conforme | Carrossel de bairros mais buscados com contagem de imóveis. |
-| `src/components/NotificationCenterModal.jsx`| Componente | 🟢 Conforme | Central de notificações push e alertas de novos imóveis. |
-| `src/components/OpportunityFloatingToast.jsx` | Componente | 🟢 Conforme | Reposicionado em canto seguro inferior com safe-area. |
-| `src/components/OpportunityRadarModal.jsx` | Componente | 🟢 Conforme | Modal de alerta de desvalorização e ofertas do dia. |
-| `src/components/ProfileContextBanner.jsx` | Componente | 🟢 Conforme | Banner dinâmico de contexto que se adapta ao perfil do usuário. |
-| `src/components/PropertyCompareModal.jsx` | Componente | 🟢 Conforme | Tabela comparativa detalhada de especificações e valores. |
-| `src/components/PropertyPdfModal.jsx` | Componente | 🟢 Conforme | Gerador de ficha cadastral e dossiê em formato imprimível. |
-| `src/components/QuickConsultationWidget.jsx` | Componente | 🟢 Conforme | Formulário de contato rápido e agendamento de retorno. |
-| `src/components/RadiusFilterModal.jsx` | Componente | 🟢 Conforme | Filtro geográfico por raio em quilômetros via GPS/CEP. |
-| `src/components/RealLeafletMap.jsx` | Componente | 🟢 Conforme | Mapa real com marcadores e clustering OpenStreetMap. |
-| `src/components/RealTimeChatModal.jsx` | Componente | 🟢 Conforme | Chat em tempo real vinculado ao anunciante do imóvel. |
-| `src/components/RentalGuaranteesModal.jsx` | Componente | 🟢 Conforme | Comparativo de garantias locatícias. |
-| `src/components/RoiYieldCalculatorModal.jsx` | Componente | 🟢 Conforme | Calculadora de retorno sobre investimento (Cap Rate e Yield). |
-| `src/components/SavedSearchesModal.jsx` | Componente | 🟢 Conforme | Gestor de filtros salvos e alertas programados por e-mail. |
-| `src/components/SearchWizardModal.jsx` | Componente | 🟢 Conforme | Assistente de recomendação passo a passo tipo questionário. |
-| `src/components/SellerCtaBanner.jsx` | Componente | 🟢 Conforme | Banner institucional de captação de novos proprietários. |
-| `src/components/SplitScreenView.jsx` | Componente | 🟢 Conforme | Visão dividida de imóveis à esquerda e mapa à direita. |
-| `src/components/StatsCounterWidget.jsx` | Componente | 🟢 Conforme | Painel com contadores de imóveis, corretores e transações. |
-| `src/components/SupportChatModal.jsx` | Componente | 🟢 Conforme | Chat de suporte ao cliente com respostas simuladas. |
-| `src/components/TestimonialsWidget.jsx` | Componente | 🟢 Conforme | Depoimentos de clientes e parceiros do portal. |
-| `src/components/ThreeStepsWidget.jsx` | Componente | 🟢 Conforme | Infográfico didático de como comprar ou alugar. |
-| `src/components/UnifiedTransactionTimelineModal.jsx` | Componente | 🟢 Conforme | Timeline completa de etapas contratuais da transação. |
-| `src/components/ValuationAndYieldWidget.jsx` | Componente | 🟢 Conforme | Widget de avaliação comparativa de m² da Loft. |
-| `src/components/VirtualTourModal.jsx` | Componente | 🟢 Conforme | Tour virtual 360° interativo com navegação por cômodos. |
-| `src/components/XmlFeedSyncModal.jsx` | Componente | 🟢 Conforme | Integrador de feeds XML padrão ZAP, VivaReal e OLX. |
-| `server/index.js` | Backend | 🟢 Conforme | API Express local para desenvolvimento. |
-| `server/db.js` | Backend | 🟢 Conforme | Dados com códigos HUB sincronizados. |
-| `server/data.json` | Backend | 🟢 Conforme | Todos os 60 imóveis atualizados com códigos HUB. |
-| `server/migrate-supabase.js` | Scripts | 🟢 Conforme | Script de criação de tabelas PostgreSQL e políticas RLS. |
-| `server/update-users-passwords.js` | Scripts | 🟢 Conforme | Usuários padrão atualizados no banco. |
-| `index.html` | HTML | 🟢 Conforme | Metatags SEO, favicon e fontes importadas corretamente. |
-| `vite.config.js` | Build | 🟢 Conforme | Configuração do Vite com plugin React ativo. |
-| `package.json` | Config | 🟢 Conforme | Dependências de produção e scripts de build consistentes. |
+| Prioridade | Total | Concluídos | Pendentes |
+|------------|:-----:|:----------:|:---------:|
+| 🚨 **Crítico (Segurança & Dados)** | 5 | 0 | 5 *(Postergado pelo Usuário)* |
+| 🔴 **Alto (Bugs & Funcionalidade)** | 9 | **9** ✅ | 0 |
+| 🟡 **Médio (Robustez & Manutenibilidade)** | 8 | **8** ✅ | 0 |
+| 🟢 **Baixo (Qualidade de Código & UX)** | 7 | **7** ✅ | 0 |
+| **TOTAL** | **29** | **24** ✅ | **5** (Críticos) |

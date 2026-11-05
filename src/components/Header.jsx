@@ -871,14 +871,6 @@ export default function Header({
         <div 
           className="mobile-drawer-overlay"
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100vw',
-            height: '100vh',
-            height: '100dvh',
             zIndex: 999999,
             backgroundColor: 'rgba(15, 23, 42, 0.75)',
             backdropFilter: 'blur(8px)',
@@ -894,8 +886,6 @@ export default function Header({
             style={{
               width: 'min(380px, 86vw)',
               height: '100%',
-              minHeight: '100dvh',
-              maxHeight: '100dvh',
               backgroundColor: 'var(--bg-card)',
               color: 'var(--text-main)',
               boxShadow: 'var(--shadow-xl)',

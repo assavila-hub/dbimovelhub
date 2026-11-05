@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, LogIn, UserPlus, AlertCircle, Loader2, KeyRound, CheckCircle, ArrowLeft, ChevronDown, ChevronUp, Send, Sparkles } from 'lucide-react';
-import { loginUser, registerUser, requestPasswordReset, resetPasswordDirectly } from '../services/api';
+import { X, Lock, Mail, LogIn, UserPlus, AlertCircle, Loader2, KeyRound, CheckCircle, ArrowLeft, ChevronDown, ChevronUp, Send, ShieldCheck } from 'lucide-react';
+import { loginUser, registerUser, requestPasswordReset } from '../services/api';
 
 export default function AuthModal({
   isOpen,
@@ -11,9 +11,6 @@ export default function AuthModal({
   const [role, setRole] = useState('buyer'); // 'agency', 'owner', 'broker', 'buyer'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [forgotTab, setForgotTab] = useState('direct'); // 'direct' ou 'email'
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [creci, setCreci] = useState('');
@@ -54,24 +51,8 @@ export default function AuthModal({
         onClose();
       } else if (mode === 'forgot') {
         if (!email.trim()) throw new Error('Por favor, informe seu e-mail cadastrado.');
-        if (forgotTab === 'direct') {
-          if (!newPassword || newPassword.length < 6) {
-            throw new Error('A nova senha deve ter no mínimo 6 caracteres.');
-          }
-          if (newPassword !== confirmNewPassword) {
-            throw new Error('As senhas digitadas não coincidem.');
-          }
-          const res = await resetPasswordDirectly(email, newPassword);
-          setSuccessMessage(res.message);
-          setPassword(newPassword);
-          setTimeout(() => {
-            onLoginSuccess(res.user);
-            onClose();
-          }, 1800);
-        } else {
-          const res = await requestPasswordReset(email);
-          setSuccessMessage(res.message);
-        }
+        const res = await requestPasswordReset(email);
+        setSuccessMessage(res.message);
       }
     } catch (err) {
       console.error("Auth error:", err);
@@ -194,207 +175,68 @@ export default function AuthModal({
               </div>
             </div>
           ) : mode === 'forgot' ? (
-            /* MODE: FORGOT PASSWORD */
+            /* MODE: FORGOT PASSWORD (SECURE SUPABASE EMAIL RECOVERY) */
             <form onSubmit={handleSubmit}>
-              {/* Tabs for Forgot Password */}
-              <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.25rem', backgroundColor: 'var(--bg-main)', padding: '0.25rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setForgotTab('direct');
-                    setError('');
-                    setSuccessMessage('');
-                  }}
-                  style={{
-                    flex: 1,
-                    padding: '0.55rem 0.5rem',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    border: 'none',
-                    borderRadius: 'var(--radius-sm)',
-                    backgroundColor: forgotTab === 'direct' ? 'var(--color-primary)' : 'transparent',
-                    color: forgotTab === 'direct' ? '#fff' : 'var(--text-muted)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.35rem'
-                  }}
-                >
-                  <Sparkles size={14} />
-                  <span>Redefinir Imediatamente</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setForgotTab('email');
-                    setError('');
-                    setSuccessMessage('');
-                  }}
-                  style={{
-                    flex: 1,
-                    padding: '0.55rem 0.5rem',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    border: 'none',
-                    borderRadius: 'var(--radius-sm)',
-                    backgroundColor: forgotTab === 'email' ? 'var(--color-primary)' : 'transparent',
-                    color: forgotTab === 'email' ? '#fff' : 'var(--text-muted)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.35rem'
-                  }}
-                >
-                  <Mail size={14} />
-                  <span>Enviar por E-mail</span>
-                </button>
+              <div style={{
+                backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                border: '1px solid rgba(59, 130, 246, 0.25)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '0.85rem 1rem',
+                marginBottom: '1.25rem',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.65rem'
+              }}>
+                <ShieldCheck size={20} color="var(--color-primary-light)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
+                  <strong>Recuperação Segura:</strong> Digite seu e-mail cadastrado. Enviaremos um link protegido oficial do Supabase para você definir sua nova senha com segurança.
+                </div>
               </div>
 
-              {forgotTab === 'direct' ? (
-                <>
-                  <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
-                    Informe seu e-mail cadastrado e crie uma nova senha. Ela será atualizada no banco de dados Supabase na hora:
-                  </p>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
+                  E-mail Cadastrado
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="email"
+                    placeholder="seu.email@exemplo.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    style={{ width: '100%', padding: '0.65rem 0.65rem 0.65rem 2.2rem' }}
+                  />
+                  <Mail size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
+                </div>
+              </div>
 
-                  <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
-                      E-mail Cadastrado
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        type="email"
-                        placeholder="seu.email@exemplo.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        style={{ width: '100%', padding: '0.65rem 0.65rem 0.65rem 2.2rem' }}
-                      />
-                      <Mail size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
-                      Nova Senha (Mínimo 6 caracteres)
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        type="password"
-                        placeholder="••••••••"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
-                        minLength={6}
-                        style={{ width: '100%', padding: '0.65rem 0.65rem 0.65rem 2.2rem' }}
-                      />
-                      <Lock size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
-                      Confirmar Nova Senha
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        type="password"
-                        placeholder="••••••••"
-                        value={confirmNewPassword}
-                        onChange={(e) => setConfirmNewPassword(e.target.value)}
-                        required
-                        minLength={6}
-                        style={{ width: '100%', padding: '0.65rem 0.65rem 0.65rem 2.2rem' }}
-                      />
-                      <Lock size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      padding: '0.85rem',
-                      fontSize: '0.95rem',
-                      fontWeight: 700,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.5rem'
-                    }}
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 size={18} className="spin-animation" />
-                        <span>Atualizando senha...</span>
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle size={16} />
-                        <span>Salvar Nova Senha e Conectar</span>
-                      </>
-                    )}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
-                    Digite seu e-mail cadastrado. Enviaremos as instruções de recuperação via Supabase Auth:
-                  </p>
-
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
-                      E-mail Cadastrado
-                    </label>
-                    <div style={{ position: 'relative' }}>
-                      <input
-                        type="email"
-                        placeholder="seu.email@exemplo.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        style={{ width: '100%', padding: '0.65rem 0.65rem 0.65rem 2.2rem' }}
-                      />
-                      <Mail size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      padding: '0.85rem',
-                      fontSize: '0.95rem',
-                      fontWeight: 700,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.5rem'
-                    }}
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 size={18} className="spin-animation" />
-                        <span>Enviando link...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send size={16} />
-                        <span>Enviar Link de Recuperação</span>
-                      </>
-                    )}
-                  </button>
-
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.75rem', textAlign: 'center', lineHeight: 1.4 }}>
-                    ⚠️ Nota: O serviço de e-mail gratuito do Supabase tem limite de 3 envios por hora. Caso não receba, utilize a aba <strong>Redefinir Imediatamente</strong> acima.
-                  </p>
-                </>
-              )}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  padding: '0.85rem',
+                  fontSize: '0.95rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem'
+                }}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={18} className="spin-animation" />
+                    <span>Enviando link seguro...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={16} />
+                    <span>Enviar Link de Recuperação</span>
+                  </>
+                )}
+              </button>
 
               <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
                 <button

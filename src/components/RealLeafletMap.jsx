@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { MapPin, Navigation, ShieldCheck, Heart } from 'lucide-react';
@@ -34,12 +34,26 @@ const createPriceIcon = (priceText, isHovered) => {
 };
 
 export default function RealLeafletMap({
-  properties,
+  properties = [],
   selectedProperty,
   onSelectProperty
 }) {
-  // Center map on Brazil (São Paulo area default)
-  const defaultCenter = [-23.56, -46.66];
+  const DEFAULT_PROPERTY_IMAGE = 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80';
+
+  // Only map properties with valid, verified numeric coordinates
+  const validProperties = useMemo(() => {
+    return properties.filter(p => 
+      typeof p.lat === 'number' && 
+      typeof p.lng === 'number' && 
+      !isNaN(p.lat) && 
+      !isNaN(p.lng)
+    );
+  }, [properties]);
+
+  // Center map dynamically on selected property, or first valid property, or default
+  const defaultCenter = selectedProperty?.lat && selectedProperty?.lng
+    ? [selectedProperty.lat, selectedProperty.lng]
+    : (validProperties.length > 0 ? [validProperties[0].lat, validProperties[0].lng] : [-23.56, -46.66]);
 
   return (
     <div style={{
@@ -73,7 +87,7 @@ export default function RealLeafletMap({
             Mapa Interativo OpenStreetMap (ImóvelHUB)
           </strong>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            {properties.length} imóveis geolocalizados em tempo real
+            {validProperties.length} imóveis geolocalizados em tempo real
           </span>
         </div>
       </div>
@@ -89,14 +103,16 @@ export default function RealLeafletMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {properties.map((prop) => {
-          const lat = prop.lat || -23.56;
-          const lng = prop.lng || -46.66;
+        {validProperties.map((prop) => {
+          const lat = prop.lat;
+          const lng = prop.lng;
           const isSelected = selectedProperty?.id === prop.id;
 
           const priceText = prop.transactionType === 'Venda'
             ? `R$ ${(prop.price / 1000).toFixed(0)}k`
             : `R$ ${prop.rentPrice}/mês`;
+
+          const popupImage = (Array.isArray(prop.images) && prop.images[0]) || DEFAULT_PROPERTY_IMAGE;
 
           return (
             <Marker
@@ -110,8 +126,8 @@ export default function RealLeafletMap({
               <Popup>
                 <div style={{ width: '220px', padding: '4px', fontFamily: 'system-ui, sans-serif' }}>
                   <img
-                    src={prop.images[0]}
-                    alt=""
+                    src={popupImage}
+                    alt={prop.title || 'Foto do Imóvel'}
                     style={{ width: '100%', height: '110px', objectFit: 'cover', borderRadius: '8px', marginBottom: '6px' }}
                   />
                   <div style={{ fontWeight: 800, color: '#1e3a8a', fontSize: '1rem' }}>

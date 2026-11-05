@@ -60,6 +60,7 @@ import MassCsvManagerModal from './components/MassCsvManagerModal';
 import MovingChecklistModal from './components/MovingChecklistModal';
 import RadiusFilterModal from './components/RadiusFilterModal';
 import OpportunityFloatingToast from './components/OpportunityFloatingToast';
+import { filterPropertiesList } from './services/filterProperties';
 
 import PropertyDetailPage from './pages/PropertyDetailPage';
 import BrokerProfilePage from './pages/BrokerProfilePage';
@@ -229,19 +230,29 @@ export default function App() {
 
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [isLoadingProperties, setIsLoadingProperties] = useState(false);
 
   // Load from Express API & Saved Custom Theme on Mount
   useEffect(() => {
+    let isMounted = true;
     async function loadData() {
-      const [apiProps, apiUsers] = await Promise.all([
-        fetchProperties(),
-        fetchUsers()
-      ]);
-      if (apiProps && apiProps.length > 0) {
-        setProperties(apiProps);
-      }
-      if (apiUsers && apiUsers.length > 0) {
-        setUsers(apiUsers);
+      setIsLoadingProperties(true);
+      try {
+        const [apiProps, apiUsers] = await Promise.all([
+          fetchProperties(),
+          fetchUsers()
+        ]);
+        if (!isMounted) return;
+        if (apiProps && apiProps.length > 0) {
+          setProperties(apiProps);
+        }
+        if (apiUsers && apiUsers.length > 0) {
+          setUsers(apiUsers);
+        }
+      } catch (err) {
+        console.warn("Could not load initial data:", err);
+      } finally {
+        if (isMounted) setIsLoadingProperties(false);
       }
     }
     loadData();
@@ -512,111 +523,19 @@ export default function App() {
     showToast(`Busca personalizada do Assistente Inteligente aplicada com sucesso!`);
   };
 
-  // Filtering Logic
-  const filteredProperties = properties.filter((item) => {
-    if (showOnlyFavorites && !favorites.includes(item.id)) return false;
-
-    if (activeTab && activeTab !== 'Todos' && activeTab !== 'all') {
-      if (activeTab === 'Comprar' && item.transactionType !== 'Venda' && item.purpose !== 'Venda') return false;
-      if (activeTab === 'Alugar' && item.transactionType !== 'Aluguel' && item.purpose !== 'Aluguel') return false;
-      if (activeTab === 'Lançamentos' && !item.isLaunch && !item.isRelease) return false;
-      if (activeTab === 'Temporada' && item.transactionType !== 'Temporada' && !item.isSeason) return false;
-      if (activeTab === 'Imóvel Novo' && !item.isNew && !item.isLaunch) return false;
-      if (activeTab === 'Leilão' && item.transactionType !== 'Leilao' && !item.isAuction) return false;
-    }
-
-    if (searchQuery && searchQuery.trim() !== '') {
-      const rawQ = searchQuery.trim().toLowerCase();
-      const cleanQ = rawQ.replace(/^[#\s]+/, '').replace(/^hub[-_\s]*/, '');
-      const itemCodeClean = (item.code || '').toLowerCase().replace(/^hub[-_\s]*/, '');
-
-      const isDirectCodeMatch = 
-        (item.code && (item.code.toLowerCase() === rawQ || itemCodeClean === cleanQ)) ||
-        (item.id && (item.id.toLowerCase() === rawQ || item.id.toLowerCase() === `prop-${rawQ}`));
-
-      if (isDirectCodeMatch) {
-        // Direct Code / ID Match - instantly matches!
-        return true;
-      }
-
-      const normalize = (str) =>
-        (str || '')
-          .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/[,\-–—\(\)\/]/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-
-      const normQuery = normalize(searchQuery);
-      const queryTerms = normQuery.split(' ').filter(t => t.length > 0);
-      const searchableText = normalize(
-        `${item.code || ''} ${item.id} ${item.title} ${item.neighborhood} ${item.city} ${item.state} ${item.address} ${item.type} ${item.subType} ${item.referenceCode || ''} ${item.advertiser?.name || ''} ${item.advertiser?.email || ''} ${item.advertiser?.phone || ''} ${item.description || ''}`
-      );
-
-      const matchesAllTerms = queryTerms.every(term => searchableText.includes(term));
-      if (!matchesAllTerms) return false;
-    }
-
-    if (selectedSubTypes.length > 0) {
-      const matchSub = selectedSubTypes.includes(item.subType) || selectedSubTypes.includes(item.type);
-      if (!matchSub) return false;
-    } else if (selectedType !== 'Todos') {
-      const matchType = item.type === selectedType || item.subType === selectedType;
-      if (!matchType) return false;
-    }
-    if (Number(minBedrooms) > 0 && (item.bedrooms || 0) < Number(minBedrooms)) return false;
-    if (Number(minParkingSpots) > 0 && (item.parkingSpots || 0) < Number(minParkingSpots)) return false;
-
-    const effectivePrice = item.transactionType === 'Venda' ? item.price : (showTotalCost ? (item.rentPrice + (item.condoFee || 0) + (item.iptu || 0)) : item.rentPrice);
-    if (filters.minPrice && effectivePrice < filters.minPrice) return false;
-    if (filters.maxPrice && effectivePrice > filters.maxPrice) return false;
-    if (filters.minArea > 0 && item.area < filters.minArea) return false;
-    if (filters.minParking > 0 && (item.parkingSpots || 0) < filters.minParking) return false;
-
-    // Filtro por Estágio do Imóvel
-    if (filters.stage && filters.stage !== 'all') {
-      if (filters.stage === 'pronto' && (item.isLaunch || item.transactionType === 'Leilao')) return false;
-      if (filters.stage === 'planta' && !item.isLaunch && !item.isRelease) return false;
-      if (filters.stage === 'novo' && !item.isNew && !item.isLaunch) return false;
-      if (filters.stage === 'leilao' && item.transactionType !== 'Leilao' && !item.isAuction) return false;
-    }
-
-    // Filtro por Posição do Andar
-    if (filters.floorPosition && filters.floorPosition !== 'all') {
-      const fullText = `${item.title} ${item.subType} ${item.description || ''}`.toLowerCase();
-      if (filters.floorPosition === 'terreo' && !fullText.includes('térreo') && !fullText.includes('garden') && !item.amenities?.includes('Térreo')) return false;
-      if (filters.floorPosition === 'alto' && !fullText.includes('andar alto') && !fullText.includes('vista livre') && !item.amenities?.includes('Andar Alto')) return false;
-      if (filters.floorPosition === 'cobertura' && item.subType !== 'Cobertura' && !fullText.includes('cobertura') && !fullText.includes('duplex') && !fullText.includes('triplex')) return false;
-      if (filters.floorPosition === 'baixo' && (fullText.includes('cobertura') || fullText.includes('andar alto'))) return false;
-    }
-
-    if (filters.amenities && filters.amenities.length > 0) {
-      const hasAll = filters.amenities.every(amenity => {
-        if (amenity === 'Aceita Permuta') return item.acceptsExchange || item.description?.toLowerCase().includes('permuta');
-        if (amenity === 'Minha Casa Minha Vida (MCMV)') return item.price <= 350000 && item.transactionType === 'Venda';
-        if (amenity === 'Apenas com Tour Virtual 360°') return item.hasVirtualTour || true;
-        if (amenity === 'Aluguel Sem Fiador (Garantia Digital)') return item.transactionType === 'Aluguel';
-        return item.amenities?.includes(amenity);
-      });
-      if (!hasAll) return false;
-    }
-
-    // Filtro por Raio Geográfico (Haversine Distance)
-    if (activeRadiusFilter && activeRadiusFilter.lat && activeRadiusFilter.lng) {
-      const R = 6371; // Raio da terra em km
-      const dLat = ((item.lat || -23.56) - activeRadiusFilter.lat) * Math.PI / 180;
-      const dLon = ((item.lng || -46.66) - activeRadiusFilter.lng) * Math.PI / 180;
-      const a = 
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(activeRadiusFilter.lat * Math.PI / 180) * Math.cos((item.lat || -23.56) * Math.PI / 180) * 
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const dist = R * c;
-      if (dist > (activeRadiusFilter.radiusKm || 5)) return false;
-    }
-
-    return true;
+  // Filtering Logic - Centralized in filterPropertiesList
+  const filteredProperties = filterPropertiesList(properties, {
+    showOnlyFavorites,
+    favorites,
+    activeTab,
+    searchQuery,
+    selectedType,
+    selectedSubTypes,
+    minBedrooms,
+    minParkingSpots,
+    filters,
+    showTotalCost,
+    activeRadiusFilter
   });
 
   // Sorting Logic
@@ -1089,8 +1008,12 @@ export default function App() {
             createdAt: 'Agora'
           };
           try {
-            const existing = JSON.parse(localStorage.getItem('imobhub_user_saved_searches') || '[]');
-            localStorage.setItem('imobhub_user_saved_searches', JSON.stringify([newSaved, ...existing]));
+            const existing = JSON.parse(
+              localStorage.getItem('imovelhub_saved_searches') || 
+              localStorage.getItem('imobhub_user_saved_searches') || 
+              '[]'
+            );
+            localStorage.setItem('imovelhub_saved_searches', JSON.stringify([newSaved, ...existing]));
           } catch(e) {}
           showToast(`Combinação salva com sucesso! Alertas ativados na Central.`);
         }}

@@ -17,6 +17,15 @@ import {
   X
 } from 'lucide-react';
 import ImovelwebCategoryDropdown from './ImovelwebCategoryDropdown';
+import { 
+  normalizeText, 
+  normalizeText as normalize,
+  matchesLocationOrText, 
+  matchesLocationOrText as matchesLocation,
+  matchesCategory, 
+  matchesTransactionTab,
+  matchesTransactionTab as matchesTab 
+} from '../services/filterProperties';
 
 
 
@@ -51,10 +60,10 @@ export default function HeroSearch({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
 
-  // Load recent searches from localStorage
+  // Load recent searches from localStorage (Standardized to imovelhub_*)
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('imobhub_recent_searches');
+      const saved = localStorage.getItem('imovelhub_recent_searches') || localStorage.getItem('imobhub_recent_searches');
       if (saved) {
         setRecentSearches(JSON.parse(saved));
       }
@@ -69,72 +78,26 @@ export default function HeroSearch({
     const updated = [clean, ...recentSearches.filter(s => s.toLowerCase() !== clean.toLowerCase())].slice(0, 5);
     setRecentSearches(updated);
     try {
-      localStorage.setItem('imobhub_recent_searches', JSON.stringify(updated));
+      localStorage.setItem('imovelhub_recent_searches', JSON.stringify(updated));
     } catch (e) {}
   };
 
   const handleClearRecentSearches = (e) => {
     e.stopPropagation();
     setRecentSearches([]);
+    localStorage.removeItem('imovelhub_recent_searches');
     localStorage.removeItem('imobhub_recent_searches');
   };
 
   // =========================================================================
-  // FILTRAGEM MULTIDIMENSIONAL REATIVA CRUZADA (BIDIRECIONAL 100% REAL)
+  // FILTRAGEM MULTIDIMENSIONAL REATIVA CRUZADA (CENTRALIZADA)
   // =========================================================================
-
-  const normalize = (str) =>
-    (str || '')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[,\-–—\(\)\/]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-  // Helper de correspondência de texto para localização e código de referência
-  const matchesLocation = (prop, query) => {
-    if (!query || !query.trim()) return true;
-    const cleanQ = query.trim().replace(/^#/, '');
-    if (prop.id && (prop.id.toLowerCase() === cleanQ.toLowerCase() || prop.id.toLowerCase() === `prop-${cleanQ.toLowerCase()}`)) {
-      return true;
-    }
-    const normQuery = normalize(query);
-    const queryTerms = normQuery.split(' ').filter(t => t.length > 0);
-    const full = normalize(
-      `${prop.id || ''} ${prop.title || ''} ${prop.neighborhood || ''} ${prop.city || ''} ${prop.state || ''} ${prop.address || ''} ${prop.type || ''} ${prop.subType || ''} ${prop.referenceCode || ''}`
-    );
-    return queryTerms.every(term => full.includes(term));
-  };
-
-  // Helper de correspondência de tipo/categoria
-  const matchesCategory = (prop, subTypes, mainType) => {
-    if (!subTypes || subTypes.length === 0) {
-      if (mainType && mainType !== 'Todos' && mainType !== 'all') {
-        return prop.type === mainType || prop.subType === mainType;
-      }
-      return true;
-    }
-    return subTypes.includes(prop.subType) || subTypes.includes(prop.type);
-  };
-
-  // Helper de transação
-  const matchesTab = (prop, tab) => {
-    if (!tab || tab === 'Todos' || tab === 'all') return true;
-    if (tab === 'Comprar') return prop.transactionType === 'Venda' || prop.purpose === 'Venda';
-    if (tab === 'Alugar') return prop.transactionType === 'Aluguel' || prop.purpose === 'Aluguel';
-    if (tab === 'Lançamentos') return prop.isLaunch || prop.isRelease;
-    if (tab === 'Temporada') return prop.transactionType === 'Temporada' || prop.isSeason;
-    if (tab === 'Imóvel Novo') return prop.isNew || prop.isLaunch;
-    if (tab === 'Leilão') return prop.transactionType === 'Leilao' || prop.isAuction;
-    return true;
-  };
 
   // 1. POOL PARA CATEGORIAS: Imóveis filtrados por Localização + Quartos + Vagas + Aba
   const categoryContextProperties = useMemo(() => {
     return properties.filter(p => {
-      if (!matchesTab(p, activeTab)) return false;
-      if (!matchesLocation(p, searchQuery)) return false;
+      if (!matchesTransactionTab(p, activeTab)) return false;
+      if (!matchesLocationOrText(p, searchQuery)) return false;
       if (Number(minBedrooms) > 0 && (p.bedrooms || 0) < Number(minBedrooms)) return false;
       if (Number(minParkingSpots) > 0 && (p.parkingSpots || 0) < Number(minParkingSpots)) return false;
       return true;
@@ -144,7 +107,7 @@ export default function HeroSearch({
   // 2. POOL PARA LOCALIZAÇÃO: Imóveis filtrados por Categorias + Quartos + Vagas + Aba
   const locationContextProperties = useMemo(() => {
     return properties.filter(p => {
-      if (!matchesTab(p, activeTab)) return false;
+      if (!matchesTransactionTab(p, activeTab)) return false;
       if (!matchesCategory(p, selectedSubTypes, selectedType)) return false;
       if (Number(minBedrooms) > 0 && (p.bedrooms || 0) < Number(minBedrooms)) return false;
       if (Number(minParkingSpots) > 0 && (p.parkingSpots || 0) < Number(minParkingSpots)) return false;
