@@ -1,20 +1,16 @@
 import React from 'react';
 import { 
   ArrowLeft, 
-  User, 
   BadgeCheck, 
-  Phone, 
   MessageCircle, 
   Star, 
-  Building2, 
-  ShieldCheck,
-  MapPin
+  Building2
 } from 'lucide-react';
 import PropertyCard from '../components/PropertyCard';
 
 export default function BrokerProfilePage({
   advertiser,
-  properties,
+  properties = [],
   onNavigateHome,
   isFavorite,
   isCompared,
@@ -27,8 +23,13 @@ export default function BrokerProfilePage({
 }) {
   if (!advertiser) return null;
 
+  const whatsappNum = advertiser.whatsapp || (advertiser.phone ? advertiser.phone.replace(/\D/g, '') : '5511999990000');
+
   // Filter properties by this advertiser
-  const brokerProperties = properties.filter(p => p.advertiser?.name === advertiser.name || advertiser.name.includes(p.advertiser?.name));
+  const brokerProperties = properties.filter(p => 
+    p.advertiser?.name === advertiser.name || 
+    (advertiser.name && p.advertiser?.name && advertiser.name.includes(p.advertiser.name))
+  );
 
   return (
     <div className="container" style={{ padding: '2rem 1.5rem', flex: 1 }}>
@@ -101,7 +102,7 @@ export default function BrokerProfilePage({
           </button>
 
           <a
-            href={`https://wa.me/${advertiser.whatsapp}?text=Olá! Vi seu perfil de corretor no ImóvelHUB.`}
+            href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent('Olá! Vi seu perfil de corretor no ImóvelHUB.')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn"
@@ -135,19 +136,23 @@ export default function BrokerProfilePage({
           gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
           gap: '1.75rem'
         }}>
-          {brokerProperties.map((property) => (
-            <PropertyCard
-              key={property.id}
-              property={property}
-              isFavorite={isFavorite(property.id)}
-              isCompared={isCompared(property.id)}
-              onToggleFavorite={onToggleFavorite}
-              onToggleCompare={onToggleCompare}
-              onSelectProperty={onSelectProperty}
-              onOpenScheduler={onOpenScheduler}
-              onOpenCalculator={onOpenCalculator}
-            />
-          ))}
+          {brokerProperties.map((property) => {
+            const isFav = typeof isFavorite === 'function' ? isFavorite(property.id) : (Array.isArray(isFavorite) ? isFavorite.includes(property.id) : false);
+            const isComp = typeof isCompared === 'function' ? isCompared(property.id) : (Array.isArray(isCompared) ? isCompared.includes(property.id) : false);
+            return (
+              <PropertyCard
+                key={property.id}
+                property={property}
+                isFavorite={isFav}
+                isCompared={isComp}
+                onToggleFavorite={onToggleFavorite}
+                onToggleCompare={onToggleCompare}
+                onSelectProperty={onSelectProperty}
+                onOpenScheduler={onOpenScheduler}
+                onOpenCalculator={onOpenCalculator}
+              />
+            );
+          })}
         </div>
       )}
     </div>

@@ -58,7 +58,7 @@ export default function ResetPasswordModal({
       setSuccess(true);
 
       setTimeout(() => {
-        onPasswordResetSuccess && onPasswordResetSuccess(authData?.user);
+        onPasswordResetSuccess?.(authData?.user);
         onClose();
       }, 2000);
     } catch (err) {

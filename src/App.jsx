@@ -382,7 +382,14 @@ export default function App() {
       setIsResetPasswordOpen(true);
     } else if (hash.includes('type=signup') || hash.includes('type=email_confirmation')) {
       const match = hash.match(/access_token=([^&]+)/);
+      const refreshMatch = hash.match(/refresh_token=([^&]+)/);
       if (match) {
+        if (refreshMatch) {
+          supabase.auth.setSession({
+            access_token: match[1],
+            refresh_token: refreshMatch[1]
+          }).catch(err => console.warn("setSession error:", err));
+        }
         supabase.auth.getUser(match[1]).then(async ({ data: authData }) => {
           if (authData?.user?.email) {
             await supabase.from('users').update({ status: 'active' }).ilike('email', authData.user.email);

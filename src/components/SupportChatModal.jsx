@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Headphones, Send, Sparkles, MessageCircle, ShieldCheck, CheckCircle } from 'lucide-react';
+import { X, Headphones, Send } from 'lucide-react';
 
 export default function SupportChatModal({
   isOpen,

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   X, 
-  Calculator
+  Calculator,
+  ArrowRight
 } from 'lucide-react';
 
 const BANKS_DATA = [

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layers, Compass, CheckCircle2, Maximize2, Sparkles } from 'lucide-react';
+import { Layers, Compass, CheckCircle2 } from 'lucide-react';
 
 export default function FloorPlansWidget({ property }) {
   const plans = [

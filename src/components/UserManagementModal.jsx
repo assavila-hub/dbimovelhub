@@ -2,15 +2,8 @@ import React, { useState } from 'react';
 import { 
   X, 
   Users, 
-  UserCheck, 
-  UserX, 
-  ShieldCheck, 
   PlusCircle, 
-  Edit, 
-  Trash2, 
-  Lock, 
-  Mail, 
-  BadgeCheck 
+  Trash2 
 } from 'lucide-react';
 
 export default function UserManagementModal({
@@ -177,7 +170,6 @@ export default function UserManagementModal({
               </thead>
               <tbody>
                 {users.map((u) => {
-                  const roleBadge = getRoleLabel(u.role);
                   return (
                     <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                       <td style={{ padding: '0.85rem 1rem' }}>

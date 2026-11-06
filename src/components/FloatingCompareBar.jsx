@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeftRight, X, Sparkles, Building2 } from 'lucide-react';
+import { ArrowLeftRight, X } from 'lucide-react';
 
 export default function FloatingCompareBar({
   comparedProperties,

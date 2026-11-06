@@ -1,5 +1,3 @@
-import { PROPERTY_TAXONOMY } from './categories.js';
-
 export const INITIAL_PROPERTIES = [
   // ==========================================
   // APARTAMENTO - PADRÃO (2x)

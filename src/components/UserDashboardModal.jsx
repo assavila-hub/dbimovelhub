@@ -5,40 +5,20 @@ import {
   User, 
   Building2, 
   Calendar, 
-  Star, 
   PlusCircle, 
-  CheckCircle, 
-  ArrowRight,
-  FileText,
-  Clock,
-  BadgeCheck,
-  Phone,
-  Mail,
-  Heart,
-  MessageSquare,
-  ShieldCheck,
-  Headphones,
-  Sliders,
-  DollarSign,
-  TrendingUp,
-  Share2,
-  Video,
-  CheckCircle2,
-  AlertTriangle,
-  Send,
-  Calculator,
-  Eye,
+  MessageSquare, 
+  ShieldCheck, 
+  Headphones, 
+  TrendingUp, 
+  Share2, 
+  CheckCircle2, 
+  Award, 
+  Home, 
+  Users, 
+  Percent, 
   Trash2,
-  ExternalLink,
-  Edit,
   Sparkles,
-  Award,
-  Layers,
-  HelpCircle,
-  Briefcase,
-  Users,
-  Percent,
-  Plus
+  Send
 } from 'lucide-react';
 
 export default function UserDashboardModal({
@@ -373,7 +353,7 @@ export default function UserDashboardModal({
                 className="btn btn-outline btn-sm"
                 onClick={() => {
                   onClose();
-                  onOpenAdminDashboard && onOpenAdminDashboard();
+                  onOpenAdminDashboard?.();
                 }}
                 style={{ fontSize: '0.75rem', borderColor: '#38bdf8', color: '#38bdf8' }}
               >
@@ -760,7 +740,7 @@ export default function UserDashboardModal({
                       className="btn btn-primary btn-sm"
                       onClick={() => {
                         onClose();
-                        onOpenPostProperty && onOpenPostProperty();
+                        onOpenPostProperty?.();
                       }}
                     >
                       <PlusCircle size={15} />
@@ -895,7 +875,7 @@ export default function UserDashboardModal({
                       className="btn btn-primary btn-sm"
                       onClick={() => {
                         onClose();
-                        onOpenPostProperty && onOpenPostProperty();
+                        onOpenPostProperty?.();
                       }}
                     >
                       <PlusCircle size={15} />
@@ -914,7 +894,7 @@ export default function UserDashboardModal({
                         className="btn btn-primary btn-sm"
                         onClick={() => {
                           onClose();
-                          onOpenPostProperty && onOpenPostProperty();
+                          onOpenPostProperty?.();
                         }}
                       >
                         <PlusCircle size={15} />
@@ -976,7 +956,7 @@ export default function UserDashboardModal({
                                       className="btn btn-ghost btn-sm"
                                       onClick={() => {
                                         if (window.confirm(`Tem certeza que deseja excluir o anúncio "${prop.title}"?`)) {
-                                          onDeleteProperty && onDeleteProperty(prop.id);
+                                          onDeleteProperty?.(prop.id);
                                         }
                                       }}
                                       title="Excluir Imóvel"
@@ -1100,12 +1080,19 @@ export default function UserDashboardModal({
 
               {activeTab === 'broker-portfolio' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Imóveis da Minha Carteira ({properties.length})</h3>
-                    <button className="btn btn-primary btn-sm" onClick={() => { onClose(); onOpenPostProperty && onOpenPostProperty(); }}>
-                      <PlusCircle size={15} />
-                      <span>Cadastrar Novo Imóvel</span>
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      {onOpenLeadCrm && (
+                        <button className="btn btn-outline btn-sm" onClick={() => { onClose(); onOpenLeadCrm?.(); }}>
+                          <span>Abrir CRM &amp; Funil</span>
+                        </button>
+                      )}
+                      <button className="btn btn-primary btn-sm" onClick={() => { onClose(); onOpenPostProperty?.(); }}>
+                        <PlusCircle size={15} />
+                        <span>Cadastrar Novo Imóvel</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflowX: 'auto' }}>
@@ -1219,6 +1206,12 @@ export default function UserDashboardModal({
                       <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>VISITAS SOLICITADAS</span>
                       <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#059669', marginTop: '0.2rem' }}>{roleVisits.length}</div>
                     </div>
+                    {buyerSimulations.length > 0 && (
+                      <div style={{ backgroundColor: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>SIMULAÇÕES SALVAS</span>
+                        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#8b5cf6', marginTop: '0.2rem' }}>{buyerSimulations.length}</div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

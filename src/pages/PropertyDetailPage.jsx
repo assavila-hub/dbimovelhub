@@ -8,17 +8,11 @@ import {
   CheckCircle2, 
   Calendar, 
   Calculator, 
-  MessageCircle, 
-  Phone, 
-  Share2, 
   Sparkles, 
-  Compass, 
   MessageSquare, 
   FileText,
   ChevronLeft,
   ChevronRight,
-  User,
-  BadgeCheck,
   Video,
   Layers
 } from 'lucide-react';
@@ -27,7 +21,7 @@ import ConstructionTimelineWidget from '../components/ConstructionTimelineWidget
 
 function getYouTubeEmbedUrl(url) {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   return (match && match[2].length === 11) ? `https://www.youtube-nocookie.com/embed/${match[2]}` : null;
 }
@@ -53,6 +47,16 @@ export default function PropertyDetailPage({
   const [selectedImage, setSelectedImage] = useState(0);
 
   if (!property) return null;
+
+  const advertiser = property.advertiser || {
+    name: 'Proprietário Anunciante',
+    type: 'Anunciante Verificado',
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+    creci: null
+  };
+
+  const isFav = typeof isFavorite === 'function' ? isFavorite(property.id) : (Array.isArray(isFavorite) ? isFavorite.includes(property.id) : false);
+  const isComp = typeof isCompared === 'function' ? isCompared(property.id) : (Array.isArray(isCompared) ? isCompared.includes(property.id) : false);
 
   const imagesList = (Array.isArray(property.images) && property.images.length > 0)
     ? property.images
@@ -94,15 +98,15 @@ export default function PropertyDetailPage({
             className="btn btn-outline btn-sm"
           >
             <ArrowLeftRight size={16} />
-            <span>{isCompared ? 'No Comparador' : 'Comparar Lado a Lado'}</span>
+            <span>{isComp ? 'No Comparador' : 'Comparar Lado a Lado'}</span>
           </button>
           <button
             onClick={() => onToggleFavorite(property.id)}
             className="btn btn-outline btn-sm"
-            style={{ color: isFavorite ? 'var(--color-accent)' : 'currentColor' }}
+            style={{ color: isFav ? 'var(--color-accent)' : 'currentColor' }}
           >
-            <Heart size={16} fill={isFavorite ? 'var(--color-accent)' : 'none'} />
-            <span>{isFavorite ? 'Salvo nos Favoritos' : 'Favoritar'}</span>
+            <Heart size={16} fill={isFav ? 'var(--color-accent)' : 'none'} />
+            <span>{isFav ? 'Salvo nos Favoritos' : 'Favoritar'}</span>
           </button>
         </div>
       </div>
@@ -356,6 +360,11 @@ export default function PropertyDetailPage({
               </div>
               <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
                 Condomínio: <strong>R$ {property.condoFee || 0}</strong> • IPTU: <strong>R$ {property.iptu || 0}/mês</strong>
+                {totalMonthly && (
+                  <div style={{ color: 'var(--color-primary-light)', fontWeight: 700, marginTop: '0.25rem' }}>
+                    Pacote Total Estimado: R$ {totalMonthly.toLocaleString('pt-BR')}/mês
+                  </div>
+                )}
               </div>
             </div>
 
@@ -399,6 +408,26 @@ export default function PropertyDetailPage({
 
               <button
                 className="btn btn-outline"
+                onClick={() => onOpenItbiCalculator && onOpenItbiCalculator(property)}
+                style={{ width: '100%', padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}
+              >
+                <Calculator size={18} />
+                <span>Simulador de ITBI &amp; Escritura</span>
+              </button>
+
+              {property.hasVirtualTour && (
+                <button
+                  className="btn btn-outline"
+                  onClick={() => onOpenVirtualTour && onOpenVirtualTour(property)}
+                  style={{ width: '100%', padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center', borderColor: '#8b5cf6', color: '#8b5cf6' }}
+                >
+                  <Video size={18} />
+                  <span>Tour Virtual 360° Imersivo</span>
+                </button>
+              )}
+
+              <button
+                className="btn btn-outline"
                 onClick={() => onOpenRoiCalculator && onOpenRoiCalculator(property)}
                 style={{ width: '100%', padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center', borderColor: '#10b981', color: '#10b981' }}
               >
@@ -427,7 +456,7 @@ export default function PropertyDetailPage({
 
             {/* Advertiser Card Link */}
             <div
-              onClick={() => onNavigateBroker && onNavigateBroker(property.advertiser)}
+              onClick={() => onNavigateBroker && onNavigateBroker(advertiser)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -441,14 +470,14 @@ export default function PropertyDetailPage({
               }}
             >
               <img
-                src={property.advertiser.avatar}
-                alt={property.advertiser.name}
+                src={advertiser.avatar}
+                alt={advertiser.name}
                 style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover' }}
               />
               <div>
-                <strong style={{ fontSize: '0.95rem', display: 'block' }}>{property.advertiser.name}</strong>
+                <strong style={{ fontSize: '0.95rem', display: 'block' }}>{advertiser.name}</strong>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  {property.advertiser.type} {property.advertiser.creci ? `• CRECI ${property.advertiser.creci}` : ''}
+                  {advertiser.type} {advertiser.creci ? `• CRECI ${advertiser.creci}` : ''}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--color-primary-light)', fontWeight: 700, display: 'block', marginTop: '2px' }}>
                   Ver perfil e carteira de imóveis →

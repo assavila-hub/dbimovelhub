@@ -3,17 +3,11 @@ import {
   X, 
   RefreshCw, 
   Database, 
-  FileCode, 
   CheckCircle2, 
   Download, 
   Copy, 
   Check, 
   Upload, 
-  Sparkles, 
-  ShieldCheck, 
-  AlertCircle, 
-  Layers,
-  ArrowRight,
   Server
 } from 'lucide-react';
 
@@ -46,6 +40,7 @@ export default function XmlFeedSyncModal({
         timestamp: new Date().toLocaleTimeString('pt-BR'),
         status: 'Sucesso'
       });
+      onImportProperties?.([]);
     }, 1200);
   };
 

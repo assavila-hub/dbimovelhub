@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Clock, User, Calendar, Share2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export default function BlogPostPage({
   post,

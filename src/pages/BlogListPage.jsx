@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, BookOpen, Clock, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 import { BLOG_POSTS } from '../mockData/blogPosts';
 
 export default function BlogListPage({
@@ -8,6 +8,16 @@ export default function BlogListPage({
 }) {
   return (
     <div className="container" style={{ padding: '2.5rem 1.5rem', flex: 1 }}>
+      {/* Back to Home Button */}
+      <button
+        onClick={onNavigateHome}
+        className="btn btn-secondary btn-sm"
+        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.5rem' }}
+      >
+        <ArrowLeft size={16} />
+        <span>Voltar para Imóveis</span>
+      </button>
+
       {/* Header */}
       <div style={{ marginBottom: '2.5rem', textAlign: 'center', maxWidth: '750px', margin: '0 auto 3rem auto' }}>
         <div style={{

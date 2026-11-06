@@ -267,7 +267,7 @@ export async function loginUser(email, password) {
   
   // 1. Check Supabase Auth for email confirmation status
   try {
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error: authError } = await supabase.auth.signInWithPassword({
       email: cleanEmail,
       password: password
     });
@@ -277,6 +277,8 @@ export async function loginUser(email, password) {
       if (msg.includes('email not confirmed') || (authError.status === 400 && authError.code === 'email_not_confirmed')) {
         throw new Error('E-mail não confirmado. Por favor, acesse seu e-mail e clique no link de ativação antes de fazer login.');
       }
+    } else if (signInData?.user?.email_confirmed_at) {
+      await supabase.from('users').update({ status: 'active' }).ilike('email', cleanEmail);
     }
   } catch (authErr) {
     if (authErr.message?.includes('não confirmado')) {
@@ -415,6 +417,44 @@ export async function resendConfirmationEmail(email) {
     }
 
     return { success: true, message: 'Novo e-mail de confirmação enviado! Verifique sua caixa de entrada e spam.' };
+  } catch (err) {
+    throw err;
+  }
+}
+
+// 11.2. Verify Email OTP Code or Token directly
+export async function verifyEmailOtp(email, token) {
+  const cleanEmail = (email || '').trim().toLowerCase();
+  const cleanToken = (token || '').trim();
+
+  if (!cleanEmail || !cleanToken) {
+    throw new Error('Informe o e-mail e o código de verificação recebido.');
+  }
+
+  try {
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: cleanEmail,
+      token: cleanToken,
+      type: 'signup'
+    });
+
+    if (error) {
+      const { data: retryData, error: retryError } = await supabase.auth.verifyOtp({
+        email: cleanEmail,
+        token: cleanToken,
+        type: 'email'
+      });
+      if (retryError) {
+        throw new Error(retryError.message || error.message || 'Código de ativação inválido ou expirado.');
+      }
+      if (retryData?.user) {
+        await supabase.from('users').update({ status: 'active' }).ilike('email', cleanEmail);
+        return { success: true, message: 'Conta ativada com sucesso! Você já pode realizar o login.' };
+      }
+    }
+
+    await supabase.from('users').update({ status: 'active' }).ilike('email', cleanEmail);
+    return { success: true, message: 'Conta ativada com sucesso! Você já pode realizar o login.' };
   } catch (err) {
     throw err;
   }

@@ -3,12 +3,9 @@ import {
   X, 
   Building2, 
   Users, 
-  DollarSign, 
   BarChart3, 
-  Settings, 
   Tag, 
   Trash2, 
-  Edit, 
   PlusCircle, 
   Search, 
   CheckSquare, 
@@ -17,8 +14,6 @@ import {
   Palette, 
   RefreshCw, 
   Globe, 
-  FileText, 
-  Calendar, 
   CreditCard, 
   Radio, 
   ShieldCheck, 
@@ -26,22 +21,10 @@ import {
   FileCheck, 
   Database, 
   ClipboardCheck, 
-  CheckCircle2, 
-  SlidersHorizontal,
-  Home, 
   ChevronDown, 
   ChevronRight, 
   Pencil, 
-  Layers, 
-  AlertTriangle,
-  Send,
   ExternalLink,
-  Sparkles,
-  Phone,
-  Mail,
-  Award,
-  Briefcase,
-  Headphones,
   FileSpreadsheet,
   Download
 } from 'lucide-react';
@@ -322,7 +305,7 @@ export default function AdminDashboardModal({
     if (selectedPropIds.length === 0) return;
     if (window.confirm(`Tem certeza que deseja excluir em massa ${selectedPropIds.length} imóvel(is) selecionado(s)?`)) {
       selectedPropIds.forEach(id => {
-        onDeleteProperty && onDeleteProperty(id);
+        onDeleteProperty?.(id);
       });
       setSelectedPropIds([]);
       alert('Imóveis excluídos com sucesso!');
@@ -334,7 +317,7 @@ export default function AdminDashboardModal({
     selectedPropIds.forEach(id => {
       const found = properties.find(p => p.id === id);
       if (found) {
-        onUpdateProperty && onUpdateProperty({ ...found, status: newStatus });
+        onUpdateProperty?.({ ...found, status: newStatus });
       }
     });
     setSelectedPropIds([]);
@@ -345,7 +328,7 @@ export default function AdminDashboardModal({
   const handleSavePropertyEdit = (e) => {
     e.preventDefault();
     if (!editingProperty) return;
-    onUpdateProperty && onUpdateProperty(editingProperty);
+    onUpdateProperty?.(editingProperty);
     setEditingProperty(null);
     alert(`Imóvel "${editingProperty.title}" atualizado com sucesso!`);
   };
@@ -517,7 +500,7 @@ export default function AdminDashboardModal({
       phone: newUserData.phone || '(11) 98888-0000',
       creci: newUserData.role === 'broker' ? (newUserData.creci || '00000-F') : null
     };
-    onAddUser && onAddUser(newUser);
+    onAddUser?.(newUser);
     setShowAddUserModal(false);
     setNewUserData({ name: '', email: '', role: 'broker', status: 'active', phone: '', creci: '' });
     alert(`Usuário "${newUser.name}" cadastrado com sucesso!`);
@@ -526,7 +509,7 @@ export default function AdminDashboardModal({
   const handleSaveEditUser = (e) => {
     e.preventDefault();
     if (!editingUser) return;
-    onUpdateUserRole && onUpdateUserRole(editingUser.id, editingUser.role);
+    onUpdateUserRole?.(editingUser.id, editingUser.role);
     setEditingUser(null);
     alert('Dados do usuário atualizados!');
   };
@@ -579,7 +562,7 @@ export default function AdminDashboardModal({
                 </span>
               </div>
               <span style={{ fontSize: '0.75rem', opacity: 0.85 }}>
-                Gestão central de imóveis, modalidades, categorias/picklists, SEO e usuários
+                Gestão central de imóveis, modalidades, categorias/picklists, SEO e usuários {currentUser?.name ? `• ${currentUser.name}` : ''}
               </span>
             </div>
           </div>
@@ -687,6 +670,12 @@ export default function AdminDashboardModal({
                   <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>PROPOSTAS FORMAIS</span>
                   <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#8b5cf6' }}>{proposals.length}</div>
                   <span style={{ fontSize: '0.72rem', color: '#8b5cf6' }}>High Line Batel em análise</span>
+                </div>
+
+                <div style={{ backgroundColor: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>VISITAS AGENDADAS</span>
+                  <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#f59e0b' }}>{schedules.length}</div>
+                  <span style={{ fontSize: '0.72rem', color: '#f59e0b' }}>Visitas presenciais/tours</span>
                 </div>
 
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
@@ -1000,7 +989,7 @@ export default function AdminDashboardModal({
                                   className="btn btn-ghost btn-sm"
                                   onClick={() => {
                                     if (window.confirm(`Tem certeza que deseja excluir o imóvel "${prop.title}"?`)) {
-                                      onDeleteProperty && onDeleteProperty(prop.id);
+                                      onDeleteProperty?.(prop.id);
                                     }
                                   }}
                                   title="Excluir Imóvel"
@@ -1429,7 +1418,7 @@ export default function AdminDashboardModal({
                                 className="btn btn-ghost btn-sm"
                                 onClick={() => {
                                   if (window.confirm(`Excluir conta de "${u.name}"?`)) {
-                                    onDeleteUser && onDeleteUser(u.id);
+                                    onDeleteUser?.(u.id);
                                   }
                                 }}
                                 style={{ color: '#ef4444', padding: '0.35rem' }}
@@ -1526,7 +1515,20 @@ export default function AdminDashboardModal({
           {/* TAB: FINANCEIRO */}
           {activeTab === 'financial' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Faturamento e Planos Contratados</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 800 }}>Faturamento e Planos Contratados</h3>
+                {onOpenCheckout && (
+                  <button 
+                    type="button" 
+                    className="btn btn-primary btn-sm"
+                    onClick={() => onOpenCheckout()}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700 }}
+                  >
+                    <CreditCard size={15} />
+                    <span>Contratar Plano de Destaque</span>
+                  </button>
+                )}
+              </div>
               <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', overflowX: 'auto' }}>
                 <div className="table-responsive">
                   <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>

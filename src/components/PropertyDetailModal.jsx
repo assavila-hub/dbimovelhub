@@ -25,7 +25,8 @@ import {
   Bell,
   Video,
   Copy,
-  Check
+  Check,
+  Layers
 } from 'lucide-react';
 import FloorPlansWidget from './FloorPlansWidget';
 import ConstructionTimelineWidget from './ConstructionTimelineWidget';
@@ -68,6 +69,14 @@ export default function PropertyDetailModal({
     ? property.images
     : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80'];
   const amenitiesList = Array.isArray(property.amenities) ? property.amenities : [];
+
+  const advertiser = property.advertiser || {
+    name: 'Proprietário Anunciante',
+    type: 'Anunciante Verificado',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&q=80',
+    whatsapp: '5511999990000',
+    creci: null
+  };
 
   const propCode = property.code || property.id;
 
@@ -663,7 +672,7 @@ export default function PropertyDetailModal({
                 {/* Direct WhatsApp Contact Button (OLX / Chaves na Mão) */}
                 <div style={{ marginBottom: '1.25rem' }}>
                   <a
-                    href={`https://wa.me/${property.advertiser?.whatsapp || '5511999990000'}?text=Olá! Gostaria de informações sobre o imóvel ${encodeURIComponent(property.title)}`}
+                    href={`https://wa.me/${advertiser.whatsapp || '5511999990000'}?text=Olá! Gostaria de informações sobre o imóvel ${encodeURIComponent(property.title)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
@@ -696,17 +705,17 @@ export default function PropertyDetailModal({
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                     <img
-                      src={property.advertiser?.avatar || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&q=80'}
-                      alt={property.advertiser?.name}
+                      src={advertiser.avatar}
+                      alt={advertiser.name}
                       style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #38bdf8' }}
                     />
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        <strong style={{ fontSize: '0.92rem' }}>{property.advertiser?.name}</strong>
+                        <strong style={{ fontSize: '0.92rem' }}>{advertiser.name}</strong>
                         <ShieldCheck size={16} color="#0284c7" title="Anunciante Verificado CRECI" />
                       </div>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        {property.advertiser?.type} {property.advertiser?.creci ? `• CRECI ${property.advertiser.creci}` : ''}
+                        {advertiser.type} {advertiser.creci ? `• CRECI ${advertiser.creci}` : ''}
                       </span>
                     </div>
                   </div>

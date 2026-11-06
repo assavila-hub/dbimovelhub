@@ -4,19 +4,10 @@ import {
   Sparkles, 
   ArrowRight, 
   ArrowLeft, 
-  CheckCircle2, 
-  MapPin, 
-  Home, 
-  DollarSign, 
-  Bed, 
-  ShieldCheck, 
-  Car, 
   Check, 
   Building2, 
-  Zap, 
   Gavel, 
-  Sun, 
-  SlidersHorizontal 
+  Sun 
 } from 'lucide-react';
 import { CITIES_AND_NEIGHBORHOODS } from '../mockData/properties';
 

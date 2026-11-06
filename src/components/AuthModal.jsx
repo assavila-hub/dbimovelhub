@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, LogIn, UserPlus, AlertCircle, Loader2, KeyRound, CheckCircle, ArrowLeft, ChevronDown, ChevronUp, Send, ShieldCheck, RefreshCw } from 'lucide-react';
-import { loginUser, registerUser, requestPasswordReset, resendConfirmationEmail } from '../services/api';
+import { X, Lock, Mail, LogIn, UserPlus, AlertCircle, Loader2, KeyRound, CheckCircle, ArrowLeft, ChevronDown, ChevronUp, Send, ShieldCheck, RefreshCw, Key } from 'lucide-react';
+import { loginUser, registerUser, requestPasswordReset, resendConfirmationEmail, verifyEmailOtp } from '../services/api';
 
 export default function AuthModal({
   isOpen,
@@ -14,8 +14,10 @@ export default function AuthModal({
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [creci, setCreci] = useState('');
+  const [otpCode, setOtpCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [showDemoAccounts, setShowDemoAccounts] = useState(false);
@@ -35,6 +37,30 @@ export default function AuthModal({
       setError(err.message || 'Erro ao reenviar e-mail de ativação.');
     } finally {
       setResending(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    if (!otpCode.trim()) {
+      setError('Por favor, informe o código de 6 dígitos recebido por e-mail.');
+      return;
+    }
+    setVerifyingOtp(true);
+    setError('');
+    setSuccessMessage('');
+    try {
+      const res = await verifyEmailOtp(email, otpCode);
+      setSuccessMessage(res.message);
+      setOtpCode('');
+      setTimeout(() => {
+        setMode('login');
+        setSuccessMessage('Conta ativada com sucesso! Entre com sua senha.');
+      }, 1500);
+    } catch (err) {
+      setError(err.message || 'Código inválido ou expirado. Verifique e tente novamente.');
+    } finally {
+      setVerifyingOtp(false);
     }
   };
 
@@ -208,34 +234,75 @@ export default function AuthModal({
                 border: '1px solid rgba(59, 130, 246, 0.2)',
                 borderRadius: 'var(--radius-sm)',
                 padding: '0.85rem',
-                marginBottom: '1.5rem',
+                marginBottom: '1.25rem',
                 fontSize: '0.82rem',
                 color: 'var(--text-main)',
                 lineHeight: 1.5,
                 textAlign: 'left'
               }}>
-                📩 <strong>Atenção:</strong> Você precisa clicar no link recebido no seu e-mail para ativar sua conta antes de conseguir fazer login. Verifique também sua caixa de <strong>Spam ou Lixo Eletrônico</strong>.
+                📩 <strong>Como ativar:</strong> Clique no link recebido no seu e-mail OU digite abaixo o <strong>código numérico de 6 dígitos</strong> recebido na mensagem.
               </div>
+
+              {/* Instant 6-digit OTP verification box */}
+              <form onSubmit={handleVerifyOtp} style={{
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-md)',
+                padding: '1rem',
+                marginBottom: '1.25rem',
+                textAlign: 'left'
+              }}>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, display: 'block', marginBottom: '0.4rem', color: 'var(--text-main)' }}>
+                  Código de Confirmação (6 dígitos do e-mail):
+                </label>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                    <input
+                      type="text"
+                      placeholder="Ex: 123456"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value)}
+                      maxLength={32}
+                      style={{
+                        width: '100%',
+                        padding: '0.65rem 0.65rem 0.65rem 2.2rem',
+                        letterSpacing: '2px',
+                        fontWeight: 700,
+                        fontSize: '1rem'
+                      }}
+                    />
+                    <Key size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={verifyingOtp || !otpCode.trim()}
+                    className="btn btn-primary"
+                    style={{ padding: '0.65rem 1rem', fontSize: '0.85rem', fontWeight: 700, whiteSpace: 'nowrap' }}
+                  >
+                    {verifyingOtp ? <Loader2 size={16} className="spin-animation" /> : 'Confirmar'}
+                  </button>
+                </div>
+              </form>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-secondary"
                   onClick={() => {
                     setMode('login');
                     setError('');
-                    setSuccessMessage('Após clicar no link no seu e-mail, informe suas credenciais abaixo para entrar.');
+                    setSuccessMessage('Após confirmar no e-mail ou código, informe seu e-mail e senha.');
                   }}
                   style={{ width: '100%', padding: '0.75rem', fontWeight: 700 }}
                 >
-                  Ir para Tela de Login
+                  Já confirmei, ir para Login
                 </button>
 
                 <button
                   type="button"
                   onClick={handleResendActivation}
                   disabled={resending}
-                  className="btn btn-secondary"
+                  className="btn"
                   style={{
                     width: '100%',
                     padding: '0.65rem',
@@ -243,11 +310,13 @@ export default function AuthModal({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '0.4rem'
+                    gap: '0.4rem',
+                    border: '1px solid var(--border-color)',
+                    background: 'transparent'
                   }}
                 >
                   <RefreshCw size={14} className={resending ? 'spin-animation' : ''} />
-                  <span>{resending ? 'Reenviando e-mail...' : 'Não recebeu? Reenviar link de ativação'}</span>
+                  <span>{resending ? 'Reenviando e-mail...' : 'Não recebeu o código? Reenviar e-mail'}</span>
                 </button>
               </div>
             </div>

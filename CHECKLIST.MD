@@ -208,6 +208,29 @@ Resultado dos testes: 🟢 **6/6 Testes Automatizados Aprovados (`npm test`) | V
 - **Diagnóstico:** Arquivo `.env.example` incompleto e sem documentação das variáveis do frontend e backend.
 - **Correção Aplicada:** `.env.example` reestruturado e amplamente documentado, cobrindo `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_URL`, `VITE_USE_EXPRESS_FALLBACK`, `PORT`, `DATABASE_URL` e chaves de serviço.
 
+### 30. Pente Fino Arquivo por Arquivo & Fluxo de Ativação por E-mail e Código OTP
+- **Status:** ✅ **CORRIGIDO & BLINDADO**
+- **Arquivos:**
+  - [`src/components/AuthModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/AuthModal.jsx)
+  - [`src/services/api.js`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/services/api.js)
+  - [`src/App.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/App.jsx)
+  - [`src/components/PropertyDetailModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/PropertyDetailModal.jsx)
+  - [`src/components/FinanceCalculatorModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/FinanceCalculatorModal.jsx)
+  - [`src/components/UserDashboardModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/UserDashboardModal.jsx)
+  - [`src/components/AdminDashboardModal.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/components/AdminDashboardModal.jsx)
+  - [`src/pages/PropertyDetailPage.jsx`](file:///home/assav/Developer/dbimovelhub/imovelhub/src/pages/PropertyDetailPage.jsx)
+- **Diagnóstico:** 
+  1. Usuários recém-cadastrados eram logados automaticamente antes de confirmar o e-mail.
+  2. O link de confirmação do Supabase apontava para `http://localhost:3000`, gerando erro de conexão recusada no navegador do usuário caso o frontend estivesse em outra porta ou no celular.
+  3. Existiam potenciais falhas de runtime em componentes JSX por falta de imports (`Layers`, `ArrowRight`, `Home`, `ExternalLink`, `Sparkles`, `Send`).
+  4. Estruturas `property.advertiser` sem fallback quebravam páginas se os dados fossem nulos.
+- **Correção Aplicada:**
+  1. **Fim do Auto-login no Cadastro:** Cadastro passa obrigatoriamente para a tela de aviso de confirmação (`verify-notice`) e usuário inicia com `status: 'pending_verification'`.
+  2. **Ativação por Código OTP:** Adicionada a função `verifyEmailOtp` e campo no modal para digitar o código numérico de 6 dígitos recebido por e-mail, permitindo ativar a conta imediatamente mesmo se o link do Supabase tentar abrir `localhost:3000`.
+  3. **Resolução de Tokens na URL:** `App.jsx` configurado para capturar tokens de confirmação de cadastro no hash, sincronizar a sessão via `supabase.auth.setSession`, atualizar o status do usuário para `active` e limpar a barra de endereços.
+  4. **Correção de Todos os Componentes:** Adicionados todos os imports de ícones ausentes, limpos imports mortos e criados fallbacks seguros para dados de anunciantes e propriedades.
+  5. **0 Erros de Build e Lint:** Verificação completa de sintaxe, tipos e linter em 76 arquivos com 0 erros.
+
 ---
 
 ## 📌 RESUMO DO STATUS ATUAL
@@ -217,5 +240,5 @@ Resultado dos testes: 🟢 **6/6 Testes Automatizados Aprovados (`npm test`) | V
 | 🚨 **Crítico (Segurança & Dados)** | 5 | 0 | 5 *(Postergado pelo Usuário)* |
 | 🔴 **Alto (Bugs & Funcionalidade)** | 9 | **9** ✅ | 0 |
 | 🟡 **Médio (Robustez & Manutenibilidade)** | 8 | **8** ✅ | 0 |
-| 🟢 **Baixo (Qualidade de Código & UX)** | 7 | **7** ✅ | 0 |
-| **TOTAL** | **29** | **24** ✅ | **5** (Críticos) |
+| 🟢 **Baixo (Qualidade de Código & UX)** | 8 | **8** ✅ | 0 |
+| **TOTAL** | **30** | **25** ✅ | **5** (Críticos) |

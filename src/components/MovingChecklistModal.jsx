@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, 
-  CheckSquare, 
   Square, 
   Truck, 
   Zap, 
-  Droplet, 
-  Wifi, 
   Building2, 
   Key, 
   Plus, 
   Trash2, 
-  Sparkles,
   CheckCircle2
 } from 'lucide-react';
 
@@ -124,7 +120,7 @@ export default function MovingChecklistModal({
             <Truck size={22} color="#38bdf8" />
             <div>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>
-                Checklist de Mudança &amp; Pós-Venda
+                Checklist de Mudança &amp; Pós-Venda {property?.title ? `• ${property.title}` : ''}
               </h2>
               <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
                 Guia prático para troca de contas, condomínio, internet e mudança
