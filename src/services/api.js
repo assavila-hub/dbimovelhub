@@ -265,6 +265,27 @@ export async function createProposal(proposalData) {
 export async function loginUser(email, password) {
   const cleanEmail = (email || '').trim().toLowerCase();
   
+  // 1. Check Supabase Auth for email confirmation status
+  try {
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password: password
+    });
+
+    if (authError) {
+      const msg = (authError.message || '').toLowerCase();
+      if (msg.includes('email not confirmed') || (authError.status === 400 && authError.code === 'email_not_confirmed')) {
+        throw new Error('E-mail não confirmado. Por favor, acesse seu e-mail e clique no link de ativação antes de fazer login.');
+      }
+    }
+  } catch (authErr) {
+    if (authErr.message?.includes('não confirmado')) {
+      throw authErr;
+    }
+    console.warn("Supabase auth check:", authErr);
+  }
+
+  // 2. Fetch profile from database
   try {
     const { data, error } = await supabase
       .from('users')
@@ -280,6 +301,19 @@ export async function loginUser(email, password) {
     if (user.status === 'blocked') {
       throw new Error('Esta conta está congelada/bloqueada pelo Administrador. Entre em contato com o suporte.');
     }
+
+    // If pending verification, check if user has verified via Supabase Auth
+    if (user.status === 'pending_verification') {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentAuthUser = sessionData?.session?.user;
+      if (currentAuthUser && currentAuthUser.email?.toLowerCase() === cleanEmail && currentAuthUser.email_confirmed_at) {
+        await supabase.from('users').update({ status: 'active' }).eq('id', user.id);
+        user.status = 'active';
+      } else {
+        throw new Error('Sua conta ainda não foi ativada. Por favor, confirme o e-mail de ativação enviado para sua caixa de entrada antes de entrar.');
+      }
+    }
+
     if (user.password && user.password !== password) {
       throw new Error('Senha incorreta. Verifique suas credenciais.');
     }
@@ -290,7 +324,7 @@ export async function loginUser(email, password) {
   }
 }
 
-// 11. Real Authentication (Register)
+// 11. Real Authentication (Register with Required Email Confirmation)
 export async function registerUser({ name, email, password, role, phone, creci }) {
   const cleanEmail = (email || '').trim().toLowerCase();
 
@@ -308,8 +342,9 @@ export async function registerUser({ name, email, password, role, phone, creci }
 
     // Trigger official Supabase confirmation email with production Vercel redirect URL
     let authUserId = null;
+    const redirectOrigin = typeof window !== 'undefined' ? `${window.location.origin}/` : 'https://dbimovelhub.vercel.app/';
+    
     try {
-      const redirectOrigin = typeof window !== 'undefined' ? `${window.location.origin}/` : 'https://dbimovelhub.vercel.app/';
       const authRes = await supabase.auth.signUp({
         email: cleanEmail,
         password: password,
@@ -319,10 +354,20 @@ export async function registerUser({ name, email, password, role, phone, creci }
         }
       });
       authUserId = authRes?.data?.user?.id || authRes?.user?.id || null;
+      if (authRes.error) {
+        console.warn("Supabase auth signUp error:", authRes.error);
+        if (authRes.error.message && !authRes.error.message.includes('over_email_send_rate_limit')) {
+          throw new Error(authRes.error.message);
+        }
+      }
     } catch (authErr) {
       console.warn("Supabase auth signUp notification:", authErr);
+      if (authErr.message && !authErr.message.includes('over_email_send_rate_limit')) {
+        throw authErr;
+      }
     }
 
+    // New registered user starts in 'pending_verification' status until email is confirmed
     const newUser = {
       id: authUserId || `user-${Date.now()}`,
       name: name.trim(),
@@ -332,7 +377,7 @@ export async function registerUser({ name, email, password, role, phone, creci }
       phone: phone || '',
       creci: role === 'broker' ? creci : null,
       avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
-      status: 'active'
+      status: 'pending_verification'
     };
 
     const { data, error } = await supabase
@@ -346,6 +391,30 @@ export async function registerUser({ name, email, password, role, phone, creci }
     }
 
     return data[0];
+  } catch (err) {
+    throw err;
+  }
+}
+
+// 11.1. Resend Confirmation Email
+export async function resendConfirmationEmail(email) {
+  const cleanEmail = (email || '').trim().toLowerCase();
+  const redirectOrigin = typeof window !== 'undefined' ? `${window.location.origin}/` : 'https://dbimovelhub.vercel.app/';
+  
+  try {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: cleanEmail,
+      options: {
+        emailRedirectTo: redirectOrigin
+      }
+    });
+
+    if (error) {
+      throw new Error(error.message || 'Erro ao reenviar e-mail de ativação.');
+    }
+
+    return { success: true, message: 'Novo e-mail de confirmação enviado! Verifique sua caixa de entrada e spam.' };
   } catch (err) {
     throw err;
   }

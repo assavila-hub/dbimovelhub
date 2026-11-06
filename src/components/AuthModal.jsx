@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, LogIn, UserPlus, AlertCircle, Loader2, KeyRound, CheckCircle, ArrowLeft, ChevronDown, ChevronUp, Send, ShieldCheck } from 'lucide-react';
-import { loginUser, registerUser, requestPasswordReset } from '../services/api';
+import { X, Lock, Mail, LogIn, UserPlus, AlertCircle, Loader2, KeyRound, CheckCircle, ArrowLeft, ChevronDown, ChevronUp, Send, ShieldCheck, RefreshCw } from 'lucide-react';
+import { loginUser, registerUser, requestPasswordReset, resendConfirmationEmail } from '../services/api';
 
 export default function AuthModal({
   isOpen,
@@ -15,9 +15,28 @@ export default function AuthModal({
   const [phone, setPhone] = useState('');
   const [creci, setCreci] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [showDemoAccounts, setShowDemoAccounts] = useState(false);
+
+  const handleResendActivation = async () => {
+    if (!email.trim()) {
+      setError('Por favor, informe seu e-mail cadastrado.');
+      return;
+    }
+    setResending(true);
+    setError('');
+    setSuccessMessage('');
+    try {
+      const res = await resendConfirmationEmail(email);
+      setSuccessMessage(res.message);
+    } catch (err) {
+      setError(err.message || 'Erro ao reenviar e-mail de ativação.');
+    } finally {
+      setResending(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -37,7 +56,7 @@ export default function AuthModal({
         if (password.length < 6) throw new Error('A senha deve ter no mínimo 6 caracteres.');
         if (role === 'broker' && !creci.trim()) throw new Error('Por favor, informe seu número de CRECI.');
 
-        const newUser = await registerUser({
+        await registerUser({
           name,
           email,
           password,
@@ -46,9 +65,8 @@ export default function AuthModal({
           creci
         });
         
-        // Instant login: Connect the user immediately without blocking them
-        onLoginSuccess(newUser);
-        onClose();
+        // Bloqueio de auto-login: O usuário obrigatoriamente deve confirmar o e-mail primeiro
+        setMode('verify-notice');
       } else if (mode === 'forgot') {
         if (!email.trim()) throw new Error('Por favor, informe seu e-mail cadastrado.');
         const res = await requestPasswordReset(email);
@@ -106,19 +124,42 @@ export default function AuthModal({
         <div style={{ padding: '1.5rem' }}>
           {error && (
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.6rem',
               backgroundColor: 'rgba(239, 68, 68, 0.1)',
               border: '1px solid rgba(239, 68, 68, 0.3)',
               color: '#ef4444',
-              padding: '0.75rem 1rem',
+              padding: '0.85rem 1rem',
               borderRadius: 'var(--radius-md)',
               fontSize: '0.85rem',
               marginBottom: '1.25rem'
             }}>
-              <AlertCircle size={18} style={{ flexShrink: 0 }} />
-              <span>{error}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: (error.includes('não confirmado') || error.includes('não foi ativada')) ? '0.5rem' : 0 }}>
+                <AlertCircle size={18} style={{ flexShrink: 0 }} />
+                <span>{error}</span>
+              </div>
+              {(error.includes('não confirmado') || error.includes('não foi ativada')) && (
+                <button
+                  type="button"
+                  onClick={handleResendActivation}
+                  disabled={resending}
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: '1px solid #ef4444',
+                    color: '#ef4444',
+                    borderRadius: 'var(--radius-sm)',
+                    padding: '0.35rem 0.65rem',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    marginTop: '0.25rem'
+                  }}
+                >
+                  <RefreshCw size={13} className={resending ? 'spin-animation' : ''} />
+                  <span>{resending ? 'Reenviando...' : 'Reenviar e-mail de ativação'}</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -140,9 +181,9 @@ export default function AuthModal({
             </div>
           )}
 
-          {/* MODE: VERIFY NOTICE (EMAIL ACTIVATION) */}
+          {/* MODE: VERIFY NOTICE (EMAIL ACTIVATION REQUIRED) */}
           {mode === 'verify-notice' ? (
-            <div style={{ textAlign: 'center', padding: '1.5rem 0.5rem' }}>
+            <div style={{ textAlign: 'center', padding: '1.25rem 0.5rem' }}>
               <div style={{
                 width: '64px',
                 height: '64px',
@@ -157,20 +198,56 @@ export default function AuthModal({
                 <Mail size={32} />
               </div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>Confirme seu Cadastro por E-mail</h3>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '1.5rem' }}>
-                Enviamos um link de ativação oficial para <strong>{email}</strong>. Acesse seu e-mail e clique no link para ativar sua conta antes de anunciar ou enviar propostas.
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+                Enviamos um link de confirmação para:<br />
+                <strong style={{ color: 'var(--text-main)', fontSize: '1rem' }}>{email}</strong>
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+
+              <div style={{
+                backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                border: '1px solid rgba(59, 130, 246, 0.2)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '0.85rem',
+                marginBottom: '1.5rem',
+                fontSize: '0.82rem',
+                color: 'var(--text-main)',
+                lineHeight: 1.5,
+                textAlign: 'left'
+              }}>
+                📩 <strong>Atenção:</strong> Você precisa clicar no link recebido no seu e-mail para ativar sua conta antes de conseguir fazer login. Verifique também sua caixa de <strong>Spam ou Lixo Eletrônico</strong>.
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={() => {
                     setMode('login');
                     setError('');
+                    setSuccessMessage('Após clicar no link no seu e-mail, informe suas credenciais abaixo para entrar.');
                   }}
-                  style={{ width: '100%', padding: '0.75rem' }}
+                  style={{ width: '100%', padding: '0.75rem', fontWeight: 700 }}
                 >
                   Ir para Tela de Login
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResendActivation}
+                  disabled={resending}
+                  className="btn btn-secondary"
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem',
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem'
+                  }}
+                >
+                  <RefreshCw size={14} className={resending ? 'spin-animation' : ''} />
+                  <span>{resending ? 'Reenviando e-mail...' : 'Não recebeu? Reenviar link de ativação'}</span>
                 </button>
               </div>
             </div>

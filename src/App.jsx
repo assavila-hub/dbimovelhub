@@ -347,13 +347,29 @@ export default function App() {
 
   // Supabase Auth Recovery & URL Token Listener (Signup & Password Reset)
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         setIsResetPasswordOpen(true);
-      } else if (event === 'SIGNED_IN') {
+      } else if (event === 'SIGNED_IN' && session?.user) {
         const hash = window.location.hash || '';
         if (hash.includes('type=signup') || hash.includes('type=email_confirmation')) {
-          showToast('✅ Conta ativada com sucesso! Bem-vindo ao ImóvelHUB.');
+          try {
+            await supabase.from('users').update({ status: 'active' }).ilike('email', session.user.email);
+            const { data: userProfiles } = await supabase
+              .from('users')
+              .select('*')
+              .ilike('email', session.user.email)
+              .limit(1);
+
+            if (userProfiles && userProfiles.length > 0) {
+              setCurrentUser(userProfiles[0]);
+              showToast(`✅ E-mail confirmado com sucesso! Bem-vindo(a), ${userProfiles[0].name}.`);
+            } else {
+              showToast('✅ Conta ativada com sucesso! Bem-vindo ao ImóvelHUB.');
+            }
+          } catch (err) {
+            console.error("Error activating verified user:", err);
+          }
           if (window.history && window.history.replaceState) {
             window.history.replaceState(null, '', window.location.pathname);
           }
@@ -365,7 +381,23 @@ export default function App() {
     if (hash.includes('type=recovery') || (hash.includes('access_token=') && hash.includes('type=recovery'))) {
       setIsResetPasswordOpen(true);
     } else if (hash.includes('type=signup') || hash.includes('type=email_confirmation')) {
-      showToast('✅ E-mail confirmado com sucesso!');
+      const match = hash.match(/access_token=([^&]+)/);
+      if (match) {
+        supabase.auth.getUser(match[1]).then(async ({ data: authData }) => {
+          if (authData?.user?.email) {
+            await supabase.from('users').update({ status: 'active' }).ilike('email', authData.user.email);
+            const { data: userProfiles } = await supabase
+              .from('users')
+              .select('*')
+              .ilike('email', authData.user.email)
+              .limit(1);
+            if (userProfiles && userProfiles.length > 0) {
+              setCurrentUser(userProfiles[0]);
+              showToast(`✅ E-mail confirmado com sucesso! Bem-vindo(a), ${userProfiles[0].name}.`);
+            }
+          }
+        }).catch(err => console.warn(err));
+      }
       if (window.history && window.history.replaceState) {
         window.history.replaceState(null, '', window.location.pathname);
       }
