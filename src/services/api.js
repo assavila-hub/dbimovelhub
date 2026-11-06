@@ -304,11 +304,27 @@ export async function loginUser(email, password) {
       throw new Error('Esta conta está congelada/bloqueada pelo Administrador. Entre em contato com o suporte.');
     }
 
-    // If pending verification, check if user has verified via Supabase Auth
+    // 3. Authenticate with Supabase Auth or fallback credentials
+    let authConfirmed = false;
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password: password
+      });
+      if (authData?.user) {
+        authConfirmed = true;
+      } else if (authError && authError.message.toLowerCase().includes('email not confirmed')) {
+        throw new Error('Sua conta ainda não foi ativada. Por favor, confirme o e-mail de ativação enviado para sua caixa de entrada antes de entrar.');
+      }
+    } catch (authErr) {
+      if (authErr.message && authErr.message.includes('ainda não foi ativada')) {
+        throw authErr;
+      }
+    }
+
+    // If pending verification in database but verified via Supabase Auth
     if (user.status === 'pending_verification') {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const currentAuthUser = sessionData?.session?.user;
-      if (currentAuthUser && currentAuthUser.email?.toLowerCase() === cleanEmail && currentAuthUser.email_confirmed_at) {
+      if (authConfirmed) {
         await supabase.from('users').update({ status: 'active' }).eq('id', user.id);
         user.status = 'active';
       } else {
@@ -339,7 +355,7 @@ export async function registerUser({ name, email, password, role, phone, creci }
       .limit(1);
 
     if (existing && existing.length > 0) {
-      throw new Error('Este e-mail já está cadastrado. Faça login ou use outro e-mail.');
+      throw new Error('Este e-mail já está cadastrado no sistema. Por favor, acesse a aba "Entrar" com suas credenciais ou utilize "Esqueceu a senha?".');
     }
 
     // Trigger official Supabase confirmation email with production Vercel redirect URL
@@ -355,6 +371,12 @@ export async function registerUser({ name, email, password, role, phone, creci }
           data: { name: name.trim(), role: role || 'buyer', phone: phone || '', creci: creci || null }
         }
       });
+
+      // In Supabase, if the user already exists in auth.users, identities is an empty array [] and no email is sent
+      if (authRes?.data?.user?.identities && authRes.data.user.identities.length === 0) {
+        throw new Error('Este e-mail já possui cadastro confirmado no sistema. Por favor, acesse a aba "Entrar" com sua senha ou solicite redefinição.');
+      }
+
       authUserId = authRes?.data?.user?.id || authRes?.user?.id || null;
       if (authRes.error) {
         console.warn("Supabase auth signUp error:", authRes.error);
@@ -364,7 +386,7 @@ export async function registerUser({ name, email, password, role, phone, creci }
       }
     } catch (authErr) {
       console.warn("Supabase auth signUp notification:", authErr);
-      if (authErr.message && !authErr.message.includes('over_email_send_rate_limit')) {
+      if (authErr.message) {
         throw authErr;
       }
     }
