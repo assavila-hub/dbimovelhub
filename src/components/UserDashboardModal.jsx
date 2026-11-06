@@ -18,7 +18,11 @@ import {
   Percent, 
   Trash2,
   Sparkles,
-  Send
+  Send,
+  Briefcase,
+  Heart,
+  FileText,
+  DollarSign
 } from 'lucide-react';
 
 export default function UserDashboardModal({
@@ -375,11 +379,14 @@ export default function UserDashboardModal({
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.4rem',
-          padding: '0.6rem 1.5rem',
+          gap: '0.45rem',
+          padding: '0.6rem clamp(0.75rem, 2vw, 1.5rem)',
           backgroundColor: 'var(--bg-main)',
           borderBottom: '1px solid var(--border-color)',
-          overflowX: 'auto'
+          overflowX: 'auto',
+          whiteSpace: 'nowrap',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'none'
         }}>
           {/* TABS FOR IMOBILIÁRIA (AGENCY) */}
           {activeRole === 'agency' && [
@@ -408,7 +415,8 @@ export default function UserDashboardModal({
                   backgroundColor: isActive ? 'var(--bg-card)' : 'transparent',
                   color: isActive ? '#0284c7' : 'var(--text-muted)',
                   borderBottom: isActive ? '2px solid #0284c7' : '2px solid transparent',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 <Icon size={15} />
@@ -443,7 +451,8 @@ export default function UserDashboardModal({
                   backgroundColor: isActive ? 'var(--bg-card)' : 'transparent',
                   color: isActive ? '#f59e0b' : 'var(--text-muted)',
                   borderBottom: isActive ? '2px solid #f59e0b' : '2px solid transparent',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 <Icon size={15} />
@@ -478,7 +487,8 @@ export default function UserDashboardModal({
                   backgroundColor: isActive ? 'var(--bg-card)' : 'transparent',
                   color: isActive ? '#059669' : 'var(--text-muted)',
                   borderBottom: isActive ? '2px solid #059669' : '2px solid transparent',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 <Icon size={15} />
@@ -514,7 +524,8 @@ export default function UserDashboardModal({
                   backgroundColor: isActive ? 'var(--bg-card)' : 'transparent',
                   color: isActive ? '#3b82f6' : 'var(--text-muted)',
                   borderBottom: isActive ? '2px solid #3b82f6' : '2px solid transparent',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 <Icon size={15} />
@@ -548,7 +559,8 @@ export default function UserDashboardModal({
                   backgroundColor: isActive ? 'var(--bg-card)' : 'transparent',
                   color: isActive ? '#8b5cf6' : 'var(--text-muted)',
                   borderBottom: isActive ? '2px solid #8b5cf6' : '2px solid transparent',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0
                 }}
               >
                 <Icon size={15} />

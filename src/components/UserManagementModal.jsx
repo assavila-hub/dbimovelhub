@@ -3,7 +3,8 @@ import {
   X, 
   Users, 
   PlusCircle, 
-  Trash2 
+  Trash2,
+  BadgeCheck 
 } from 'lucide-react';
 
 export default function UserManagementModal({

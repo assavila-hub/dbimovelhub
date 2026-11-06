@@ -7,7 +7,8 @@ import {
   Check, 
   Building2, 
   Gavel, 
-  Sun 
+  Sun,
+  Home 
 } from 'lucide-react';
 import { CITIES_AND_NEIGHBORHOODS } from '../mockData/properties';
 

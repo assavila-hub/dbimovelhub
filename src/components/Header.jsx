@@ -28,7 +28,8 @@ import {
   Bookmark,
   MapPin,
   Clock,
-  Truck
+  Truck,
+  Briefcase
 } from 'lucide-react';
 
 export default function Header({
@@ -125,17 +126,21 @@ export default function Header({
       <div className="header-top-banner" style={{
         backgroundColor: 'var(--color-primary)',
         color: '#ffffff',
-        padding: '0.35rem 1.5rem',
+        padding: '0.35rem clamp(0.75rem, 2vw, 1.5rem)',
         fontSize: '0.76rem',
         fontWeight: 500,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '1rem',
+        maxWidth: '100%',
+        overflow: 'hidden'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-          <Sparkles size={13} color="#f59e0b" />
-          <span>Plataforma Imobiliária Completa do Brasil: Compra, Aluguel, Lançamentos, Temporada &amp; Leilão</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0, overflow: 'hidden' }}>
+          <Sparkles size={13} color="#f59e0b" style={{ flexShrink: 0 }} />
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            Plataforma Imobiliária Completa do Brasil: Compra, Aluguel, Lançamentos, Temporada &amp; Leilão
+          </span>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.72rem', opacity: 0.9, flexShrink: 0 }} className="desktop-only">
           <span style={{ background: 'rgba(255,255,255,0.15)', padding: '0.12rem 0.5rem', borderRadius: '4px' }}>Filtros Avançados</span>
@@ -635,14 +640,14 @@ export default function Header({
         {/* =========================================================================
            RIGHT SIDE ACTIONS (Theme, Favorites, User Menu, CTA)
            ========================================================================= */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.3rem, 1vw, 0.6rem)', flexShrink: 0 }}>
           
           {/* Dark / Light Toggle */}
           <button 
             className="btn btn-ghost btn-sm"
             onClick={() => setDarkMode(!darkMode)}
             title="Alternar Tema Escuro/Claro"
-            style={{ borderRadius: '50%', width: '38px', height: '38px', padding: 0 }}
+            style={{ borderRadius: '50%', width: '36px', height: '36px', padding: 0, flexShrink: 0 }}
           >
             {darkMode ? <Sun size={18} color="#f59e0b" /> : <Moon size={18} color="#64748b" />}
           </button>
@@ -651,7 +656,7 @@ export default function Header({
           <button 
             className="btn btn-ghost btn-sm"
             onClick={onOpenNotifications}
-            style={{ position: 'relative', padding: '0.45rem 0.65rem' }}
+            style={{ position: 'relative', width: '36px', height: '36px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
             title="Central de Notificações"
             aria-label={`Central de Notificações (${unreadNotificationsCount} novas)`}
           >
@@ -659,8 +664,8 @@ export default function Header({
             {unreadNotificationsCount > 0 && (
               <span style={{
                 position: 'absolute',
-                top: '0px',
-                right: '0px',
+                top: '-2px',
+                right: '-2px',
                 backgroundColor: '#ef4444',
                 color: '#fff',
                 borderRadius: '50%',
@@ -679,11 +684,11 @@ export default function Header({
             )}
           </button>
 
-          {/* Favoritos Shortcut */}
+          {/* Favoritos Shortcut (Desktop only to prevent mobile crowding; accessible in drawer and dashboard) */}
           <button 
-            className="btn btn-ghost btn-sm"
+            className="btn btn-ghost btn-sm desktop-only"
             onClick={onOpenFavorites}
-            style={{ position: 'relative', padding: '0.45rem 0.65rem' }}
+            style={{ position: 'relative', padding: '0.45rem 0.65rem', flexShrink: 0 }}
             title="Meus Favoritos"
             aria-label={`Meus Favoritos (${favoritesCount})`}
           >
@@ -711,9 +716,9 @@ export default function Header({
             )}
           </button>
 
-          {/* User Account / Profile Menu (Submenu 4) */}
+          {/* User Account / Profile Menu (Submenu 4) - Desktop only */}
           {currentUser ? (
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative' }} className="desktop-only">
               <button
                 className="btn btn-outline btn-sm"
                 onClick={() => toggleDropdown('usuario')}
@@ -819,10 +824,41 @@ export default function Header({
             <button
               className="btn btn-outline btn-sm desktop-only"
               onClick={onOpenAuth}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 0.95rem' }}
+              style={{ fontSize: '0.85rem', padding: '0.5rem 0.95rem', flexShrink: 0 }}
             >
               <User size={16} />
               <span>Entrar</span>
+            </button>
+          )}
+
+          {/* User Quick Avatar for Mobile */}
+          {currentUser && (
+            <button
+              className="btn btn-ghost btn-sm mobile-only"
+              onClick={() => currentUser.role === 'admin' ? onOpenAdminDashboard() : onOpenUserDashboard()}
+              title={`Painel de ${currentUser.name}`}
+              style={{
+                padding: '0',
+                borderRadius: '50%',
+                width: '34px',
+                height: '34px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1.5px solid var(--color-primary-light)',
+                backgroundColor: 'var(--bg-main)',
+                flexShrink: 0
+              }}
+            >
+              {currentUser.avatar ? (
+                <img 
+                  src={currentUser.avatar} 
+                  alt={currentUser.name} 
+                  style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} 
+                />
+              ) : (
+                <span style={{ fontSize: '0.85rem' }}>🏡</span>
+              )}
             </button>
           )}
 
@@ -830,7 +866,7 @@ export default function Header({
           <button 
             className="btn btn-primary btn-sm desktop-only"
             onClick={onOpenPostProperty}
-            style={{ fontWeight: 800, fontSize: '0.85rem', padding: '0.5rem 1.1rem' }}
+            style={{ fontWeight: 800, fontSize: '0.85rem', padding: '0.5rem 1.1rem', flexShrink: 0 }}
           >
             <PlusCircle size={16} />
             <span>Anunciar Imóvel</span>
@@ -842,18 +878,19 @@ export default function Header({
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Abrir Menu de Navegação"
             style={{
-              padding: '0.45rem 0.75rem',
+              padding: '0.45rem 0.65rem',
               borderRadius: 'var(--radius-sm)',
               border: '1px solid var(--border-color)',
               backgroundColor: 'var(--bg-main)',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
-              cursor: 'pointer'
+              gap: '0.35rem',
+              cursor: 'pointer',
+              flexShrink: 0
             }}
           >
-            <Menu size={20} color="var(--color-primary-light)" />
-            <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>Menu</span>
+            <Menu size={18} color="var(--color-primary-light)" />
+            <span style={{ fontSize: '0.82rem', fontWeight: 800 }}>Menu</span>
           </button>
         </div>
       </div>
