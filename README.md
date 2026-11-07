@@ -1,208 +1,190 @@
-# 🏢 ImóvelHUB — Portal Imobiliário Enterprise de Alto Padrão
+# 🏢 ImóvelHUB — Plataforma Imobiliária Full-Stack
 
 <p align="center">
   <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80" alt="ImóvelHUB Banner" width="100%" style="border-radius: 12px; max-height: 380px; object-fit: cover;" />
 </p>
 
 <p align="center">
-  <strong>Plataforma imobiliária completa de última geração, inspirada nas melhores funcionalidades do ZAP Imóveis, Viva Real, Imovelweb, QuintoAndar e Loft.</strong>
+  <strong>Projeto de estudos avançado que consolida as melhores experiências e funcionalidades dos 6 maiores portais do Brasil: ZAP Imóveis, VivaReal, QuintoAndar, Loft, Imovelweb e OLX.</strong>
+</p>
+
+<p align="center">
+  <a href="https://dbimovelhub.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/🚀_Acessar_Deploy_Oficial-dbimovelhub.vercel.app-0284c7?style=for-the-badge&logo=vercel&logoColor=white" alt="Deploy Vercel" />
+  </a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" />
   <img src="https://img.shields.io/badge/Vite-8.2-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Express-5.2-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+  <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Node.js-Express_5-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node Express" />
   <img src="https://img.shields.io/badge/Leaflet-1.9-199900?style=for-the-badge&logo=leaflet&logoColor=white" alt="Leaflet" />
-  <img src="https://img.shields.io/badge/Status-Produção_Pronta-success?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Status-100%25_Operacional-success?style=for-the-badge" alt="Status" />
 </p>
 
 ---
 
-## 📖 Visão Geral
+## 🎯 Sobre o Projeto
 
-O **ImóvelHUB** é uma plataforma imobiliária *Full-Stack* moderna, responsiva e de alta performance. O sistema foi desenvolvido para conectar compradores, locatários, proprietários, corretores e administradores com total transparência, dados 100% verídicos e ferramentas de ponta para negociação, cálculo financeiro e análise de mercado.
+O **ImóvelHUB** é uma plataforma imobiliária *Full-Stack* moderna, responsiva e de alta fidelidade técnica desenvolvida com o objetivo de estudar e aplicar as melhores práticas da engenharia de software contemporânea:
+- Arquitetura limpa de componentes reativos sem dependência de frameworks CSS pesados.
+- Integração de mapas esféricos com cálculo geodésico (*Haversine*).
+- Gestão de estado sem complexidade desnecessária.
+- Banco de dados relacional oficial na nuvem (**Supabase PostgreSQL**) com fallback para API REST Express.
+- Suíte completa de cálculos financeiros habitacionais brasileiros (SAC, PRICE, ITBI, Cartório e ROI de Locação).
 
----
-
-## 🌟 Principais Funcionalidades
-
-### 1. 🔍 Buscador Cascata Bidirecional 100% Reativo e Verídico
-- **Filtragem Inteligente em Qualquer Ordem**: O usuário pode começar escolhendo pela *Categoria*, pela *Localização*, pelos *Quartos* ou pelas *Vagas*. O catálogo recalcula instantaneamente as opções verdadeiras, eliminando resultados vazios ou opções fantasmas.
-- **Normalização e Tokenização Avançada**: Busca tolerante a acentuação, maiúsculas/minúsculas e pontuação (ex: digitar *"Moema, São Paulo"*, *"Arujá"*, *"Bosque Maia"* ou buscar diretamente por código `#prop-1`, `prop-45`).
-- **Pílulas de Filtros Rápidos com Contadores**: Exibição de tags (`🐾 Pet Friendly`, `🏊 Piscina`, `🥩 Varanda Gourmet`, `🛡️ Sem Fiador`, `☀️ Sol da Manhã`, `⚡ Energia Solar`) com contagem real de imóveis em tempo real.
-- **Histórico de Buscas Recentes**: Salvo localmente para acesso rápido em 1 clique.
-
-### 2. 🏙️ Catálogo com 60 Imóveis Cadastrados
-- Cobertura de cidades e bairros reais:
-  - **São Paulo (SP)**: Moema, Pinheiros, Jardins, Itaim Bibi, Vila Madalena, Vila Mariana;
-  - **Arujá (SP)**: Arujá 5, Real Park, Arujazinho;
-  - **Santa Isabel (SP)**: Monte Serrat, Jardim Eldorado, Represa de Igaratá;
-  - **Guarulhos (SP)**: Bosque Maia, Jardim Flor da Montanha, Vila Augusta, Cumbica;
-  - **Jacareí (SP)**: Villa Branca, Jardim Flórida, Centro;
-  - **Pindamonhangaba (SP)**: Cidade Nova, Ribeirão Grande, Centro;
-  - **Rio de Janeiro (RJ)**: Copacabana, Ipanema, Leblon;
-  - **Curitiba (PR)**: Batel, Água Verde;
-  - **Belo Horizonte (MG)**: Savassi, Lourdes.
-
-### 3. 🗺️ Modos de Visualização & Mapa Interativo
-- **Visualização em Grade (Grid)**: Cards com carrossel de fotos, badges de verificação (QuintoAndar/Loft), cálculo de R$/m² e botão de tour rápido.
-- **Modo Dividir Tela (Split-View)**: Lista lateral de imóveis sincronizada com mapa interativo contínuo.
-- **Mapa em Tela Cheia (Leaflet & OpenStreetMap)**: Marcadores geográficos dinâmicos com agrupamento e popup detalhado.
-- **Busca por Raio Geográfico (GPS e Pontos de Referência)**: Filtro com cálculo de distância por fórmula de *Haversine* (1km a 50km).
-
-### 4. 🎛️ Filtros Avançados Unificados
-- **Barra de Resumo de Filtros Ativos**: Visualização no topo com botões `✕` para remoção rápida.
-- **Inputs Numéricos Diretos de Preço (R$)**: Digitação livre de valor mínimo e máximo + Histograma vetorial SVG de densidade de preços.
-- **Filtro de Estágio do Imóvel**: *Pronto para Morar*, *Na Planta / Lançamento*, *Imóvel Novo*, *Leilão*, *Temporada*.
-- **Filtro por Preferência de Andar**: *Térreo/Garden*, *Andar Baixo*, *Andar Alto*, *Cobertura/Duplex*.
-- **Salvar Combinações de Busca**: Permite salvar filtros favoritos para receber alertas na Central de Notificações.
-
-### 5. ⚖️ Comparador de Imóveis Side-by-Side
-- Comparação lado a lado de até 4 imóveis simultâneos.
-- Destaques inteligentes automáticos: `🏆 Menor R$/m²`, `✨ Maior Espaço Útil`, `💰 Mais Econômico`.
-- **Exportação do Comparativo em PDF**: Geração de relatório formatado para impressão ou envio a clientes.
-
-### 6. 💬 Central de Atendimento & Negociação em Tempo Real
-- **Chat Direto por Imóvel**: Canal de conversa em tempo real entre comprador e anunciante.
-- **Canal de Suporte ImóvelHUB**: Atendimento integrado com assistente de suporte.
-- **Agendamento de Visitas Online**: Escolha de dia e horário com confirmação instantânea.
-- **Proposta Formal de Compra**: Formulário digital para envio de oferta com valor de entrada e prazo de validade.
-
-### 7. 📑 Suíte Financeira e Jurídica Integrada
-- **Simulador de Financiamento Habitacional**: Comparação entre sistemas SAC e PRICE com taxas reais dos principais bancos brasileiros (Caixa, Itaú, Bradesco, Santander, Banco do Brasil).
-- **Calculadora de ITBI e Custos Cartorários**: Estimativa precisa de imposto municipal (ITBI), escritura pública e registro de imóveis.
-- **Calculadora de Rentabilidade e ROI / Yield**: Projeção de retorno anual para locação tradicional vs. temporada/Airbnb.
-- **Gerador de Ficha Técnica em PDF**: Exportação profissional do imóvel com fotos, mapa, comodidades e contatos.
-- **Plantas Baixas Interativas e Tour Virtual 360°**.
-
-### 8. 🛡️ Painel Administrativo & Gestão de Usuários (RBAC)
-- Suporte a múltiplos perfis de acesso: **Administrador**, **Corretor / Imobiliária**, **Proprietário**, **Comprador** e **Suporte**.
-- Gestão completa de anúncios (CRUD), moderação, destaque de planos e relatórios analíticos de visualizações e leads.
-- Backup completo do banco de dados em **JSON** e exportação de dados em **CSV**.
+🔗 **Demonstração em Produção:** [https://dbimovelhub.vercel.app](https://dbimovelhub.vercel.app)
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🧭 Mini Tutorial — Conheça o Projeto em 5 Minutos
 
-### **Frontend**
-- **React 19** — Biblioteca declarativa e reativa para interfaces de usuário.
-- **Vite 8** — Ferramenta de build ultrarrápida com Hot Module Replacement (HMR).
+Criamos este roteiro guiado para que você possa degustar todas as capacidades técnicas e funcionais da plataforma:
+
+### 1️⃣ Explorando o Buscador Cascata & Modalidades
+1. Na barra superior do formulário de busca (*Hero*), alterne entre as modalidades: **Comprar**, **Alugar**, **Lançamentos**, **Leilão** ou **Temporada**.
+2. Digite na busca livre termos como *"Batel"*, *"Moema"*, *"Arujá"* ou o código sequencial de um imóvel (ex: `#HUB-001`, `HUB-025`).
+3. Clique nas pílulas de filtros rápidos (`🐾 Pet Friendly`, `🏊 Piscina`, `🥩 Varanda Gourmet`, `☀️ Sol da Manhã`) e veja a contagem de imóveis recalcular instantaneamente.
+
+### 2️⃣ Alternando Modos de Visualização & Mapa Interativo
+1. No topo do catálogo, experimente os 3 modos de exibição:
+   - **Grade (Grid):** Visualização rica em cards com carrossel de fotos, cálculo automático de R$/m² e badges de liquidez.
+   - **Dividir Tela (Split-View):** Lista de imóveis à esquerda sincronizada em tempo real com mapa interativo contínuo à direita.
+   - **Mapa:** Visualização cartográfica em tela cheia com marcadores dinâmicos, clusters e popup de detalhes via *Leaflet*.
+
+### 3️⃣ Testando os Simuladores Financeiros (Menu Serviços)
+1. No cabeçalho, clique em **"Serviços & Soluções"** e abra o **"Simulador Multi-Bancos"**:
+   - Ajuste o valor do imóvel e a entrada para comparar parcelas e CET entre **Caixa Econômica Federal**, **Banco do Brasil**, **Itaú**, **Bradesco** e **Santander** nos sistemas **SAC** e **PRICE**.
+2. Abra a **"Calculadora de ROI & Yield"** para analisar rentabilidade anual estimada para locação tradicional vs. temporada/Airbnb e tempo de payback.
+3. Abra a **"Calculadora de ITBI & Cartório"** para estimar impostos municipais e taxas notariais por estado.
+
+### 4️⃣ Acessando os Perfis de Acesso Rápidos (RBAC)
+No canto superior direito, clique em **"Entrar"**. No rodapé do modal, você encontrará botões de **1 clique** para testar as personas do sistema:
+
+* 👑 **Administrador Master (`admin@imovelhub.com.br`):**
+  - Abre o **Painel Admin Master**: 5 cards de KPI em tempo real, gestão em massa de imóveis (Ativar/Pausar/Excluir), edição dinâmica de categorias e taxonomias, laudos de vistoria digital, sincronizador de feeds XML (Kenlo/Vista) e backup em JSON/CSV.
+* 💼 **Corretor / Imobiliária (`fernanda.corretora@imoveis.com`):**
+  - Acesse o **CRM de Leads & Funil Kanban** com estágios de negociação, agenda de visitas confirmadas e perfil profissional com selo CRECI.
+* 🏡 **Proprietário (`ricardo.proprietario@email.com`):**
+  - Painel de gestão dos seus imóveis cadastrados, métricas de visualizações, propostas recebidas e atalho para anunciar novos imóveis.
+* 🔍 **Comprador / Locatário (`carlos.comprador@email.com`):**
+  - Favoritos salvos, comparador lado a lado e histórico de agendamentos.
+
+### 5️⃣ Gerando Documentos: PDF com QR Code e Contrato ICP-Brasil
+1. Clique em qualquer card de imóvel para abrir a **Ficha Detalhada**.
+2. Clique no botão **"Baixar Ficha Técnica em PDF / QR Code"** para visualizar a folha de especificações pronta para impressão com link dinâmico.
+3. No menu superior em **Serviços**, acesse **"Contratos Digitais"** para ver a geração de minutas de locação e compra e venda com protocolo ICP-Brasil.
+
+---
+
+## 🌟 Pilares e Funcionalidades Principais
+
+| Módulo | Inspiração | Descrição e Recursos |
+|---|---|---|
+| **Catálogo & Busca** | *ZAP Imóveis & VivaReal* | Buscador bidirecional com normalização de acentos, busca por raio geográfico via GPS (*Haversine*), 60 imóveis em capitais e interior de SP/RJ/PR/MG. |
+| **Locação Sem Fiador** | *QuintoAndar* | Vistoria fotográfica digital com laudo de entrada/saída, garantias locatícias integradas e agendamento de visitas online. |
+| **Avaliação & Preço m²** | *Loft* | Algoritmo de precificação justa, histórico de preço reduzido, comparativo com a média do bairro e análise de liquidez. |
+| **Taxonomia Completa** | *Imovelweb* | Estrutura hierárquica por tipo (Apartamento, Casa, Comercial, Terreno, Rural) e subtipos (Cobertura, Duplex, Galpão, Chácara). |
+| **Negociação & CRM** | *OLX & Imobiliárias* | Chat em tempo real entre comprador e anunciante, propostas formais com sinal e CRM Kanban visual de atendimento de leads. |
+| **Suíte Financeira** | *Mercado Bancário BR* | Fórmulas oficiais SAC e PRICE, taxas SELIC/TR dinâmicas, alíquotas de ITBI municipais e cálculo de amortização. |
+
+---
+
+## 🛠️ Stack Tecnológica
+
+### Frontend
+- **React 19** — Componentes declarativos e reatividade de alta performance.
+- **Vite 8** — Build tool ultrarrápido com Hot Module Replacement (HMR).
 - **Leaflet & React-Leaflet** — Mapas interativos e georreferenciamento vetorial.
-- **Lucide React** — Conjunto moderno de ícones vetoriais.
-- **CSS3 Puro (Design System Próprio)** — Sem frameworks pesados, arquitetura de tokens HSL, suporte a dark mode nativo, glassmorphism e micro-animações.
+- **Lucide React** — Pacote abrangente de ícones vetoriais modernos.
+- **CSS3 Puro & Design System** — Variáveis CSS, paleta HSL, modo claro/escuro nativo, animações e responsividade fluida para mobile, tablet e 4K.
 
-### **Backend & Persistência**
-- **Node.js & Express 5** — API REST para gerenciamento de imóveis, usuários e mensagens de chat.
-- **JSON Database Engine (`server/data.json`)** — Motor de persistência leve e síncrono.
-- **CORS** — Middleware de segurança para requisições cross-origin.
+### Backend & Nuvem
+- **Supabase Cloud (PostgreSQL)** — Banco de dados relacional oficial com autenticação, Row Level Security (RLS) e persistência em nuvem.
+- **Node.js & Express 5** — API REST de suporte e contingência local (`server/`).
+- **ViaCEP API** — Integração de autocompletar dinâmico de endereços brasileiros via CEP.
+- **Node Test Runner (`node:test`)** — Suíte automatizada de testes unitários e de integração.
+- **Oxlint** — Linter ultrarrápido em Rust para garantia de qualidade estática de código.
 
 ---
 
-## 🚀 Como Executar o Projeto Localmente
+## 🚀 Como Executar Localmente
 
 ### Pré-requisitos
 - **Node.js** (versão 18.0 ou superior)
 - **npm** (versão 9.0 ou superior) ou **yarn** / **pnpm**
-- **Git** instalado no computador
+- **Git**
 
 ### Passo a Passo
 
-1. **Clonar o Repositório**:
+1. **Clonar o Repositório:**
    ```bash
-   git clone https://github.com/SEU-USUARIO/imobhub.git
-   cd imobhub
+   git clone https://github.com/assavila-hub/dbimovelhub.git
+   cd dbimovelhub
    ```
 
-2. **Instalar as Dependências**:
+2. **Instalar Dependências:**
    ```bash
    npm install
    ```
 
-3. **Iniciar a Aplicação (Frontend + Backend)**:
+3. **Configurar as Variáveis de Ambiente:**
+   Copie o arquivo de exemplo para criar seu `.env`:
    ```bash
+   cp .env.example .env
+   ```
+   *(As chaves públicas para testes em desenvolvimento local já possuem valores padrão configurados).*
+
+4. **Executar a Aplicação:**
+   ```bash
+   # Executar o Frontend em modo desenvolvimento:
+   npm run dev
+
+   # Ou iniciar Frontend + Backend Express simultaneamente:
    npm run start:all
    ```
-   > Esse comando inicializa simultaneamente a **API Express** na porta `3001` e o **Vite Dev Server** na porta `5173`.
 
-4. **Acessar no Navegador**:
-   - Abra [http://localhost:5173](http://localhost:5173) no seu navegador.
-   - A API Backend estará respondendo em [http://localhost:3001/api/properties](http://localhost:3001/api/properties).
+5. **Acessar no Navegador:**
+   - Frontend Vite: [http://localhost:5173](http://localhost:5173)
+   - API REST Express: [http://localhost:3001/api/properties](http://localhost:3001/api/properties)
 
 ---
 
-## 📜 Scripts Disponíveis no `package.json`
+## 🧪 Comandos & Scripts Disponíveis
 
-| Comando | Descrição |
+| Comando | Finalidade |
 |---|---|
-| `npm run start:all` | Inicia o servidor backend Express e o frontend Vite em paralelo. |
-| `npm run dev` | Inicia somente o servidor de desenvolvimento do frontend Vite. |
-| `npm run server` | Inicia somente a API backend Express (`server/index.js`). |
-| `npm run build` | Compila e minifica a aplicação para produção na pasta `dist/`. |
-| `npm run preview` | Executa uma prévia local do build de produção. |
-| `npm run lint` | Executa o linter de alta performance (Oxlint) para validação do código. |
+| `npm run dev` | Inicia o servidor local Vite com HMR na porta `5173`. |
+| `npm run start:all` | Inicia simultaneamente o frontend e a API backend Express. |
+| `npm test` | Executa a suíte de 13 testes automatizados (motor de busca, haversine, SAC/PRICE, taxonomia). |
+| `npm run lint` | Executa o linter (Oxlint) em todos os 70+ arquivos do projeto. |
+| `npm run build` | Compila os bundles de produção otimizados e minificados em `dist/`. |
+| `npm run preview` | Executa uma prévia local do build gerado em `dist/`. |
 
 ---
 
-## 📂 Estrutura de Pastas do Projeto
+## 🔐 Contas de Demonstração para Testes Rápidos
 
-```
-imobhub/
-├── public/                 # Arquivos públicos e favicons
-├── server/                 # Backend Node.js / Express
-│   ├── data.json           # Banco de dados persistente em JSON
-│   ├── db.js               # Camada de acesso aos dados (DAO)
-│   └── index.js            # Rotas da API REST Express (Porta 3001)
-├── src/
-│   ├── components/         # Componentes React modulares
-│   │   ├── AdminDashboardModal.jsx      # Painel de controle do Administrador
-│   │   ├── AuthModal.jsx                # Autenticação e troca de perfil
-│   │   ├── FiltersSidebar.jsx           # Modal de filtros avançados unificados
-│   │   ├── HeroSearch.jsx               # Seção Hero com busca cascata e abas
-│   │   ├── ImovelwebCategoryDropdown.js # Seletor de categorias em árvore
-│   │   ├── PropertyCard.jsx             # Card individual de imóvel
-│   │   ├── PropertyCompareModal.jsx     # Comparador lado a lado com PDF
-│   │   ├── PropertyDetailModal.jsx      # Ficha completa do imóvel
-│   │   ├── RealLeafletMap.jsx           # Mapa interativo com pins
-│   │   ├── SplitScreenView.jsx          # Modo dividir tela (Lista + Mapa)
-│   │   └── ...                          # Modais de calculadora, chat, propostas, etc.
-│   ├── mockData/           # Dados mockados e taxonomias imobiliárias
-│   │   ├── categories.js   # Estrutura completa de tipos e subtipos
-│   │   ├── properties.js   # 60 imóveis completos com coordenadas e fotos
-│   │   └── users.js        # Usuários e planos de anúncio
-│   ├── pages/              # Páginas completas da aplicação
-│   │   ├── BrokerProfilePage.jsx        # Perfil público da imobiliária/corretor
-│   │   └── PropertyDetailPage.jsx       # Página dedicada do imóvel
-│   ├── services/           # Comunicação com a API backend (`api.js`)
-│   ├── App.jsx             # Componente raiz, orquestrador de estado e rotas
-│   ├── index.css           # Design system completo e estilos globais
-│   └── main.jsx            # Ponto de entrada do React 19
-├── package.json            # Dependências e scripts
-├── vite.config.js          # Configuração do Vite e plugins
-└── README.md               # Apresentação e documentação do projeto
-```
+Para testar todos os níveis de permissão sem necessidade de cadastro prévio, use as credenciais abaixo ou utilize os botões demonstrativos de 1 clique no modal de login:
+
+| Perfil | E-mail de Teste | Senha | Funcionalidades em Destaque |
+|---|---|---|---|
+| 👑 **Administrador Master** | `admin@imovelhub.com.br` | `admin123` | Painel Admin, KPIs, moderação de imóveis, edição de categorias, backup JSON/CSV |
+| 🏢 **Imobiliária (Agência)** | `contato@capitalprime.com.br` | `imob123` | Gestão de corretores vinculados, divisão de comissão (split) e carteira total |
+| 💼 **Corretor Credenciado** | `fernanda.corretora@imoveis.com` | `corretor123` | CRM de Leads Kanban, agenda de visitas, imóveis captados e selo CRECI |
+| 🏡 **Proprietário Anunciante** | `ricardo.proprietario@email.com` | `owner123` | Publicação de imóveis, acompanhamento de propostas e contratação de destaque |
+| 🔍 **Comprador / Locatário** | `carlos.comprador@email.com` | `comprador123` | Favoritos, comparador de imóveis, agendamento de visitas e envio de propostas |
+| 🎧 **Suporte & Atendimento** | `suporte@imovelhub.com.br` | `suporte123` | Fila de tickets de atendimento e triagem de anúncios |
 
 ---
 
-## 👥 Perfis de Acesso de Teste (RBAC)
+## 📚 Finalidade do Projeto & Licença
 
-Você pode alternar entre os perfis a qualquer momento clicando no botão **"Entrar / Painel"** no topo da página:
+Este projeto foi concebido e estruturado com propósitos estritamente **educacionais e de portfólio técnico**, demonstrando a arquitetura de uma solução real de ponta a ponta, desde a modelagem de domínio até a publicação em nuvem.
 
-| Perfil | Nome de Exemplo | Acesso Principal |
-|---|---|---|
-| 👑 **Administrador** | Carlos Administrador | Painel Admin Geral, Aprovação de Anúncios, Gestão de Usuários, Backup |
-| 💼 **Corretor / Imobiliária** | Ricardo Corretor (CRECI 123.456-F) | Gestão dos seus imóveis, recebimento de propostas e chat com leads |
-| 🏡 **Proprietário** | Marina Proprietária | Anúncio de imóveis particulares, contratação de destaques e métricas |
-| 🔍 **Comprador / Locatário** | Juliana Compradora | Busca avançada, favoritos, comparador, agendamento e propostas |
-| 🎧 **Suporte** | Suporte ImóvelHUB | Atendimento ao cliente via Central de Ajuda |
-
----
-
-## 📄 Licença
-
-Distribuído sob a licença **MIT**. Consulte o arquivo `LICENSE` para obter mais informações.
-
----
+Distribuído sob a licença **MIT**. Sinta-se à vontade para clonar, estudar e utilizar como base para seus próprios projetos!
 
 <p align="center">
-  Desenvolvido com excelência para revolucionar a experiência de compra, venda e locação de imóveis no Brasil. 🇧🇷✨
+  Desenvolvido com dedicação e paixão por tecnologia imobiliária. 🇧🇷✨
 </p>
